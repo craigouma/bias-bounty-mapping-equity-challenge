@@ -13,14 +13,12 @@ published_undefined_rate:
 undefined_other_components: 0.01
 
 transport:
-  reference_set:
-    maricopa-az: A
-    northern-ca: A
-    eastern-ok: A
-    south-central-tx: A
-    eastern-wa: A
+  # A = interstate, US and state routes; B adds secondary state, toll and business routes.
+  # Tracts on A (or with motorway or trunk) are the high tier, tracts on B only the mid tier.
+  reference_set: A
+  secondary_set: B
   boundary_d_m: 0
-  p_defined_above_tau: 0.95
+  p_defined_high: 0.98
   p_defined_floor: 0.02
   sigma: 0.15
   fallback_sigma: 1.0
