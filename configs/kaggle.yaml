@@ -20,7 +20,7 @@ stages:
     pull: ['features/.*']
   03_model:
     slug: bbme-03-model
-    gpu: true
+    gpu: false
     kernel_sources: [bbme-02-features]
     pull: ['runs/{run_id}/.*']
   04_analysis:
