@@ -30,3 +30,4 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.098486812
 - Submissions used after this one: 2 of 35
 - Result note: rank 307; beats S01 by 0.0088
+- Result note: scale 0.644, scaled rmse 0.0944 (D021)

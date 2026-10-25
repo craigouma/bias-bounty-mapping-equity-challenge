@@ -114,3 +114,12 @@ ratio of 0.4 (Overture carries two to three school places per school); kappa_E d
 (establishments are most likely apportioned by business addresses, so places rarely fall short);
 the building per-unit deficit is switched off (it flagged metro apartment tracts where few
 footprints per housing unit is real). The resulting S02 file has mean 0.058 and rms 0.079.
+
+**D021. Scaled RMSE as the comparison metric.** With E[y^2] from S01 (0.0115019) and a
+submission's E[p^2] from its own file, its public RMSE R gives E[yp] = (E[y^2] + E[p^2] - R^2) / 2.
+The best global multiplicative scale for that method is s = E[yp] / E[p^2], and its RMSE at that
+scale is sqrt(E[y^2] - E[yp]^2 / E[p^2]). Hypotheses are compared on this scaled RMSE, which
+isolates the method's signal from its overall level. S02: s = 0.644, scaled RMSE 0.0944.
+A global output scale is a tunable scalar (1 of 6, section 4.4) and is applied only to final
+candidates or to a submission registered to test it. E[p^2] is computed over all tracts; the
+public split is a random 30%, and excluding eastern-wa changes the S02 values by under 0.0002.
