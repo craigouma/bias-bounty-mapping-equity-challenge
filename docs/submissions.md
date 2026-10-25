@@ -17,3 +17,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.107246299
 - Submissions used after this one: 1 of 35
 - Result note: rank 339 at upload; implies mean of y squared about 0.0115 on the public split; leaderboard top entries show exactly 0
+
+## S02 (2026-10-25)
+
+- File: `artifacts/submissions/S02_20261025-1729-03_model-3dc08da.csv`
+- Run ID: `20261025-1729-03_model-3dc08da`
+- Code SHA: `3dc08da492467a57ce35ac94279bc402293286b5`
+- Hypothesis: v1 analytic method (D015, D019, D020)
+- Change against current best: first model: tiered route-based transport, baseline building, Poisson facilities and kappa_E 0.01 establishments, Monte Carlo composite; predicted mean 0.058, rms 0.079
+- Expected direction: below S01 (0.10725); a result above S01 means the component scale is still too high
+- Decision informed: whether the v1 structure beats the constant and sets the reference for every D1 hypothesis
+- Public RMSE: pending
+- Submissions used after this one: 2 of 35
