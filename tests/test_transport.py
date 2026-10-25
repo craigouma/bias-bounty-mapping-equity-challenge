@@ -38,3 +38,10 @@ def test_draws_shape_bounds_and_zero_overture():
     assert (d.values >= 0).all() and (d.values <= 1).all()
     assert d.point[0] == pytest.approx(1.0)
     assert d.p_defined[0] == cfg["transport"]["p_defined_above_tau"]
+
+
+def test_boundary_knob_switches_to_buffered_length():
+    df, cfg = _frame(), load("model")
+    df["road_buf25_refAmt_len"] = df["road_refAmt_len"] + 100.0
+    cfg["transport"]["boundary_d_m"] = 25
+    assert (reference_length(df, cfg) == df["road_refAmt_len"] + 100.0).all()
