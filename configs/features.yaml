@@ -30,3 +30,13 @@ reference_sets:
   A: [interstate, us_route, state]
   B: [interstate, us_route, state, state_secondary, toll, business]
   C: [interstate, us_route, state, state_secondary, toll, business, county]
+# Context columns from <region>-strata-tract-table. Building-count strata (usfs_BuildingCount_sum,
+# usfs_BuildingCover_mean, usfs_BuildingDensity_mean, carbonplan_buildings) stay out pending
+# Craig's decision on whether they derive from a removed reference layer (decisions D013).
+strata_columns:
+  [COUNTYFP, ALAND, pop_total, pop_urban, pct_urban, ur_class, svi_overall, svi_socioeconomic,
+   svi_household, svi_minority, svi_housing_transport, cvi_overall, ruca_primary, ruca_secondary,
+   ruca_pop_density, rucc_2023, rucc_metro, nchs_2013, tribal_any, tribal_pct, tribal_legal,
+   tribal_statistical, usdm_summer_dsci, usdm_winter_dsci, usfs_WHP_mean, usfs_RPS_mean,
+   usfs_HUCount_sum, usfs_PopCount_sum, epht_heat_days_summer, mtbs_wildfire_burned_pct_land,
+   nifc_wildfire_burned_pct_land, nifc_years_since_wildfire, ghcn_any_nearest_km]
