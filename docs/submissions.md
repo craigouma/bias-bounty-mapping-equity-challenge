@@ -14,5 +14,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: first submission: the sample file as downloaded, every score 0.0
 - Expected direction: RMSE equals the root mean square of the true scores; sets the scale for every later result
 - Decision informed: confirms the upload format and gives the all-zero baseline
-- Public RMSE: pending
+- Public RMSE: 0.107246299
 - Submissions used after this one: 1 of 35
+- Result note: rank 339 at upload; implies mean of y squared about 0.0115 on the public split; leaderboard top entries show exactly 0
