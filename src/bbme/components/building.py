@@ -36,12 +36,17 @@ def structures_per_unit_floor(df: pd.DataFrame, cfg: dict) -> pd.Series:
 
 
 def building_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: int) -> Draws:
-    """B as max(baseline, deficit against the per-unit floor); 1 where Overture has no footprint."""
+    """B as max(baseline, deficit against the per-unit floor); 1 where Overture has no footprint.
+
+    The deficit term is used only when `use_hu_deficit` is set.
+    """
     b = cfg["building"]
     n = df["bld_n"].to_numpy(float)
     hu = df["acs_housing_units"].fillna(0).to_numpy(float)
-    floor = structures_per_unit_floor(df, cfg).to_numpy()
-    deficit = np.where(hu > 0, np.nan_to_num(gap(n, floor * hu)), 0.0)
+    deficit = np.zeros(len(df))
+    if b["use_hu_deficit"]:
+        floor = structures_per_unit_floor(df, cfg).to_numpy()
+        deficit = np.where(hu > 0, np.nan_to_num(gap(n, floor * hu)), 0.0)
     point = np.where(n == 0, 1.0, np.maximum(b["baseline_gap"], deficit))
     p = np.where((n > 0) | (hu > 0), b["p_defined_with_evidence"], b["p_defined_without"])
     values = np.broadcast_to(point[:, None], (len(df), n_draws))
