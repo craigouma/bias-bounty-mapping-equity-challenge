@@ -1,0 +1,30 @@
+username: carloscrou
+code_dataset: bbme-code
+accelerator: NvidiaTeslaT4
+
+stages:
+  00_env:
+    slug: bbme-00-env
+    gpu: true
+    kernel_sources: []
+    pull: ['env/.*']
+  01_ingest:
+    slug: bbme-01-ingest
+    gpu: false
+    kernel_sources: []
+    pull: ['audit/.*']
+  02_features:
+    slug: bbme-02-features
+    gpu: false
+    kernel_sources: [bbme-01-ingest]
+    pull: ['features/.*']
+  03_model:
+    slug: bbme-03-model
+    gpu: true
+    kernel_sources: [bbme-02-features]
+    pull: ['runs/{run_id}/.*']
+  04_analysis:
+    slug: bbme-04-analysis
+    gpu: false
+    kernel_sources: [bbme-01-ingest, bbme-02-features, bbme-03-model]
+    pull: ['analysis/.*']
