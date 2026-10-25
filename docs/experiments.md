@@ -11,3 +11,4 @@ hours are recorded under Notes.
 
 | Run ID | Stage | SHA | Overrides | Status | Wall (min) | Peak RSS (GB) |
 |---|---|---|---|---|---|---|
+| 20261025-1421-00_env-4ffe361 | 00_env | 4ffe361 | defaults | complete | 0.4 | 0.03 |
