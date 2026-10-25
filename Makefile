@@ -1,4 +1,4 @@
-.PHONY: setup lint test
+.PHONY: setup lint test validate sub-ready
 
 setup:
 	uv sync
@@ -11,3 +11,11 @@ lint:
 
 test:
 	uv run pytest || [ $$? -eq 5 ]
+
+validate:
+	uv run python scripts/validate_submission.py $(SUB)
+
+sub-ready:
+	uv run python scripts/log_submission.py register --sub $(SUB) --id $(ID) \
+		--hypothesis "$(HYP)" --change "$(CHANGE)" --expect "$(EXPECT)" --informs "$(INFORMS)" \
+		$(if $(RUN),--run-id $(RUN))
