@@ -12,12 +12,19 @@ POI_SUBS = ["fire", "ems", "schools", "cbp"]
 def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     """Component estimates and the composite expectation for every tract.
 
-    One Generator seeded from the config drives every draw, consumed chunk by chunk in row
-    order, so a rerun with the same config and features reproduces every value. With
+    Each component draws from its own Generator spawned from the config seed, consumed chunk by
+    chunk in row order: a rerun with the same config and features reproduces every value, and
+    changing one component's estimator never moves another component's draws. With
     `poi.mode: constant` (ablation H-P0) every tract's POI value is its region's mean POI
     point estimate, while POI definedness is unchanged.
     """
-    rng = np.random.default_rng(cfg["seed"])
+    rngs = dict(
+        zip(
+            ["transport", "building", "poi"],
+            [np.random.default_rng(c) for c in np.random.SeedSequence(cfg["seed"]).spawn(3)],
+            strict=True,
+        )
+    )
     s = cfg["mc_draws"]
     cal = calibrate(df, cfg)
     constant_poi = None
@@ -28,10 +35,10 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
         draws = {
-            "transport": transport_draws(chunk, cfg, cal, rng, s),
-            "building": building_draws(chunk, cfg, rng, s),
+            "transport": transport_draws(chunk, cfg, cal, rngs["transport"], s),
+            "building": building_draws(chunk, cfg, rngs["building"], s),
         }
-        draws["poi"], sub = poi_draws(chunk, cfg, rng, s)
+        draws["poi"], sub = poi_draws(chunk, cfg, rngs["poi"], s)
         if constant_poi is not None:
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
             draws["poi"].values = np.broadcast_to(level[:, None], (len(chunk), s))
