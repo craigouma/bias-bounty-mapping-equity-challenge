@@ -1,4 +1,4 @@
-.PHONY: setup lint test validate sub-ready
+.PHONY: setup lint test validate sub-ready kaggle-code
 
 setup:
 	uv sync
@@ -19,3 +19,6 @@ sub-ready:
 	uv run python scripts/log_submission.py register --sub $(SUB) --id $(ID) \
 		--hypothesis "$(HYP)" --change "$(CHANGE)" --expect "$(EXPECT)" --informs "$(INFORMS)" \
 		$(if $(RUN),--run-id $(RUN))
+
+kaggle-code:
+	uv run python scripts/kaggle_code_push.py
