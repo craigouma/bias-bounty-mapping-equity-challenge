@@ -7,6 +7,7 @@ spans -112.05 to -112.00; both span lat 33.40 to 33.45. A motorway runs along th
 from pathlib import Path
 
 from bbme import db
+from bbme.config import load
 
 REGION = "maricopa-az"
 TRACT_A = "04013000100"
@@ -150,12 +151,26 @@ def build_raw(root: Path) -> Path:
     _write(con, acs, ref / f"{REGION}-census-acs-housing.parquet")
 
     strata_table = root / "strata" / REGION / f"{REGION}-strata-tract-table.parquet"
-    con.sql(
-        f"COPY (SELECT * FROM (VALUES ('{TRACT_A}', 1200, true, 0.4, 1.0), "
-        f"('{TRACT_B}', 0, false, NULL, 10.0)) "
-        f"t(GEOID, pop_total, svi_covered, svi_overall, ruca_primary)) "
-        f"TO '{strata_table}' (FORMAT parquet)"
-    )
+    context = {"COUNTYFP": "'013'", "ALAND": 20_000_000, "pop_total": 1200, "ur_class": "'urban'"}
+    columns = load("features")["strata_columns"]
+    rows = []
+    for geoid, scale in [(TRACT_A, 1), (TRACT_B, 0)]:
+        values = [f"'{geoid}' AS GEOID"]
+        for c in columns:
+            v = context.get(c, 0.5)
+            values.append(f'{v if scale or isinstance(v, str) else 0} AS "{c}"')
+        values.append(f"{bool(scale)} AS svi_covered")
+        rows.append("SELECT " + ", ".join(values))
+    con.sql(f"COPY ({' UNION ALL '.join(rows)}) TO '{strata_table}' (FORMAT parquet)")
+    for table, col in [
+        ("mtbs-tract-table", "mtbs_wildfire_burned_pct_land_2015_2023"),
+        ("nifc-tract-table", "nifc_wildfire_burned_pct_land_2015_2025"),
+    ]:
+        path = root / "strata" / REGION / f"{REGION}-{table}.parquet"
+        con.sql(
+            f"COPY (SELECT * FROM (VALUES ('{TRACT_A}', 0.0), ('{TRACT_B}', 12.5)) "
+            f"t(GEOID, {col})) TO '{path}' (FORMAT parquet)"
+        )
     national = root / "strata" / "national" / "national-census-tract-table.parquet"
     national.parent.mkdir(parents=True, exist_ok=True)
     con.sql(
