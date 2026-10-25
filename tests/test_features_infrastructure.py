@@ -1,9 +1,9 @@
 import pytest
-from synthetic import REGION, TRACT_A, TRACT_B, build_raw
 
 from bbme import db
 from bbme.features import load_tracts
 from bbme.features.infrastructure import infrastructure_features
+from synthetic import REGION, TRACT_A, TRACT_B, build_raw
 
 
 def test_infrastructure_counts_and_rail_split(tmp_path):
