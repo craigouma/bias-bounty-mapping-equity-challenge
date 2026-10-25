@@ -98,3 +98,11 @@ products. This replaces the hold in D013.
 
 **D018. Five submissions per day.** Craig's Zindi account allows 5 uploads per day. The 35
 submission budget stands; the daily plan in the project brief section 11.2 now caps each day at 5.
+
+**D019. Tiered transport reference.** From the stage 02 calibration (docs/experiments.md, 25 Oct):
+high tier = tracts with interstate, US or state route, motorway or trunk length (set A); mid tier
+= tracts with only secondary state, toll or business routes (set B); low tier = neither.
+Definedness is 0.98 in the high tier, 0.02 floor in the low tier, and the mid tier probability
+is solved per region so the mean matches the published undefined rate less 0.01. A high-tier
+tract's reference includes its secondary routes with probability p_mid / 0.98. eastern-wa
+borrows the median probabilities.
