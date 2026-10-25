@@ -59,7 +59,7 @@ allowlist:
   - '^{region}-overture-{layer}\.parquet$'
   - '^{region}-census-acs-housing\.(parquet|csv)$'
   - '^{region}-sample-submission\.csv$'
-  - '^{region}-{table}\.(parquet|csv)$'
+  - '^({region}|national)-{table}\.(parquet|csv)$'
   - '^all-aois\.geojson$'
   - '^original-rings\.geojson$'
   - '^{region}-aoi\.geojson$'
