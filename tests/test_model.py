@@ -34,3 +34,19 @@ def test_end_to_end_on_synthetic(tmp_path):
     assert out.loc[TRACT_B, "poi_defined_cbp"] == False  # noqa: E712
     again, _ = predict(df, model)
     assert again["coverage_gap_score"].equals(comp["coverage_gap_score"])
+
+
+def test_constant_poi_mode_flattens_poi_within_region(tmp_path):
+    raw = build_raw(tmp_path / "raw")
+    cfg = {
+        "data": {"regions": [REGION]},
+        "features": load("features"),
+        "poi": load("poi_categories"),
+    }
+    df = build(db.connect(), raw, cfg)
+    model = load("model")
+    model["mc_draws"] = 200
+    model["published_undefined_rate"] = {REGION: 0.5}
+    model["poi"]["mode"] = "constant"
+    comp, _ = predict(df, model)
+    assert (comp["poi_point"] == comp["poi_point"].iloc[0]).all()

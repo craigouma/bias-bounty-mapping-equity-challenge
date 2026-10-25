@@ -13,11 +13,17 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     """Component estimates and the composite expectation for every tract.
 
     One Generator seeded from the config drives every draw, consumed chunk by chunk in row
-    order, so a rerun with the same config and features reproduces every value.
+    order, so a rerun with the same config and features reproduces every value. With
+    `poi.mode: constant` (ablation H-P0) every tract's POI value is its region's mean POI
+    point estimate, while POI definedness is unchanged.
     """
     rng = np.random.default_rng(cfg["seed"])
     s = cfg["mc_draws"]
     cal = calibrate(df, cfg)
+    constant_poi = None
+    if cfg["poi"]["mode"] == "constant":
+        pilot, _ = poi_draws(df, cfg, np.random.default_rng(cfg["seed"] + 1), 200)
+        constant_poi = pd.Series(pilot.point).groupby(df["region"].to_numpy()).transform("mean")
     frames = []
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
@@ -26,6 +32,10 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
             "building": building_draws(chunk, cfg, rng, s),
         }
         draws["poi"], sub = poi_draws(chunk, cfg, rng, s)
+        if constant_poi is not None:
+            level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
+            draws["poi"].values = np.broadcast_to(level[:, None], (len(chunk), s))
+            draws["poi"].point = level
         y_mc, kept = monte_carlo(draws)
         out = pd.DataFrame(
             {"GEOID": chunk["GEOID"], "y_mc": y_mc, "y_plugin": plug_in(draws), "kept": kept}
