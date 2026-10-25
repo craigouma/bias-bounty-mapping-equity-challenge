@@ -134,3 +134,10 @@ tested. The global output scale (D021) is tuned scalar 2 of 6.
 0.0840 for d = 25 m, a tie inside the 0.003 band, and a worse raw score because it predicts
 higher. Tuned scalar 1 is closed: tried 0, 25, 50; chosen 25 (the smaller change). d = 100 is not
 tested. The Zindi submissions page shows a cap of 200 in total (read 25 Oct); the 35 budget stands.
+
+**D024. Tract-level POI estimates dropped from the default (H-P0).** S05 replaced every tract's
+POI value with its region's mean v1 POI estimate and improved the scaled RMSE from 0.0840 to
+0.0766, with the best scale moving from 0.68 to 0.89. The v1 facility and establishment models
+added variance unrelated to the target, and that variance was most of the over-prediction.
+`poi.mode` defaults to `constant`. A tract-level POI variant returns only if it beats the
+constant on scaled RMSE. Transport carries most of the signal found so far.

@@ -67,5 +67,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S03 with every tract's POI value replaced by its region's mean POI estimate (poi.mode=constant); transport and building identical to S03; mean 0.072, rms 0.084
 - Expected direction: scaled rmse clearly above S03's 0.0840 if POI variation carries signal; a tie means POI tract variation is noise and the over-prediction lies in its level
 - Decision informed: whether day 1 effort goes into the POI estimators or into transport and the POI level
-- Public RMSE: pending
+- Public RMSE: 0.077100846
 - Submissions used after this one: 5 of 35
+- Result note: rank 134; scale 0.891, scaled rmse 0.0766 against 0.0840 for S03: tract-level POI variation was noise; constant POI becomes the default
