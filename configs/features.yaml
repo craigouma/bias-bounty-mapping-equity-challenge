@@ -15,3 +15,18 @@ place_datasets:
   meta: meta
   microsoft: Microsoft%
   foursquare: Foursquare%
+# Route network groups on Overture `routes[].network` (OSM route relations). A segment belongs to
+# every group any of its routes matches. Patterns are DuckDB regexes matched on the full value.
+route_groups:
+  interstate: 'US:I'
+  us_route: 'US:US'
+  state: 'US:(AZ|CA|OK|TX|WA|NM)'
+  state_secondary: 'US:TX:(FM|RM|Loop|Spur|Business|PR|Park|Beltway)|US:WA:secondary|US:AZ:Loop'
+  toll: 'US:OK:Turnpike|US:TX:Toll|US:TX:NTTA|US:TX:Harris:HCTRA|US:TX:[A-Za-z_]*:?Toll.*|Texas Trunk System'
+  business: 'US:(I|US):(Business|Alternate|Truck|Bypass|Spur|Business:Loop|Business:Spur)'
+  county: 'US:(OK|TX|CA|WA|AZ|NM):(CR|[A-Z][a-z]+(_[A-Z][a-z]+)*)'
+# Candidate TIGER S1100 + S1200 proxies, as unions of route groups.
+reference_sets:
+  A: [interstate, us_route, state]
+  B: [interstate, us_route, state, state_secondary, toll, business]
+  C: [interstate, us_route, state, state_secondary, toll, business, county]
