@@ -34,6 +34,7 @@ building:
   p_defined_without: 0.2
 
 poi:
+  mode: model
   kappa_E: 0.01
   sigma_E: 0.5
   kappa_F: 1.0
