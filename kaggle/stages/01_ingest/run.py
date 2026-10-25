@@ -9,6 +9,7 @@ from pathlib import Path
 def main(run: dict, code: Path) -> None:
     from bbme import guard
     from bbme.config import load
+    from bbme.ingest import audit as data_audit
     from bbme.ingest import sync
     from bbme.runtime import WORKING, write_run_meta
 
@@ -61,5 +62,8 @@ def main(run: dict, code: Path) -> None:
     for region in cfg["regions"]:
         name = f"{region}-sample-submission.csv"
         shutil.copyfile(raw / "reference" / region / name, audit / name)
-    write_run_meta(audit, run, code, started)
     print(f"synced {len(files)} files, {manifest['bytes_synced'] / 1e9:.2f} GB", flush=True)
+    failures = data_audit.run(raw, audit, cfg)
+    write_run_meta(audit, run, code, started)
+    if failures:
+        print(f"AUDIT SECTIONS FAILED: {failures}", flush=True)
