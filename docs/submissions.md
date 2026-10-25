@@ -54,5 +54,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S03 with transport.boundary_d_m=50 instead of 25; mean 0.077, rms 0.103
 - Expected direction: scaled rmse below S03's 0.0840 if TIGER boundary highways often lie 25 to 50 m from the Overture line (divided carriageways)
 - Decision informed: the boundary distance for the transport component; if 50 wins clearly, d = 100 is the last allowed test
-- Public RMSE: pending
+- Public RMSE: 0.091514572
 - Submissions used after this one: 4 of 35
+- Result note: scale 0.646, scaled rmse 0.0839: tie with S03 (0.0840); d stays 25 m
