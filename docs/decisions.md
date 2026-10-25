@@ -42,3 +42,17 @@ otherwise.
 
 **D009. Empty root commit on `main`.** Git cannot branch from an unborn `main`, so the repository
 starts with one empty commit. All later work happens on branches.
+
+**D010. S01 sets the target scale.** S01 (all zeros) scored 0.107246299 public RMSE, so the mean
+of y squared on the public split is about 0.0115. Most tracts have a composite near 0 with a sparse
+tail of large values. Predictions stay low and hard 0 or 1 calls are avoided.
+
+**D011. Scorecards of zero-RMSE entries are not used.** Several leaderboard entries score exactly
+0, which is only possible by reproducing the organisers' reference scores, most likely from the
+removed layers or the old coverage-gap files. Their public Bias Scorecards reveal stratum-level
+ratios of the true scores. Using those ratios would be calibrating on leaked labels, so the
+pipeline does not use them. Changing this needs Craig's decision.
+
+**D012. Close date.** The Zindi leaderboard page shows Close 01 Nov 2026 and Reveal 01 Nov 2026
+(read 25 Oct 2026). The exact closing hour is still to be read from the countdown. Until then the
+plan keeps the final selection on Sat 31 Oct.
