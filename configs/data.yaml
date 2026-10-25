@@ -1,0 +1,86 @@
+bucket: s3://us-west-2.opendata.source.coop/humane-intelligence/bias-bounty-mapping-equity-challenge
+proxy: https://data.source.coop/humane-intelligence/bias-bounty-mapping-equity-challenge
+overture_release: 2026-08-19.0
+
+regions:
+  - maricopa-az
+  - northern-ca
+  - eastern-ok
+  - south-central-tx
+  - eastern-wa
+
+scored_tracts:
+  maricopa-az: 1593
+  northern-ca: 591
+  eastern-ok: 1192
+  south-central-tx: 6003
+  eastern-wa: 415
+
+overture_layers:
+  - buildings
+  - roads
+  - roads-unfiltered
+  - rail
+  - infrastructure
+  - pois
+
+strata_tables:
+  - strata-tract-table
+  - census-tract-table
+  - census-tracts
+  - svi-tract-table
+  - cvi-tract-table
+  - ruca-tract-table
+  - rucc-tract-table
+  - nchs-tract-table
+  - tribal-tract-table
+  - usdm-drought-tract-table
+  - drought-gov-tract-table
+  - epht-heat-tract-table
+  - nasa-heat-tract-table
+  - cdc-wonder-tract-table
+  - cdc-wonder-heat-mortality
+  - noaa-ghcn-tract-table
+  - noaa-ghcn-stations
+  - usfs-wildfire-tract-table
+  - carbonplan-tract-table
+  - mtbs-tract-table
+  - nifc-tract-table
+  - fpa-fod-tract-table
+  - usgs-combined-tract-table
+  - census-aiannh
+  - census-tribal-tracts
+  - census-tribal-subdivisions
+
+# File-name regexes; {region}, {layer} and {table} expand to alternations of the lists above.
+allowlist:
+  - '^README\.md$'
+  - '^SampleSubmission\.csv$'
+  - '^{region}-overture-{layer}\.parquet$'
+  - '^{region}-census-acs-housing\.(parquet|csv)$'
+  - '^{region}-sample-submission\.csv$'
+  - '^{region}-{table}\.(parquet|csv)$'
+  - '^all-aois\.geojson$'
+  - '^original-rings\.geojson$'
+  - '^{region}-aoi\.geojson$'
+  - '^{region}-tract-geoids\.csv$'
+
+denylist:
+  - coverage-gap
+  - coverage_gap
+  - tiger
+  - mtfcc
+  - microsoft
+  - msft
+  - footprint
+  - hifld
+  - usgs
+  - structures
+  - cbp
+  - zbp
+  - business-patterns
+
+sync_prefixes:
+  - reference
+  - strata
+  - boundaries
