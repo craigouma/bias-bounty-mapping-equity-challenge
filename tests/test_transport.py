@@ -11,7 +11,7 @@ def _frame(n: int = 400) -> pd.DataFrame:
     u = rng.random(n)
     primary = np.where(u < 0.5, 0.0, rng.uniform(500, 5000, n))
     secondary = primary + np.where((u >= 0.3) & (u < 0.5), 800.0, 0.0)
-    return pd.DataFrame(
+    df = pd.DataFrame(
         {
             "region": ["south-central-tx"] * (n // 2) + ["eastern-wa"] * (n // 2),
             "road_refAmt_len": primary,
@@ -19,6 +19,9 @@ def _frame(n: int = 400) -> pd.DataFrame:
             "road_named_len": primary * rng.uniform(0.5, 1.5, n),
         }
     )
+    df["road_buf25_refAmt_len"] = df["road_refAmt_len"]
+    df["road_buf25_refBmt_len"] = df["road_refBmt_len"]
+    return df
 
 
 def test_tiers():
@@ -38,7 +41,8 @@ def test_calibration_hits_published_definedness():
 
 def test_draws_shape_bounds_and_zero_overture():
     df, cfg = _frame(), load("model")
-    df.loc[0, ["road_refAmt_len", "road_refBmt_len", "road_named_len"]] = [3000.0, 3000.0, 0.0]
+    cols = ["road_buf25_refAmt_len", "road_buf25_refBmt_len", "road_named_len"]
+    df.loc[0, cols] = [3000.0, 3000.0, 0.0]
     cal = calibrate(df, cfg)
     d = transport_draws(df, cfg, cal, np.random.default_rng(1), 500)
     assert d.values.shape == (len(df), 500)
@@ -51,7 +55,9 @@ def test_draws_shape_bounds_and_zero_overture():
 def test_boundary_knob_switches_to_buffered_length():
     df, cfg = _frame(), load("model")
     df["road_buf25_refAmt_len"] = df["road_refAmt_len"] + 100.0
-    df["road_buf25_refBmt_len"] = df["road_refBmt_len"] + 100.0
     cfg["transport"]["boundary_d_m"] = 25
     primary, _ = reference_lengths(df, cfg)
     assert (primary == df["road_refAmt_len"] + 100.0).all()
+    cfg["transport"]["boundary_d_m"] = 0
+    primary, _ = reference_lengths(df, cfg)
+    assert (primary == df["road_refAmt_len"]).all()

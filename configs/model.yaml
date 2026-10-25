@@ -17,7 +17,7 @@ transport:
   # Tracts on A (or with motorway or trunk) are the high tier, tracts on B only the mid tier.
   reference_set: A
   secondary_set: B
-  boundary_d_m: 0
+  boundary_d_m: 25
   p_defined_high: 0.98
   p_defined_floor: 0.02
   sigma: 0.15

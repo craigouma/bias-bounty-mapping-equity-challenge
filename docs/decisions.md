@@ -129,3 +129,8 @@ counted up to 25 m outside each tract edge) improved the scaled RMSE from 0.0944
 beyond the 0.003 tie band. TIGER highways that form tract boundaries count in both neighbouring
 tracts. `transport.boundary_d_m` default 0; values tried 0, 25; at most one more value (50) is
 tested. The global output scale (D021) is tuned scalar 2 of 6.
+
+**D023. Boundary distance fixed at 25 m.** S04 (d = 50 m) scored scaled RMSE 0.0839 against
+0.0840 for d = 25 m, a tie inside the 0.003 band, and a worse raw score because it predicts
+higher. Tuned scalar 1 is closed: tried 0, 25, 50; chosen 25 (the smaller change). d = 100 is not
+tested. The Zindi submissions page shows a cap of 200 in total (read 25 Oct); the 35 budget stands.
