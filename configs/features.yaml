@@ -4,3 +4,14 @@ drivable_road_classes:
 boundary_distances_m: [10, 25, 50]
 osm_large_footprint_m2: [500, 1500, 5000]
 ml_dominated_share: 0.95
+min_ml_for_tract_median: 5
+building_datasets:
+  osm: OpenStreetMap
+  microsoft: Microsoft%
+  google: Google%
+  esri: Esri%
+ml_datasets: [microsoft, google]
+place_datasets:
+  meta: meta
+  microsoft: Microsoft%
+  foursquare: Foursquare%
