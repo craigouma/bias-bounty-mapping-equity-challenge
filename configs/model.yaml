@@ -1,0 +1,10 @@
+seed: 20261025
+mc_draws: 2000
+alpha: 1.0
+
+transport: {}
+building: {}
+poi:
+  kappa_E: 0.025
+  kappa_F: 1.0
+  facility_weight: 0.5

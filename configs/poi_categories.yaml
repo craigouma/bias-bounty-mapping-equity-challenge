@@ -1,0 +1,8 @@
+reviewed: false
+field: categories.primary
+groups:
+  fire: [fire_department]
+  ems: [ambulance_and_ems_services]
+  school:
+    [elementary_school, middle_school, high_school, school, private_school, public_school]
+  hospital: [hospital]
