@@ -56,3 +56,29 @@ pipeline does not use them. Changing this needs Craig's decision.
 **D012. Close date.** The Zindi leaderboard page shows Close 01 Nov 2026 and Reveal 01 Nov 2026
 (read 25 Oct 2026). The exact closing hour is still to be read from the countdown. Until then the
 plan keeps the final selection on Sat 31 Oct.
+
+**D013. Building-count strata held out pending Craig.** The strata tables carry
+`usfs_BuildingCount_sum`, `usfs_BuildingCover_mean`, `usfs_BuildingDensity_mean` (USFS Wildfire
+Risk to Communities) and `carbonplan_buildings`. They are in the permitted package, but they may
+be derived from building-footprint products close to the removed Microsoft reference. They stay
+out of every feature and model until Craig decides.
+
+**D014. Stage 03 runs on CPU for v1.** The v1 estimators are analytic and Monte Carlo only, so
+the GPU quota is kept for the learned building model. `configs/kaggle.yaml` switches back when a
+GPU stage is needed.
+
+**D015. v1 estimator defaults.** S01 shows the true composite is mostly small (D010), so v1 is
+conservative:
+
+- Transport: reference proxy = interstate, US and state route networks plus motorway and trunk
+  (set A in `configs/features.yaml`) in every region; tau per region at the quantile matching the
+  published undefined rate less 0.01 for building or POI; p = 0.95 above tau and the p_lo that
+  makes the region mean match below it; L_R noise lognormal sigma 0.15 above tau and 1.0 for the
+  unseen length below it. eastern-wa borrows the median tau and p_lo.
+- Building: max(0.02, gap(N_O, q10 * HU)), q10 being the 10th percentile of footprints per
+  housing unit among tracts at least 95% ML-derived in the same region and RUCA class; 1 where
+  Overture has no footprint. p = 0.995 with footprints or housing units, 0.2 otherwise.
+- POI: facility reference ~ Poisson(0.5 * observed + 0.5 * prior), prior = the region's Overture
+  total spread by population and land area (fire, EMS) or population (schools);
+  establishments = 0.025 * population with lognormal sigma 0.5, undefined at zero population.
+- Composite: 2,000 joint draws per tract, conditional on at least one component defined; alpha 1.
