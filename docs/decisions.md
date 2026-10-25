@@ -106,3 +106,11 @@ Definedness is 0.98 in the high tier, 0.02 floor in the low tier, and the mid ti
 is solved per region so the mean matches the published undefined rate less 0.01. A high-tier
 tract's reference includes its secondary routes with probability p_mid / 0.98. eastern-wa
 borrows the median probabilities.
+
+**D020. v1 scale set by the S01 bound.** A calibrated expectation cannot have a larger second
+moment than the target, so rms(prediction) must stay below S01's 0.107. The first v1 run had
+rms 0.193. Three defaults changed, none tuned on the leaderboard: schools get a reference-to-Overture
+ratio of 0.4 (Overture carries two to three school places per school); kappa_E drops to 0.01
+(establishments are most likely apportioned by business addresses, so places rarely fall short);
+the building per-unit deficit is switched off (it flagged metro apartment tracts where few
+footprints per housing unit is real). The resulting S02 file has mean 0.058 and rms 0.079.
