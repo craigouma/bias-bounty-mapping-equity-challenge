@@ -41,5 +41,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S02 with transport reference lengths taken inside each tract grown outward by 25 m (transport.boundary_d_m=25); mean 0.073, rms 0.098
 - Expected direction: scaled rmse (D021) below S02's 0.0944 if TIGER highways on tract edges count in both neighbours; raw rmse may rise because v1 already over-predicts
 - Decision informed: whether transport keeps the boundary buffer and whether d is worth one more test
-- Public RMSE: pending
+- Public RMSE: 0.089740618
 - Submissions used after this one: 3 of 35
+- Result note: rank 274; scale 0.678, scaled rmse 0.0840 against 0.0944 for S02: H-T1 confirmed

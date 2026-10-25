@@ -123,3 +123,9 @@ isolates the method's signal from its overall level. S02: s = 0.644, scaled RMSE
 A global output scale is a tunable scalar (1 of 6, section 4.4) and is applied only to final
 candidates or to a submission registered to test it. E[p^2] is computed over all tracts; the
 public split is a random 30%, and excluding eastern-wa changes the S02 values by under 0.0002.
+
+**D022. H-T1 confirmed; boundary distance is tuned scalar 1 of 6.** S03 (transport reference
+counted up to 25 m outside each tract edge) improved the scaled RMSE from 0.0944 to 0.0840, well
+beyond the 0.003 tie band. TIGER highways that form tract boundaries count in both neighbouring
+tracts. `transport.boundary_d_m` default 0; values tried 0, 25; at most one more value (50) is
+tested. The global output scale (D021) is tuned scalar 2 of 6.
