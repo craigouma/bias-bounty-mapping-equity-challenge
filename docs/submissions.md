@@ -70,3 +70,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.077100846
 - Submissions used after this one: 5 of 35
 - Result note: rank 134; scale 0.891, scaled rmse 0.0766 against 0.0840 for S03: tract-level POI variation was noise; constant POI becomes the default
+
+## S06 (2026-10-25)
+
+- File: `artifacts/submissions/S06_20261025-1907-03_model-d96dddf.csv`
+- Run ID: `20261025-1907-03_model-d96dddf`
+- Code SHA: `d96dddfe52e5d8cb7fff36c6de1c2a99acf22281`
+- Hypothesis: H-B3 building reference from USFS building counts (approved D017)
+- Change against current best: S05 method (now with independent component streams; rms drift 0.0011 from the S05 file) with B = E[gap(N_O, k U e^z)], k and spread learned on ML-dominated tracts (building.reference=usfs); transport and POI identical; mean 0.086, rms 0.099
+- Expected direction: scaled rmse below S05's 0.0766 if the Microsoft reference tracks the USFS count, so its shortfalls mark real building gaps; raw rmse may rise with the higher mean
+- Decision informed: whether building gets a tract-level estimator or stays at the 0.01 baseline
+- Public RMSE: pending
+- Submissions used after this one: 6 of 35

@@ -141,3 +141,9 @@ POI value with its region's mean v1 POI estimate and improved the scaled RMSE fr
 added variance unrelated to the target, and that variance was most of the over-prediction.
 `poi.mode` defaults to `constant`. A tract-level POI variant returns only if it beats the
 constant on scaled RMSE. Transport carries most of the signal found so far.
+
+**D025. Independent random streams per component.** Each component now draws from its own
+Generator spawned from the config seed (`numpy.random.SeedSequence(seed).spawn(3)`), so a change
+to one estimator cannot move another component's Monte Carlo draws. Rerunning the S05 method
+with the new streams changes scores by rms 0.0011 (max 0.015), far inside the 0.003 tie band, so
+S05's result stands for the current default.
