@@ -20,6 +20,7 @@ REGIONS = load("data")["regions"]
         ("strata/eastern-wa/eastern-wa-svi-tract-table.parquet", True),
         ("strata/eastern-wa/eastern-wa-svi-tract-table.csv", False),
         ("strata/national/national-svi-tract-table.parquet", False),
+        ("strata/national/national-census-tract-table.parquet", True),
         ("bulk-downloads/reference.zip", False),
         ("bulk-downloads/README.md", False),
     ],
