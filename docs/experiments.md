@@ -1,0 +1,13 @@
+# Experiments
+
+Every Kaggle stage run is appended to the runs table by `make kaggle-run`. Wall time is
+measured from push to completion on the Mac and includes queueing. Peak memory is the stage
+process peak RSS read from `runtime.json`. Calibration checks, out-of-fold metrics and GPU
+hours are recorded under Notes.
+
+## Notes
+
+## Runs
+
+| Run ID | Stage | SHA | Overrides | Status | Wall (min) | Peak RSS (GB) |
+|---|---|---|---|---|---|---|
