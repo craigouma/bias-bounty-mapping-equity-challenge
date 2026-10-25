@@ -152,3 +152,14 @@ Scored `roads` layer, km by class:
 - `48039990000` and `48057990000` have no land area and no Overture building, road or place.
   Any defined component there has Overture count 0 and a gap of 1, and a scored tract has at
   least one defined component, so their score is 1.
+
+## USFS building count against Overture (H-B3 check)
+
+Source: stage 02 run `20261025-1806-02_features-b1a2332`. `usfs_BuildingCount_sum` and
+`carbonplan_buildings` have no nulls or zeros on scored tracts. In tracts at least 95% ML-derived,
+the median of Overture footprints over the USFS count is 1.00 (eastern-ok, 301 tracts), 1.12
+(eastern-wa, 18), 1.00 (maricopa-az, 24), 1.03 (northern-ca, 54), 1.03 (south-central-tx, 949),
+with robust spread 0.03 to 0.10 on the log scale. Across all tracts the correlation of log counts
+is 0.971, and fewer than 0.3% of tracts have under half the expected count. The USFS count
+behaves like a building footprint count, consistent with derivation from footprint data, which
+the writeup discloses (decisions D017).
