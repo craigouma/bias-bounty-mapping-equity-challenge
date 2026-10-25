@@ -57,3 +57,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.091514572
 - Submissions used after this one: 4 of 35
 - Result note: scale 0.646, scaled rmse 0.0839: tie with S03 (0.0840); d stays 25 m
+
+## S05 (2026-10-25)
+
+- File: `artifacts/submissions/S05_20261025-1757-03_model-fd0d69e.csv`
+- Run ID: `20261025-1757-03_model-fd0d69e`
+- Code SHA: `fd0d69ec5c19b3039a41c7e595ff64b84053ab64`
+- Hypothesis: H-P0 ablation: tract-level POI variation carries signal
+- Change against current best: S03 with every tract's POI value replaced by its region's mean POI estimate (poi.mode=constant); transport and building identical to S03; mean 0.072, rms 0.084
+- Expected direction: scaled rmse clearly above S03's 0.0840 if POI variation carries signal; a tie means POI tract variation is noise and the over-prediction lies in its level
+- Decision informed: whether day 1 effort goes into the POI estimators or into transport and the POI level
+- Public RMSE: pending
+- Submissions used after this one: 5 of 35
