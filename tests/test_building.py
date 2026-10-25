@@ -41,3 +41,13 @@ def test_deficit_off_by_default():
     df.loc[0, ["bld_n", "bld_ml_share"]] = [30.0, 0.2]
     d = building_draws(df, cfg, np.random.default_rng(0), 10)
     assert d.point[0] == cfg["building"]["baseline_gap"]
+
+
+def test_usfs_reference_learns_ratio_and_flags_shortfall():
+    df, cfg = _frame(), load("model")
+    df["usfs_BuildingCount_sum"] = df["bld_n"] / 2
+    df.loc[0, ["bld_n", "bld_ml_share"]] = [15.0, 0.3]
+    cfg["building"]["reference"] = "usfs"
+    d = building_draws(df, cfg, np.random.default_rng(0), 200)
+    assert d.point[0] == pytest.approx(0.9, abs=0.01)
+    assert d.point[5] == pytest.approx(0.0, abs=0.01)
