@@ -27,5 +27,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: first model: tiered route-based transport, baseline building, Poisson facilities and kappa_E 0.01 establishments, Monte Carlo composite; predicted mean 0.058, rms 0.079
 - Expected direction: below S01 (0.10725); a result above S01 means the component scale is still too high
 - Decision informed: whether the v1 structure beats the constant and sets the reference for every D1 hypothesis
-- Public RMSE: pending
+- Public RMSE: 0.098486812
 - Submissions used after this one: 2 of 35
+- Result note: rank 307; beats S01 by 0.0088
+- Result note: scale 0.644, scaled rmse 0.0944 (D021)
