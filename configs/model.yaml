@@ -27,6 +27,10 @@ building:
   baseline_gap: 0.01
   # The per-unit floor flags metro apartment tracts, where few footprints per unit is real.
   use_hu_deficit: false
+  # H-B3: reference count from USFS Wildfire Risk building counts, scaled per region by the
+  # median Overture/USFS ratio in ML-dominated tracts. `none` keeps the baseline gap.
+  reference: none
+  usfs_column: usfs_BuildingCount_sum
   ml_dominated_share: 0.95
   hu_ratio_quantile: 0.02
   min_ml_tracts: 20

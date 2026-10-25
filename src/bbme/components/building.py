@@ -35,10 +35,34 @@ def structures_per_unit_floor(df: pd.DataFrame, cfg: dict) -> pd.Series:
     return stratum.map(by_stratum).fillna(df["region"].map(by_region)).fillna(pooled)
 
 
+def usfs_reference(df: pd.DataFrame, cfg: dict) -> tuple[np.ndarray, np.ndarray]:
+    """H-B3: reference count k * U and the log-scale spread, learned on ML-dominated tracts.
+
+    U is the USFS building count. Where Overture is almost all ML footprints its count stands in
+    for the reference, so the region's median of N_O / U there gives k and the MAD of
+    log(N_O / (k U)) gives the spread. Regions with too few such tracts use the pooled values.
+    """
+    b = cfg["building"]
+    u = df[b["usfs_column"]].fillna(0).to_numpy(float)
+    n = df["bld_n"].to_numpy(float)
+    ml = ((df["bld_ml_share"] >= b["ml_dominated_share"]) & (u > 0) & (n > 0)).to_numpy()
+    log_ratio = pd.Series(np.log(np.where(ml, n / np.where(u > 0, u, 1), np.nan)))
+    region = df["region"].to_numpy()
+    enough = log_ratio.groupby(region).count() >= b["min_ml_tracts"]
+    centre = log_ratio.groupby(region).median().where(enough).fillna(log_ratio.median())
+    mad = (log_ratio - pd.Series(region).map(centre)).abs().groupby(region).median()
+    spread = 1.4826 * mad.where(enough).fillna(
+        1.4826 * (log_ratio - log_ratio.median()).abs().median()
+    )
+    k = np.exp(pd.Series(region).map(centre).to_numpy())
+    return k * u, pd.Series(region).map(spread).to_numpy()
+
+
 def building_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: int) -> Draws:
     """B as max(baseline, deficit against the per-unit floor); 1 where Overture has no footprint.
 
-    The deficit term is used only when `use_hu_deficit` is set.
+    The deficit term is used only when `use_hu_deficit` is set. With `reference: usfs` (H-B3)
+    tracts with a USFS building count use E[gap(N_O, k U e^z)] instead, z ~ N(0, spread^2).
     """
     b = cfg["building"]
     n = df["bld_n"].to_numpy(float)
@@ -50,4 +74,10 @@ def building_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draw
     point = np.where(n == 0, 1.0, np.maximum(b["baseline_gap"], deficit))
     p = np.where((n > 0) | (hu > 0), b["p_defined_with_evidence"], b["p_defined_without"])
     values = np.broadcast_to(point[:, None], (len(df), n_draws))
+    if b["reference"] == "usfs":
+        ref, spread = usfs_reference(df, cfg)
+        noise = np.exp(spread[:, None] * rng.standard_normal((len(df), n_draws)))
+        drawn = np.nan_to_num(gap(n[:, None], ref[:, None] * noise))
+        values = np.where((ref > 0)[:, None], drawn, values)
+        point = values.mean(axis=1)
     return Draws(values, bernoulli(rng, p, n_draws), point, p)
