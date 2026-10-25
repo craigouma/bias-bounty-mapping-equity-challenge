@@ -40,3 +40,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261025-1729-03_model-3dc08da | 03_model | 3dc08da | defaults | complete | 1.7 | 0.66 |
 | 20261025-1738-03_model-cfd5aa7 | 03_model | cfd5aa7 | transport.boundary_d_m=25 | complete | 1.6 | 0.65 |
 | 20261025-1750-03_model-3186428 | 03_model | 3186428 | transport.boundary_d_m=50 | complete | 1.5 | 0.66 |
+| 20261025-1757-03_model-fd0d69e | 03_model | fd0d69e | poi.mode=constant | complete | 4.1 | 0.63 |
