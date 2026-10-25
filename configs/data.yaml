@@ -1,5 +1,6 @@
 bucket: s3://us-west-2.opendata.source.coop/humane-intelligence/bias-bounty-mapping-equity-challenge
 proxy: https://data.source.coop/humane-intelligence/bias-bounty-mapping-equity-challenge
+s3_endpoint: https://s3.us-west-2.amazonaws.com
 overture_release: 2026-08-19.0
 
 regions:
@@ -80,7 +81,6 @@ denylist:
   - zbp
   - business-patterns
 
-sync_prefixes:
-  - reference
-  - strata
-  - boundaries
+sync:
+  workers: 8
+  attempts: 3
