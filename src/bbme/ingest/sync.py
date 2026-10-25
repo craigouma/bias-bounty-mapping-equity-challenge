@@ -41,9 +41,13 @@ def list_bucket(cfg: dict) -> dict[str, int]:
 
 
 def wanted(key: str, regions: list[str]) -> bool:
-    """The file set of the reference `aws s3 sync` commands in the project brief section 8.2."""
+    """The reference `aws s3 sync` file set (the project brief 8.2) plus the national census table.
+
+    Region strata folders carry no census tract table, and AWATER exists only in the national
+    one, so that single national file is synced for the water-dominated edge case.
+    """
     parts = key.split("/")
-    if parts == ["README.md"]:
+    if parts in (["README.md"], ["strata", "national", "national-census-tract-table.parquet"]):
         return True
     if len(parts) == 2 and parts[0] == "boundaries":
         return True
