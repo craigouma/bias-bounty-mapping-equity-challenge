@@ -82,3 +82,19 @@ conservative:
   total spread by population and land area (fire, EMS) or population (schools);
   establishments = 0.025 * population with lognormal sigma 0.5, undefined at zero population.
 - Composite: 2,000 joint draws per tract, conditional on at least one component defined; alpha 1.
+
+**D016. Local history rewritten once before the first push.** Before the remote existed, every
+commit was rewritten so that repo content refers to "the project brief" and the local hook
+source lives in the git-excluded `.hooks/`. Kaggle run IDs created before the rewrite carry the
+old SHAs: `4ffe361` is now `a594b8c` (stage 00), `398b1ba` is now `0507ec9` (stage 01),
+`0aa771e` is now `a6a65f0` (first stage 02 run). Pushed history is never rewritten.
+
+**D017. Building-count strata become hypothesis H-B3 (Craig, 25 Oct 2026).** Craig approved
+using `usfs_BuildingCount_sum`, `usfs_BuildingCover_mean`, `usfs_BuildingDensity_mean` and
+`carbonplan_buildings` if they improve the leaderboard. They enter as a separate tested variant
+of the building reference estimate, are kept only if the public score improves beyond the 0.003
+tie band, and are disclosed in the writeup with their possible derivation from footprint
+products. This replaces the hold in D013.
+
+**D018. Five submissions per day.** Craig's Zindi account allows 5 uploads per day. The 35
+submission budget stands; the daily plan in the project brief section 11.2 now caps each day at 5.
