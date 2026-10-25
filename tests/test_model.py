@@ -50,3 +50,21 @@ def test_constant_poi_mode_flattens_poi_within_region(tmp_path):
     model["poi"]["mode"] = "constant"
     comp, _ = predict(df, model)
     assert (comp["poi_point"] == comp["poi_point"].iloc[0]).all()
+
+
+def test_component_streams_are_independent(tmp_path):
+    raw = build_raw(tmp_path / "raw")
+    cfg = {
+        "data": {"regions": [REGION]},
+        "features": load("features"),
+        "poi": load("poi_categories"),
+    }
+    df = build(db.connect(), raw, cfg)
+    df["usfs_BuildingCount_sum"] = df["bld_n"] + 1
+    model = load("model")
+    model["mc_draws"] = 200
+    model["published_undefined_rate"] = {REGION: 0.5}
+    base, _ = predict(df, model)
+    model["building"]["reference"] = "usfs"
+    changed, _ = predict(df, model)
+    assert changed["transport_point"].equals(base["transport_point"])
