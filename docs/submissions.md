@@ -31,3 +31,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Submissions used after this one: 2 of 35
 - Result note: rank 307; beats S01 by 0.0088
 - Result note: scale 0.644, scaled rmse 0.0944 (D021)
+
+## S03 (2026-10-25)
+
+- File: `artifacts/submissions/S03_20261025-1738-03_model-cfd5aa7.csv`
+- Run ID: `20261025-1738-03_model-cfd5aa7`
+- Code SHA: `cfd5aa7b0076d0e9262dd7b012feaf3a6c955264`
+- Hypothesis: H-T1 boundary double counting, d = 25 m
+- Change against current best: S02 with transport reference lengths taken inside each tract grown outward by 25 m (transport.boundary_d_m=25); mean 0.073, rms 0.098
+- Expected direction: scaled rmse (D021) below S02's 0.0944 if TIGER highways on tract edges count in both neighbours; raw rmse may rise because v1 already over-predicts
+- Decision informed: whether transport keeps the boundary buffer and whether d is worth one more test
+- Public RMSE: pending
+- Submissions used after this one: 3 of 35
