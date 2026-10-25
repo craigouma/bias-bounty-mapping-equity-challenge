@@ -44,3 +44,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.089740618
 - Submissions used after this one: 3 of 35
 - Result note: rank 274; scale 0.678, scaled rmse 0.0840 against 0.0944 for S02: H-T1 confirmed
+
+## S04 (2026-10-25)
+
+- File: `artifacts/submissions/S04_20261025-1750-03_model-3186428.csv`
+- Run ID: `20261025-1750-03_model-3186428`
+- Code SHA: `3186428d2fe78734be6b140afb99e407ec6223dd`
+- Hypothesis: H-T1 boundary distance, d = 50 m (second value of tuned scalar 1)
+- Change against current best: S03 with transport.boundary_d_m=50 instead of 25; mean 0.077, rms 0.103
+- Expected direction: scaled rmse below S03's 0.0840 if TIGER boundary highways often lie 25 to 50 m from the Overture line (divided carriageways)
+- Decision informed: the boundary distance for the transport component; if 50 wins clearly, d = 100 is the last allowed test
+- Public RMSE: pending
+- Submissions used after this one: 4 of 35
