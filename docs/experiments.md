@@ -36,3 +36,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261025-1434-01_ingest-398b1ba | 01_ingest | 398b1ba | defaults | complete | 5.4 | 1.39 |
 | 20261025-1447-02_features-0aa771e | 02_features | 0aa771e | defaults | complete | 23.7 | 6.72 |
 | 20261025-1722-03_model-8d21578 | 03_model | 8d21578 | defaults | complete | 1.2 | 0.65 |
+| 20261025-1726-03_model-1249b4b | 03_model | 1249b4b | defaults | complete | 1.3 | 0.66 |

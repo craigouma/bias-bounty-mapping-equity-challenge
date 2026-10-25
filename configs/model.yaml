@@ -25,6 +25,8 @@ transport:
 
 building:
   baseline_gap: 0.01
+  # The per-unit floor flags metro apartment tracts, where few footprints per unit is real.
+  use_hu_deficit: false
   ml_dominated_share: 0.95
   hu_ratio_quantile: 0.02
   min_ml_tracts: 20
