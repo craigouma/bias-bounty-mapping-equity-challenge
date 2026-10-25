@@ -33,7 +33,8 @@ def poi_draws(
 ) -> tuple[Draws, dict[str, tuple[np.ndarray, np.ndarray]]]:
     """Draws of P and per-sub-gap (point, p_defined) for fire, EMS, schools and establishments.
 
-    Facilities: reference count ~ Poisson(w * o + (1 - w) * kappa_F * prior); the type is
+    Facilities: reference count ~ Poisson(kappa_F * kappa_t * (w * o + (1 - w) * prior)), kappa_t
+    being the expected reference facilities per Overture place of the type; the type is
     defined when the draw is at least 1 and its gap is gap(o, draw). Establishments: reference
     count = kappa_E * population with lognormal spread, undefined at zero population.
     P is the mean of the defined halves, the facilities half the mean of the defined types.
@@ -44,8 +45,9 @@ def poi_draws(
     fac_values, fac_flags = [], []
     for name, spec in p["facility_types"].items():
         observed = df[f"poi_{spec['group']}"].to_numpy(float)
-        prior = p["kappa_F"] * facility_prior(df, spec["group"], spec["driver"])
-        lam = p["facility_weight"] * observed + (1 - p["facility_weight"]) * prior
+        prior = facility_prior(df, spec["group"], spec["driver"])
+        w = p["facility_weight"]
+        lam = p["kappa_F"] * spec["kappa"] * (w * observed + (1 - w) * prior)
         ref = rng.poisson(lam[:, None], (n, n_draws)).astype(float)
         flags = ref >= 1
         values = np.nan_to_num(gap(observed[:, None], ref))

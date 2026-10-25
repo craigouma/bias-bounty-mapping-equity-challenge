@@ -24,19 +24,22 @@ transport:
   fallback_sigma: 1.0
 
 building:
-  baseline_gap: 0.02
+  baseline_gap: 0.01
   ml_dominated_share: 0.95
-  hu_ratio_quantile: 0.1
+  hu_ratio_quantile: 0.02
   min_ml_tracts: 20
   p_defined_with_evidence: 0.995
   p_defined_without: 0.2
 
 poi:
-  kappa_E: 0.025
+  kappa_E: 0.01
   sigma_E: 0.5
   kappa_F: 1.0
   facility_weight: 0.5
+  # kappa: expected reference facilities per Overture place of the type. Overture carries two
+  # to three school places per school (duplicates, campuses, district offices); fire and EMS are
+  # close to one to one (organisers' README for EMS).
   facility_types:
-    fire: {group: fire, driver: pop_area}
-    ems: {group: ems, driver: pop_area}
-    schools: {group: school, driver: pop}
+    fire: {group: fire, driver: pop_area, kappa: 1.0}
+    ems: {group: ems, driver: pop_area, kappa: 1.0}
+    schools: {group: school, driver: pop, kappa: 0.4}
