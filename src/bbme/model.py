@@ -3,7 +3,7 @@ import pandas as pd
 
 from bbme.components.building import building_draws
 from bbme.components.poi import poi_draws
-from bbme.components.transport import calibrate, reference_length, transport_draws
+from bbme.components.transport import calibrate, transport_draws
 from bbme.composite import monte_carlo, plug_in, shrink
 
 POI_SUBS = ["fire", "ems", "schools", "cbp"]
@@ -17,7 +17,7 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     """
     rng = np.random.default_rng(cfg["seed"])
     s = cfg["mc_draws"]
-    cal = calibrate(df, reference_length(df, cfg), cfg)
+    cal = calibrate(df, cfg)
     frames = []
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)

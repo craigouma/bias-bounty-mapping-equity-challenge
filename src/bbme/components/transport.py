@@ -4,57 +4,64 @@ import pandas as pd
 from bbme.components.gap import gap
 from bbme.composite import Draws, bernoulli
 
+TIERS = ("high", "mid", "low")
 
-def reference_length(df: pd.DataFrame, cfg: dict) -> np.ndarray:
-    """Proxy for the TIGER S1100 + S1200 length: the region's route set plus motorway and trunk.
 
-    With `boundary_d_m` > 0 (H-T1) the proxy also counts route length lying within that distance
-    outside the tract edge, as a reference drawn on the shared boundary would.
+def reference_lengths(df: pd.DataFrame, cfg: dict) -> tuple[np.ndarray, np.ndarray]:
+    """Proxies for the TIGER S1100 + S1200 length: the primary and the secondary route set.
+
+    Both include motorway and trunk. With `boundary_d_m` > 0 (H-T1) they also count route
+    length lying within that distance outside the tract edge, as a reference drawn on the
+    shared boundary would.
     """
     t = cfg["transport"]
-    sets = df["region"].map(t["reference_set"])
     prefix = f"road_buf{t['boundary_d_m']}_" if t["boundary_d_m"] else "road_"
-    out = np.zeros(len(df))
-    for name in sets.unique():
-        rows = (sets == name).to_numpy()
-        out[rows] = df.loc[rows, f"{prefix}ref{name}mt_len"].to_numpy()
-    return out
+    primary = df[f"{prefix}ref{t['reference_set']}mt_len"].to_numpy(float)
+    secondary = df[f"{prefix}ref{t['secondary_set']}mt_len"].to_numpy(float)
+    return primary, np.maximum(secondary, primary)
 
 
-def calibrate(df: pd.DataFrame, ref: np.ndarray, cfg: dict) -> pd.DataFrame:
-    """Per region: threshold tau and definedness probabilities matching the published rates.
+def tiers(primary: np.ndarray, secondary: np.ndarray) -> np.ndarray:
+    return np.where(primary > 0, "high", np.where(secondary > 0, "mid", "low"))
 
-    Tracts with reference length above tau get p_hi; the rest get the p_lo that makes the
-    region's mean definedness equal 1 minus the published undefined rate (less the share
-    attributed to building or POI). Eastern Washington has no published rate and borrows the
-    median tau and median p_lo of the four calibrated regions.
+
+def calibrate(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Per region definedness by tier, matching the published undefined rates.
+
+    High-tier tracts get p_high. With p_low at the floor, p_mid is solved so the region's mean
+    definedness equals 1 minus the published undefined rate (less the share attributed to
+    building or POI); if that needs p_mid outside [floor, p_high] it is clipped and p_low
+    absorbs the rest. q = p_mid / p_high is the chance a high-tier tract's reference also holds
+    its secondary routes. Eastern Washington has no published rate and borrows the medians.
     """
     t = cfg["transport"]
     rates = cfg["published_undefined_rate"]
+    primary, secondary = reference_lengths(df, cfg)
+    tier = pd.Series(tiers(primary, secondary), index=df.index)
     rows = []
-    for region in df["region"].unique():
-        r = ref[(df["region"] == region).to_numpy()]
+    for region, g in tier.groupby(df["region"]):
+        share = {k: float((g == k).mean()) for k in TIERS}
+        row = {"region": region, **{f"share_{k}": v for k, v in share.items()}}
         if region in rates:
             target = 1 - (rates[region] - cfg["undefined_other_components"])
-            tau = float(np.quantile(r, 1 - target))
-        else:
-            target, tau = np.nan, np.nan
-        rows.append({"region": region, "target_defined": target, "tau": tau, "ref": r})
+            rest = target - t["p_defined_high"] * share["high"]
+            p_low = t["p_defined_floor"]
+            p_mid = (rest - p_low * share["low"]) / max(share["mid"], 1e-9)
+            p_mid = float(np.clip(p_mid, p_low, t["p_defined_high"]))
+            p_low = (rest - p_mid * share["mid"]) / max(share["low"], 1e-9)
+            row.update(target_defined=target, p_mid=p_mid, p_low=float(np.clip(p_low, 0, 1)))
+        rows.append(row)
     cal = pd.DataFrame(rows).set_index("region")
-    cal.loc[cal["tau"].isna(), "tau"] = cal["tau"].median()
-    p_lo = {}
-    for region, row in cal.iterrows():
-        above = float((row["ref"] > row["tau"]).mean())
-        if np.isnan(row["target_defined"]):
-            continue
-        lo = (row["target_defined"] - t["p_defined_above_tau"] * above) / max(1 - above, 1e-9)
-        p_lo[region] = float(np.clip(lo, t["p_defined_floor"], t["p_defined_above_tau"]))
-    cal["p_lo"] = [p_lo.get(r, float(np.median(list(p_lo.values())))) for r in cal.index]
-    cal["share_above_tau"] = [float((row["ref"] > row["tau"]).mean()) for _, row in cal.iterrows()]
-    cal["fallback_length"] = [
-        float(np.median(row["ref"][row["ref"] > row["tau"]])) for _, row in cal.iterrows()
+    for col in ["p_mid", "p_low"]:
+        cal[col] = cal[col].fillna(cal[col].median())
+    cal["p_high"] = t["p_defined_high"]
+    cal["q_secondary"] = cal["p_mid"] / cal["p_high"]
+    lengths = pd.Series(primary, index=df.index).where(primary > 0)
+    cal["fallback_length"] = lengths.groupby(df["region"]).median()
+    cal["mean_p_defined"] = [
+        sum(cal.loc[r, f"share_{k}"] * cal.loc[r, f"p_{k}"] for k in TIERS) for r in cal.index
     ]
-    return cal.drop(columns="ref")
+    return cal
 
 
 def transport_draws(
@@ -62,17 +69,22 @@ def transport_draws(
 ) -> Draws:
     """Draws of T = gap(L_O, L_R) and its definedness.
 
-    Above tau, L_R is the proxy with lognormal noise `sigma`. Below tau a tract is defined only
-    by chance, and then its unseen reference length is drawn around the region's typical
-    defined length with the wider `fallback_sigma`.
+    High tier: L_R is the primary proxy, replaced with probability q by the secondary proxy.
+    Mid tier: L_R is the secondary proxy. Both carry lognormal noise `sigma`. Low tier: defined
+    only by chance, and then the unseen reference length is drawn around the region's typical
+    length with the wider `fallback_sigma`.
     """
     t = cfg["transport"]
-    ref = reference_length(df, cfg)
+    n = len(df)
+    primary, secondary = reference_lengths(df, cfg)
+    tier = tiers(primary, secondary)
     c = cal.loc[df["region"]]
-    above = ref > c["tau"].to_numpy()
-    p = np.where(above, t["p_defined_above_tau"], c["p_lo"].to_numpy())
-    centre = np.where(above, ref, c["fallback_length"].to_numpy())
-    sigma = np.where(above, t["sigma"], t["fallback_sigma"])
-    noise = np.exp(sigma[:, None] * rng.standard_normal((len(df), n_draws)))
-    values = gap(df["road_named_len"].to_numpy()[:, None], centre[:, None] * noise)
+    high, mid = tier == "high", tier == "mid"
+    p = np.select([high, mid], [c["p_high"], c["p_mid"]], c["p_low"])
+    centre = np.select([high, mid], [primary, secondary], c["fallback_length"].to_numpy())
+    with_secondary = high[:, None] & bernoulli(rng, c["q_secondary"].to_numpy(), n_draws)
+    centre = np.where(with_secondary, secondary[:, None], centre[:, None])
+    sigma = np.where(tier == "low", t["fallback_sigma"], t["sigma"])
+    noise = np.exp(sigma[:, None] * rng.standard_normal((n, n_draws)))
+    values = gap(df["road_named_len"].to_numpy()[:, None], centre * noise)
     return Draws(values, bernoulli(rng, p, n_draws), values.mean(axis=1), p)

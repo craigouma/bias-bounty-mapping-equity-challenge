@@ -2,46 +2,56 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from bbme.components.transport import calibrate, reference_length, transport_draws
+from bbme.components.transport import calibrate, reference_lengths, tiers, transport_draws
 from bbme.config import load
 
 
 def _frame(n: int = 400) -> pd.DataFrame:
     rng = np.random.default_rng(0)
-    ref = np.where(rng.random(n) < 0.5, 0.0, rng.uniform(500, 5000, n))
+    u = rng.random(n)
+    primary = np.where(u < 0.5, 0.0, rng.uniform(500, 5000, n))
+    secondary = primary + np.where((u >= 0.3) & (u < 0.5), 800.0, 0.0)
     return pd.DataFrame(
         {
-            "region": ["maricopa-az"] * (n // 2) + ["eastern-wa"] * (n // 2),
-            "road_refAmt_len": ref,
-            "road_named_len": ref * rng.uniform(0.5, 1.5, n),
+            "region": ["south-central-tx"] * (n // 2) + ["eastern-wa"] * (n // 2),
+            "road_refAmt_len": primary,
+            "road_refBmt_len": secondary,
+            "road_named_len": primary * rng.uniform(0.5, 1.5, n),
         }
     )
 
 
+def test_tiers():
+    got = tiers(np.array([5.0, 0.0, 0.0]), np.array([5.0, 3.0, 0.0])).tolist()
+    assert got == ["high", "mid", "low"]
+
+
 def test_calibration_hits_published_definedness():
     df, cfg = _frame(), load("model")
-    cal = calibrate(df, reference_length(df, cfg), cfg)
-    az = cal.loc["maricopa-az"]
-    p_hi = cfg["transport"]["p_defined_above_tau"]
-    mean_p = az["share_above_tau"] * p_hi + (1 - az["share_above_tau"]) * az["p_lo"]
-    assert mean_p == pytest.approx(az["target_defined"], abs=0.02)
-    assert cal.loc["eastern-wa", "tau"] == az["tau"]
+    cal = calibrate(df, cfg)
+    tx = cal.loc["south-central-tx"]
+    t = cfg["transport"]
+    assert tx["mean_p_defined"] == pytest.approx(tx["target_defined"], abs=1e-6)
+    assert t["p_defined_floor"] <= tx["p_mid"] <= t["p_defined_high"]
+    assert cal.loc["eastern-wa", "p_mid"] == tx["p_mid"]
 
 
 def test_draws_shape_bounds_and_zero_overture():
     df, cfg = _frame(), load("model")
-    df.loc[0, ["road_refAmt_len", "road_named_len"]] = [3000.0, 0.0]
-    cal = calibrate(df, reference_length(df, cfg), cfg)
+    df.loc[0, ["road_refAmt_len", "road_refBmt_len", "road_named_len"]] = [3000.0, 3000.0, 0.0]
+    cal = calibrate(df, cfg)
     d = transport_draws(df, cfg, cal, np.random.default_rng(1), 500)
     assert d.values.shape == (len(df), 500)
     assert np.isfinite(d.values).all()
     assert (d.values >= 0).all() and (d.values <= 1).all()
     assert d.point[0] == pytest.approx(1.0)
-    assert d.p_defined[0] == cfg["transport"]["p_defined_above_tau"]
+    assert d.p_defined[0] == cfg["transport"]["p_defined_high"]
 
 
 def test_boundary_knob_switches_to_buffered_length():
     df, cfg = _frame(), load("model")
     df["road_buf25_refAmt_len"] = df["road_refAmt_len"] + 100.0
+    df["road_buf25_refBmt_len"] = df["road_refBmt_len"] + 100.0
     cfg["transport"]["boundary_d_m"] = 25
-    assert (reference_length(df, cfg) == df["road_refAmt_len"] + 100.0).all()
+    primary, _ = reference_lengths(df, cfg)
+    assert (primary == df["road_refAmt_len"] + 100.0).all()
