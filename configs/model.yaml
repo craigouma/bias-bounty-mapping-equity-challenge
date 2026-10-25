@@ -19,6 +19,7 @@ transport:
     eastern-ok: A
     south-central-tx: A
     eastern-wa: A
+  boundary_d_m: 0
   p_defined_above_tau: 0.95
   p_defined_floor: 0.02
   sigma: 0.15

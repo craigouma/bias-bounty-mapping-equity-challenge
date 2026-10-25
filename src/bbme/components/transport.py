@@ -6,12 +6,18 @@ from bbme.composite import Draws, bernoulli
 
 
 def reference_length(df: pd.DataFrame, cfg: dict) -> np.ndarray:
-    """Proxy for the TIGER S1100 + S1200 length: the region's route set plus motorway and trunk."""
-    sets = df["region"].map(cfg["transport"]["reference_set"])
+    """Proxy for the TIGER S1100 + S1200 length: the region's route set plus motorway and trunk.
+
+    With `boundary_d_m` > 0 (H-T1) the proxy also counts route length lying within that distance
+    outside the tract edge, as a reference drawn on the shared boundary would.
+    """
+    t = cfg["transport"]
+    sets = df["region"].map(t["reference_set"])
+    prefix = f"road_buf{t['boundary_d_m']}_" if t["boundary_d_m"] else "road_"
     out = np.zeros(len(df))
     for name in sets.unique():
         rows = (sets == name).to_numpy()
-        out[rows] = df.loc[rows, f"road_ref{name}mt_len"].to_numpy()
+        out[rows] = df.loc[rows, f"{prefix}ref{name}mt_len"].to_numpy()
     return out
 
 
