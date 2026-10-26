@@ -153,3 +153,10 @@ S05's result stands for the current default.
 **D026. H-B3 rejected.** S06 (building gap from the USFS building count) scored scaled RMSE
 0.0805 against 0.0766 for S05. Building stays at the 0.01 baseline (`building.reference: none`).
 The USFS columns remain in the feature table for the bias discovery analysis only.
+
+**D027. H-P1 adopted, H-T2 rejected.** S07 (establishments half defined with gap 0,
+`poi.kappa_E: 0`) scored 0.075184 raw, scaled RMSE 0.0752 against 0.0766, at a best scale of
+exactly 1.00. The gain is inside the tie band, but the variant is simpler, physically motivated
+(Overture places outnumber CBP establishments three to five times) and calibrated without any
+scale, so it becomes the default. S08 (`transport.sigma: 0.05`) scored scaled 0.0773, a tie;
+sigma stays 0.15 and the knob is closed after one test.
