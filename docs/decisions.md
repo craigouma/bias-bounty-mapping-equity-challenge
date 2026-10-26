@@ -172,3 +172,8 @@ parabola in it, so a base submission and one probe fix the optimum exactly
 `poi.level` of about 0.78 on the S07 constant. POI level is tuned scalar 2 of 6 (the boundary
 distance is 1; the global output scale is held in reserve since S07 sits at scale 1.00). It is
 folded into the next candidate rather than spending a submission on it alone.
+
+**D030. H-T4 rejected.** S10 (ramps removed from the reference proxy) scored scaled RMSE 0.0759
+against 0.0752 for S07. The line search along S07 to S10 puts the optimum at t* = -0.40
+(predicted 0.0751), the opposite direction: transport gaps should not fall. Ramps stay in the
+reference proxy. A transport level probe (`transport.value_scale`) follows.
