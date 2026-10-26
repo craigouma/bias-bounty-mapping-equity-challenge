@@ -164,3 +164,11 @@ sigma stays 0.15 and the knob is closed after one test.
 **D028. H-P2 rejected.** S09 (tract-level facility model with the establishments half at zero)
 scored scaled RMSE 0.0776 against 0.0752 for S07, and a worse raw score. The Poisson facility
 model's tract variation is noise against the target; POI stays at the regional constant.
+
+**D029. Level tuning by line search.** For a scalar that moves predictions linearly, RMSE^2 is a
+parabola in it, so a base submission and one probe fix the optimum exactly
+(`scripts/line_search.py`). S05 to S07 moved mainly the regional POI constant (about 0.115 to
+0.09); the optimum along that direction is t* = 1.8, predicted RMSE 0.0747, which corresponds to
+`poi.level` of about 0.78 on the S07 constant. POI level is tuned scalar 2 of 6 (the boundary
+distance is 1; the global output scale is held in reserve since S07 sits at scale 1.00). It is
+folded into the next candidate rather than spending a submission on it alone.
