@@ -23,6 +23,8 @@ transport:
   p_defined_high: 0.98
   p_defined_floor: 0.02
   sigma: 0.15
+  # Multiplies every transport gap draw, clipped to [0, 1] (tuned scalar, decisions log).
+  value_scale: 1.0
   fallback_sigma: 1.0
 
 building:
@@ -41,6 +43,8 @@ building:
 
 poi:
   mode: constant
+  # Multiplies the regional POI constant (tuned scalar, decisions log).
+  level: 1.0
   kappa_E: 0.0
   sigma_E: 0.5
   kappa_F: 1.0
