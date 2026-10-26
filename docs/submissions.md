@@ -109,3 +109,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.077816544
 - Submissions used after this one: 8 of 35
 - Result note: scale 0.890, scaled rmse 0.0773: tie with S05; sigma stays 0.15
+
+## S09 (2026-10-26)
+
+- File: `artifacts/submissions/S09_20261026-1130-03_model-9352aee.csv`
+- Run ID: `20261026-1130-03_model-9352aee`
+- Code SHA: `9352aee6361af8708d1443bd26870dfbda2ed24b`
+- Hypothesis: H-P2 tract-level facility half carries signal once the establishments half is zero
+- Change against current best: S07 with poi.mode=model: POI varies by tract through the fire, EMS and school Poisson model while the establishments half stays at gap 0; mean 0.062, rms 0.082, same mean POI as S07
+- Expected direction: scaled rmse below S07's 0.0752 if the S05 loss came from the establishments half; a loss means facility variation is also noise
+- Decision informed: whether POI work goes into the facility model or stays constant
+- Public RMSE: pending
+- Submissions used after this one: 9 of 35
