@@ -78,3 +78,12 @@ def test_link_and_unclipped_switches():
     cfg["transport"]["unclipped"] = True
     whole, _ = reference_lengths(df, cfg)
     assert np.allclose(whole, base + 0.5 * df["road_refAmt_len"])
+
+
+def test_value_scale_multiplies_gaps():
+    df, cfg = _frame(), load("model")
+    cal = calibrate(df, cfg)
+    base = transport_draws(df, cfg, cal, np.random.default_rng(3), 50)
+    cfg["transport"]["value_scale"] = 0.5
+    half = transport_draws(df, cfg, cal, np.random.default_rng(3), 50)
+    assert np.allclose(half.values, base.values * 0.5)

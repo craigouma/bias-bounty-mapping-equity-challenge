@@ -103,4 +103,5 @@ def transport_draws(
     sigma = np.where(tier == "low", t["fallback_sigma"], t["sigma"])
     noise = np.exp(sigma[:, None] * rng.standard_normal((n, n_draws)))
     values = gap(overture_length(df, cfg)[:, None], centre * noise)
+    values = np.clip(values * t["value_scale"], 0.0, 1.0)
     return Draws(values, bernoulli(rng, p, n_draws), values.mean(axis=1), p)

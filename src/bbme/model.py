@@ -31,6 +31,7 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     if cfg["poi"]["mode"] == "constant":
         pilot, _ = poi_draws(df, cfg, np.random.default_rng(cfg["seed"] + 1), 200)
         constant_poi = pd.Series(pilot.point).groupby(df["region"].to_numpy()).transform("mean")
+        constant_poi = (constant_poi * cfg["poi"]["level"]).clip(0, 1)
     frames = []
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
