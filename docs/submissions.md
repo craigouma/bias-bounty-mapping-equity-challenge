@@ -135,3 +135,39 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.075900456
 - Submissions used after this one: 10 of 35
 - Result note: scale 1.027, scaled rmse 0.0759 against 0.0752 for S07; line search t* = -0.40 along S07 to S10: H-T4 rejected
+
+## S11 (2026-10-26)
+
+- File: `artifacts/submissions/S11_20261026-1249-03_model-227bfa1.csv`
+- Run ID: `20261026-1249-03_model-227bfa1`
+- Code SHA: `227bfa187d45e0306de7d9f3f4e57e355f53d0ea`
+- Hypothesis: H-T5 the organisers summed whole segments touching each tract instead of clipping
+- Change against current best: S07 with transport.unclipped=true on both the Overture side and the reference proxy (the 25 m boundary increment kept); POI and building identical; mean 0.057, rms 0.067
+- Expected direction: scaled rmse below S07's 0.0752 if per-tract lengths were computed with an intersects join and no clipping
+- Decision informed: how per-tract road length is measured, which every transport feature depends on
+- Public RMSE: pending
+- Submissions used after this one: 11 of 35
+
+## S12 (2026-10-26)
+
+- File: `artifacts/submissions/S12_20261026-1426-03_model-a6dc6eb.csv`
+- Run ID: `20261026-1426-03_model-a6dc6eb`
+- Code SHA: `a6dc6eb67617ddb15cad8f02d8c267428067a106`
+- Hypothesis: transport level probe (tuned scalar 3, transport.value_scale)
+- Change against current best: S07 with every transport gap draw multiplied by 1.5 and clipped to 1; POI and building identical; mean 0.073
+- Expected direction: with S07 it fixes the transport level by line search; S10's t* = -0.40 suggests the optimum lies above 1
+- Decision informed: transport.value_scale for the combined candidate
+- Public RMSE: pending
+- Submissions used after this one: 12 of 35
+
+## S13 (2026-10-26)
+
+- File: `artifacts/submissions/S13_20261026-1427-03_model-92428b7.csv`
+- Run ID: `20261026-1427-03_model-92428b7`
+- Code SHA: `92428b7edf8dd8a5366d20b7572092b4fdb9ee2a`
+- Hypothesis: building level probe (tuned scalar 4, building.baseline_gap)
+- Change against current best: S07 with the building baseline gap at 0.05 instead of 0.01; transport and POI identical; mean 0.078
+- Expected direction: with S07 it fixes the building level by line search
+- Decision informed: building.baseline_gap for the combined candidate
+- Public RMSE: pending
+- Submissions used after this one: 13 of 35
