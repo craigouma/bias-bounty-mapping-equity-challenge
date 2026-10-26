@@ -177,3 +177,7 @@ folded into the next candidate rather than spending a submission on it alone.
 against 0.0752 for S07. The line search along S07 to S10 puts the optimum at t* = -0.40
 (predicted 0.0751), the opposite direction: transport gaps should not fall. Ramps stay in the
 reference proxy. A transport level probe (`transport.value_scale`) follows.
+
+**D031. Feature rebuilds agree to floating point.** Rebuilding stage 02 changed road lengths by at
+most 1.2e-10 m (relative 8e-16), from DuckDB's parallel summation order; transport estimates moved
+by at most 6e-16. Probes built on a newer feature table compare cleanly with S07.
