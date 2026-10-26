@@ -122,3 +122,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.078050468
 - Submissions used after this one: 9 of 35
 - Result note: scale 0.899, scaled rmse 0.0776 against 0.0752 for S07: H-P2 rejected, POI stays constant
+
+## S10 (2026-10-26)
+
+- File: `artifacts/submissions/S10_20261026-1247-03_model-fa129b8.csv`
+- Run ID: `20261026-1247-03_model-fa129b8`
+- Code SHA: `fa129b8bc461b07ffe42ed2d2daa6b5d21d7f4d1`
+- Hypothesis: H-T4 the TIGER reference excludes ramps
+- Change against current best: S07 with transport.exclude_links=true: Overture ramp length (subclass link) is removed from the reference proxy, not from the Overture side; POI and building identical; mean 0.060, rms 0.074
+- Expected direction: scaled rmse below S07's 0.0752 because TIGER S1100 and S1200 omit ramps (S1630) while the organisers' Overture side keeps them
+- Decision informed: whether ramp exclusion becomes the transport default before the H-T5 clipping test
+- Public RMSE: pending
+- Submissions used after this one: 10 of 35
