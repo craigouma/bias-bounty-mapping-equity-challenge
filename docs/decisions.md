@@ -147,3 +147,9 @@ Generator spawned from the config seed (`numpy.random.SeedSequence(seed).spawn(3
 to one estimator cannot move another component's Monte Carlo draws. Rerunning the S05 method
 with the new streams changes scores by rms 0.0011 (max 0.015), far inside the 0.003 tie band, so
 S05's result stands for the current default.
+
+## 2026-10-26
+
+**D026. H-B3 rejected.** S06 (building gap from the USFS building count) scored scaled RMSE
+0.0805 against 0.0766 for S05. Building stays at the 0.01 baseline (`building.reference: none`).
+The USFS columns remain in the feature table for the bias discovery analysis only.
