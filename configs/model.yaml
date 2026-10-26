@@ -18,6 +18,8 @@ transport:
   reference_set: A
   secondary_set: B
   boundary_d_m: 25
+  exclude_links: false
+  unclipped: false
   p_defined_high: 0.98
   p_defined_floor: 0.02
   sigma: 0.15
