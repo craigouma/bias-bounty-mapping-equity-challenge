@@ -45,3 +45,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261025-1848-03_model-7e4f29b | 03_model | 7e4f29b | building.reference=usfs | complete | 1.5 | 0.65 |
 | 20261025-1905-03_model-ca33fb7 | 03_model | ca33fb7 | defaults | complete | 1.3 | 0.63 |
 | 20261025-1907-03_model-d96dddf | 03_model | d96dddf | building.reference=usfs | complete | 1.3 | 0.65 |
+| 20261026-1108-03_model-4702f1a | 03_model | 4702f1a | poi.kappa_E=0 | complete | 10.0 | 0.62 |
