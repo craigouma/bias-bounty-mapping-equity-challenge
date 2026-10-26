@@ -29,6 +29,7 @@ def test_prior_spreads_regional_total():
 
 def test_draw_rules():
     df, cfg = _frame(), load("model")
+    cfg["poi"]["kappa_E"] = 0.01
     draws, sub = poi_draws(df, cfg, np.random.default_rng(0), 4000)
     assert sub["cbp"][1][2] == 0.0
     assert sub["cbp"][0][0] == pytest.approx(0.0, abs=1e-3)

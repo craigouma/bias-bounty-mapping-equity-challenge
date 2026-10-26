@@ -39,7 +39,7 @@ building:
 
 poi:
   mode: constant
-  kappa_E: 0.01
+  kappa_E: 0.0
   sigma_E: 0.5
   kappa_F: 1.0
   facility_weight: 0.5
