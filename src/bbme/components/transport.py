@@ -12,13 +12,29 @@ def reference_lengths(df: pd.DataFrame, cfg: dict) -> tuple[np.ndarray, np.ndarr
 
     Both include motorway and trunk. With `boundary_d_m` > 0 (H-T1) they also count route
     length lying within that distance outside the tract edge, as a reference drawn on the
-    shared boundary would.
+    shared boundary would. `exclude_links` (H-T4) removes ramps, which TIGER classes apart;
+    `unclipped` (H-T5) counts whole segments touching the tract.
     """
     t = cfg["transport"]
-    prefix = f"road_buf{t['boundary_d_m']}_" if t["boundary_d_m"] else "road_"
-    primary = df[f"{prefix}ref{t['reference_set']}mt_len"].to_numpy(float)
-    secondary = df[f"{prefix}ref{t['secondary_set']}mt_len"].to_numpy(float)
-    return primary, np.maximum(secondary, primary)
+    out = []
+    for name in (t["reference_set"], t["secondary_set"]):
+        clipped = df[f"road_ref{name}mt_len"].to_numpy(float)
+        length = (
+            df[f"road_buf{t['boundary_d_m']}_ref{name}mt_len"].to_numpy(float)
+            if t["boundary_d_m"]
+            else clipped.copy()
+        )
+        if t["exclude_links"]:
+            length = length - (clipped - df[f"road_ref{name}mt_nolink_len"].to_numpy(float))
+        if t["unclipped"]:
+            length = length + df[f"road_ref{name}mt_unclipped_len"].to_numpy(float) - clipped
+        out.append(np.maximum(length, 0.0))
+    return out[0], np.maximum(out[1], out[0])
+
+
+def overture_length(df: pd.DataFrame, cfg: dict) -> np.ndarray:
+    column = "road_named_unclipped_len" if cfg["transport"]["unclipped"] else "road_named_len"
+    return df[column].to_numpy(float)
 
 
 def tiers(primary: np.ndarray, secondary: np.ndarray) -> np.ndarray:
@@ -86,5 +102,5 @@ def transport_draws(
     centre = np.where(with_secondary, secondary[:, None], centre[:, None])
     sigma = np.where(tier == "low", t["fallback_sigma"], t["sigma"])
     noise = np.exp(sigma[:, None] * rng.standard_normal((n, n_draws)))
-    values = gap(df["road_named_len"].to_numpy()[:, None], centre * noise)
+    values = gap(overture_length(df, cfg)[:, None], centre * noise)
     return Draws(values, bernoulli(rng, p, n_draws), values.mean(axis=1), p)

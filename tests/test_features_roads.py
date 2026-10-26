@@ -75,3 +75,11 @@ def test_network_group_assignment(network, group):
         db.connect().sql(f"SELECT {case} FROM (SELECT {{'network': '{network}'}} AS x)").fetchone()
     )
     assert got[0] == group
+
+
+def test_unclipped_lengths_cover_whole_segments(roads):
+    a = roads.loc[TRACT_A]
+    assert a["road_named_unclipped_len"] >= a["road_named_len"] - 1e-6
+    assert a["road_refAmt_unclipped_len"] >= a["road_refAmt_len"] - 1e-6
+    assert a["road_refAmt_nolink_len"] == pytest.approx(a["road_refAmt_len"])
+    assert a["road_named_link_len"] == 0

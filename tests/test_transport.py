@@ -19,8 +19,11 @@ def _frame(n: int = 400) -> pd.DataFrame:
             "road_named_len": primary * rng.uniform(0.5, 1.5, n),
         }
     )
-    df["road_buf25_refAmt_len"] = df["road_refAmt_len"]
-    df["road_buf25_refBmt_len"] = df["road_refBmt_len"]
+    for name in ["A", "B"]:
+        df[f"road_buf25_ref{name}mt_len"] = df[f"road_ref{name}mt_len"]
+        df[f"road_ref{name}mt_nolink_len"] = df[f"road_ref{name}mt_len"]
+        df[f"road_ref{name}mt_unclipped_len"] = df[f"road_ref{name}mt_len"]
+    df["road_named_unclipped_len"] = df["road_named_len"]
     return df
 
 
@@ -61,3 +64,17 @@ def test_boundary_knob_switches_to_buffered_length():
     cfg["transport"]["boundary_d_m"] = 0
     primary, _ = reference_lengths(df, cfg)
     assert (primary == df["road_refAmt_len"]).all()
+
+
+def test_link_and_unclipped_switches():
+    df, cfg = _frame(), load("model")
+    df["road_refAmt_nolink_len"] = df["road_refAmt_len"] * 0.9
+    df["road_refAmt_unclipped_len"] = df["road_refAmt_len"] * 1.5
+    base, _ = reference_lengths(df, cfg)
+    cfg["transport"]["exclude_links"] = True
+    no_links, _ = reference_lengths(df, cfg)
+    assert np.allclose(no_links, base - 0.1 * df["road_refAmt_len"])
+    cfg["transport"]["exclude_links"] = False
+    cfg["transport"]["unclipped"] = True
+    whole, _ = reference_lengths(df, cfg)
+    assert np.allclose(whole, base + 0.5 * df["road_refAmt_len"])
