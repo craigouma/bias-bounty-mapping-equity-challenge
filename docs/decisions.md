@@ -160,3 +160,7 @@ exactly 1.00. The gain is inside the tie band, but the variant is simpler, physi
 (Overture places outnumber CBP establishments three to five times) and calibrated without any
 scale, so it becomes the default. S08 (`transport.sigma: 0.05`) scored scaled 0.0773, a tie;
 sigma stays 0.15 and the knob is closed after one test.
+
+**D028. H-P2 rejected.** S09 (tract-level facility model with the establishments half at zero)
+scored scaled RMSE 0.0776 against 0.0752 for S07, and a worse raw score. The Poisson facility
+model's tract variation is noise against the target; POI stays at the regional constant.
