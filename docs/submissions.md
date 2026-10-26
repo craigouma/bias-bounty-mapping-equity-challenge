@@ -119,5 +119,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S07 with poi.mode=model: POI varies by tract through the fire, EMS and school Poisson model while the establishments half stays at gap 0; mean 0.062, rms 0.082, same mean POI as S07
 - Expected direction: scaled rmse below S07's 0.0752 if the S05 loss came from the establishments half; a loss means facility variation is also noise
 - Decision informed: whether POI work goes into the facility model or stays constant
-- Public RMSE: pending
+- Public RMSE: 0.078050468
 - Submissions used after this one: 9 of 35
+- Result note: scale 0.899, scaled rmse 0.0776 against 0.0752 for S07: H-P2 rejected, POI stays constant
