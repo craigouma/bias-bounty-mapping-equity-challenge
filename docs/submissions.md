@@ -80,5 +80,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S05 method (now with independent component streams; rms drift 0.0011 from the S05 file) with B = E[gap(N_O, k U e^z)], k and spread learned on ML-dominated tracts (building.reference=usfs); transport and POI identical; mean 0.086, rms 0.099
 - Expected direction: scaled rmse below S05's 0.0766 if the Microsoft reference tracks the USFS count, so its shortfalls mark real building gaps; raw rmse may rise with the higher mean
 - Decision informed: whether building gets a tract-level estimator or stays at the 0.01 baseline
-- Public RMSE: pending
+- Public RMSE: 0.085445927
 - Submissions used after this one: 6 of 35
+- Result note: scale 0.712, scaled rmse 0.0805 against 0.0766 for S05: H-B3 rejected, building stays at the baseline
