@@ -83,3 +83,27 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.085445927
 - Submissions used after this one: 6 of 35
 - Result note: scale 0.712, scaled rmse 0.0805 against 0.0766 for S05: H-B3 rejected, building stays at the baseline
+
+## S07 (2026-10-26)
+
+- File: `artifacts/submissions/S07_20261026-1108-03_model-4702f1a.csv`
+- Run ID: `20261026-1108-03_model-4702f1a`
+- Code SHA: `4702f1a205cf7f7cc9cc5b1071bcd634a9c254fa`
+- Hypothesis: H-P1 establishments half is about 0 everywhere
+- Change against current best: current default (S05 method, component streams) with poi.kappa_E=0: the establishments half is defined with gap 0, so the regional POI constant falls from about 0.115 to about 0.09; transport and building identical; mean 0.062, rms 0.077
+- Expected direction: scaled rmse below S05's 0.0766 if Overture places outnumber the apportioned CBP establishments in nearly every tract
+- Decision informed: the POI level and whether the establishments half needs any modelling
+- Public RMSE: pending
+- Submissions used after this one: 7 of 35
+
+## S08 (2026-10-26)
+
+- File: `artifacts/submissions/S08_20261026-1118-03_model-f1228ef.csv`
+- Run ID: `20261026-1118-03_model-f1228ef`
+- Code SHA: `f1228efd0502c22cc22cb8e08d654d3c4ca1e2c1`
+- Hypothesis: H-T2 smaller transport reference noise, sigma 0.05
+- Change against current best: current default with transport.sigma=0.05 instead of 0.15; building and POI identical; mean 0.071, rms 0.084
+- Expected direction: scaled rmse below S05's 0.0766 if Overture and TIGER named-highway lengths agree closely within a tract, so the noise-driven gap mass is spurious
+- Decision informed: the transport noise level; a loss suggests testing a larger sigma
+- Public RMSE: pending
+- Submissions used after this one: 8 of 35
