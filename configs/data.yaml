@@ -93,8 +93,17 @@ external_reference:
   states: ['04', '06', '35', '40', '48', '53']
   building_url: https://minedbuildings.z5.web.core.windows.net/legacy/usbuildings-v2/{state}.geojson.zip
   building_states: [Arizona, NewMexico, California, Oklahoma, Texas, Washington]
+  facility_url: https://prd-tnm.s3.amazonaws.com/StagedProducts/Struct/GPKG/STRUCT_{state}_State_GPKG.zip
+  facility_states: [Arizona, New_Mexico, California, Oklahoma, Texas, Washington]
+  facility_fcodes:
+    fire: [74026]
+    ems: [74034]
+    schools: [73002, 73003, 73004, 73005]
+    college: [73006]
   allowlist:
     - '^tl_2025_\d{2}_prisecroads\.zip$'
+    - '^STRUCT_[A-Za-z_]+_State_GPKG\.zip$'
+    - '^facility_reference_tracts\.parquet$'
     - '^(Arizona|NewMexico|California|Oklahoma|Texas|Washington)\.geojson\.zip$'
     - '^building_reference_tracts\.parquet$'
     - '^tiger_tracts\.parquet$'
