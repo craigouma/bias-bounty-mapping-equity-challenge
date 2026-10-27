@@ -62,6 +62,7 @@ def test_provided_files_open(name):
     [
         "maricopa-az-coverage-gap.csv",
         "eastern-ok-tiger-roads.parquet",
+        "tl_2025_48_roads.zip",
         "northern-ca-microsoft-buildings.parquet",
         "eastern-ok-hifld-fire-stations.parquet",
         "south-central-tx-cbp-establishments.csv",
@@ -134,3 +135,20 @@ def test_scored_pipeline_never_imports_analysis():
             if any(n == "bbme.analysis" or n.startswith("bbme.analysis.") for n in names):
                 offenders.append(str(path.relative_to(REPO)))
     assert not offenders, offenders
+
+
+def test_permitted_external_reference_files_open():
+    assert guard.raw("external/tl_2025_48_prisecroads.zip").name == "tl_2025_48_prisecroads.zip"
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "maricopa-az-coverage-gap.csv",
+        "tl_2025_48_coverage_gap.zip",
+        "coverage-gap/tl_2025_48_prisecroads.zip",
+    ],
+)
+def test_coverage_gap_files_always_rejected(name):
+    with pytest.raises(guard.ForbiddenDataError):
+        guard.raw(name)
