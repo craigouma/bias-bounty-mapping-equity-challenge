@@ -181,3 +181,13 @@ reference proxy. A transport level probe (`transport.value_scale`) follows.
 **D031. Feature rebuilds agree to floating point.** Rebuilding stage 02 changed road lengths by at
 most 1.2e-10 m (relative 8e-16), from DuckDB's parallel summation order; transport estimates moved
 by at most 6e-16. Probes built on a newer feature table compare cleanly with S07.
+
+## 2026-10-27
+
+**D032. Level tuning closed; H-T5 rejected.** Line searches against S07: transport level
+(S12) t* = 0.30, so `transport.value_scale` = 1.15 (tuned scalar 3); building level (S13)
+t* = -0.39, so `building.baseline_gap` = 0 (tuned scalar 4, at its bound); POI level from S05
+to S07, `poi.level` = 0.779 (tuned scalar 2). Unclipped lengths (S11, H-T5) t* = -0.21: rejected,
+lengths stay clipped. Four of six scalars are used (boundary distance, POI level, transport level,
+building level); the global output scale and one more remain. No further level probes: the next
+gains must come from structure, starting with fire stations (D033).
