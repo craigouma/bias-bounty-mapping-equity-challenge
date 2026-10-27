@@ -50,3 +50,20 @@ def test_fire_model_rules():
     assert d.point[0] == pytest.approx(0.0, abs=0.05)
     assert 0 < d.point[1] <= 0.5
     assert ((d.values >= 0) & (d.values <= 1)).all()
+
+
+def test_reference_draws_follow_the_organiser_rules():
+    from bbme.components.poi import reference_draws
+
+    df = _frame()
+    df["ref_fire"] = [2.0, 1.0, 0.0, 0.0]
+    df["ref_ems"] = [0.0, 0.0, 0.0, 1.0]
+    df["ref_schools"] = [3.0, 0.0, 0.0, 0.0]
+    df["est_area"] = [100.0, 40.0, 0.0, 10.0]
+    cfg = load("model")
+    d, sub = reference_draws(df, cfg, 3)
+    assert sub["fire"][0].tolist() == [0.0, 1.0, 0.0, 0.0]
+    assert d.point[0] == pytest.approx(0.0)
+    assert d.point[1] == pytest.approx((1.0 + 0.75) / 2)
+    assert d.p_defined[2] == 0.0
+    assert d.point[3] == pytest.approx((0.0 + 1.0) / 2)

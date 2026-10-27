@@ -102,3 +102,38 @@ def fire_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: i
     )
     point, p_defined = _conditional(values, flags)
     return Draws(values, flags, point, p_defined)
+
+
+def reference_draws(
+    df: pd.DataFrame, cfg: dict, n_draws: int
+) -> tuple[Draws, dict[str, tuple[np.ndarray, np.ndarray]]]:
+    """Exact POI gap against USGS facility counts and apportioned ZBP establishments.
+
+    Each facility type is defined where the reference has one; the facilities half is the mean
+    of the defined types, the establishments half compares all Overture places with the
+    apportioned establishments, and P is the mean of the defined halves.
+    """
+    p = cfg["poi"]
+    n = len(df)
+    school_ref = sum(df[f"ref_{k}"].to_numpy(float) for k in p["school_kinds"])
+    pairs = {
+        "fire": (df["poi_fire"].to_numpy(float), df["ref_fire"].to_numpy(float)),
+        "ems": (df["poi_ems"].to_numpy(float), df["ref_ems"].to_numpy(float)),
+        "schools": (df["poi_school"].to_numpy(float), school_ref),
+        "cbp": (
+            df["poi_n"].to_numpy(float),
+            df[f"est_{p['establishment_weight']}"].to_numpy(float),
+        ),
+    }
+    sub = {}
+    for name, (overture, reference) in pairs.items():
+        sub[name] = (np.nan_to_num(gap(overture, reference)), (reference > 0).astype(float))
+    fac_gap = np.stack([sub[t][0] for t in ["fire", "ems", "schools"]], 1)
+    fac_def = np.stack([sub[t][1] > 0 for t in ["fire", "ems", "schools"]], 1)
+    facilities, fac_any = mean_defined(fac_gap, fac_def, axis=1)
+    halves = np.stack([facilities, sub["cbp"][0]], 1)
+    halves_def = np.stack([fac_any, sub["cbp"][1] > 0], 1)
+    point, defined = mean_defined(halves, halves_def, axis=1)
+    values = np.broadcast_to(point[:, None], (n, n_draws))
+    flags = np.broadcast_to(defined[:, None], (n, n_draws))
+    return Draws(values, flags, point, defined.astype(float)), sub

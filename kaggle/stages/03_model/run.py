@@ -21,6 +21,15 @@ def main(run: dict, code: Path) -> None:
         ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference" / "tiger_tracts.parquet"
         tiger = pd.read_parquet(guard.artifact(ref))[["GEOID", "tiger_len_m"]]
         df = df.merge(tiger, on="GEOID", how="left", validate="1:1")
+    if cfg["poi"]["source"] == "reference":
+        fac = upstream("facilities/FACILITY_MANIFEST.json") / "facilities"
+        est = upstream("establishments/ESTABLISHMENT_MANIFEST.json") / "establishments"
+        for path in [
+            fac / "facility_reference_tracts.parquet",
+            est / "establishment_reference_tracts.parquet",
+        ]:
+            table = pd.read_parquet(guard.artifact(path)).drop(columns="region")
+            df = df.merge(table, on="GEOID", how="left", validate="1:1")
     if cfg["building"]["source"] == "microsoft":
         ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference"
         ms = pd.read_parquet(guard.artifact(ref / "building_reference_tracts.parquet"))
