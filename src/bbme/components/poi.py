@@ -67,3 +67,33 @@ def poi_draws(
     )
     point, p_defined = _conditional(values, flags)
     return Draws(values, flags, point, p_defined), sub
+
+
+def fire_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: int) -> Draws:
+    """POI driven by fire stations, the facility type the organisers say carries the half.
+
+    Reference fire stations = the tract's Overture fire places plus uncaptured stations,
+    ~ Poisson(lambda0); the region's uncaptured total is `fire_uncaptured` per Overture fire
+    place, spread half by population and half by land area. Schools and EMS are defined with
+    gap 0 where Overture has one and undefined elsewhere (Overture over-covers schools; EMS is
+    close to one to one). The establishments half is defined with gap 0 wherever people live.
+    P is the mean of the defined halves, the facilities half the mean of the defined types.
+    """
+    p = cfg["poi"]
+    n = len(df)
+    fire = df["poi_fire"].to_numpy(float)
+    lam0 = p["fire_uncaptured"] * facility_prior(df, "fire", "pop_area")
+    ref = fire[:, None] + rng.poisson(lam0[:, None], (n, n_draws))
+    fire_def = ref >= 1
+    fire_gap = np.nan_to_num(gap(fire[:, None], ref))
+    other_def = ((df["poi_school"] > 0) | (df["poi_ems"] > 0)).to_numpy()[:, None]
+    other_def = np.broadcast_to(other_def, (n, n_draws))
+    facilities, fac_def = mean_defined(
+        np.stack([fire_gap, np.zeros((n, n_draws))], 2), np.stack([fire_def, other_def], 2), axis=2
+    )
+    est_def = np.broadcast_to((df["pop_total"].fillna(0) > 0).to_numpy()[:, None], (n, n_draws))
+    values, flags = mean_defined(
+        np.stack([facilities, np.zeros((n, n_draws))], 2), np.stack([fac_def, est_def], 2), axis=2
+    )
+    point, p_defined = _conditional(values, flags)
+    return Draws(values, flags, point, p_defined)

@@ -40,3 +40,13 @@ def test_draw_rules():
     assert fire_p[0] > 0.6
     assert ((draws.values >= 0) & (draws.values <= 1)).all()
     assert draws.p_defined[0] == pytest.approx(1.0)
+
+
+def test_fire_model_rules():
+    from bbme.components.poi import fire_draws
+
+    df, cfg = _frame(), load("model")
+    d = fire_draws(df, cfg, np.random.default_rng(0), 4000)
+    assert d.point[0] == pytest.approx(0.0, abs=0.05)
+    assert 0 < d.point[1] <= 0.5
+    assert ((d.values >= 0) & (d.values <= 1)).all()

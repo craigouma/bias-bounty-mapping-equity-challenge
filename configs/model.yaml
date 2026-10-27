@@ -45,6 +45,8 @@ poi:
   mode: constant
   # Multiplies the regional POI constant (tuned scalar, decisions log).
   level: 1.0
+  # Uncaptured reference fire stations per Overture fire place (poi.mode: fire).
+  fire_uncaptured: 0.5
   kappa_E: 0.0
   sigma_E: 0.5
   kappa_F: 1.0
