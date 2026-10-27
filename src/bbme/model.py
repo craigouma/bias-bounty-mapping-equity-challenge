@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from bbme.components.building import building_draws, microsoft_draws
-from bbme.components.poi import fire_draws, poi_draws
+from bbme.components.poi import fire_draws, poi_draws, reference_draws
 from bbme.components.transport import calibrate, tiger_draws, transport_draws
 from bbme.composite import monte_carlo, plug_in, shrink
 
@@ -50,7 +50,9 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
             else building_draws(chunk, cfg, rngs["building"], s),
         }
         draws["poi"], sub = poi_draws(chunk, cfg, rngs["poi"], s)
-        if fire_scale is not None:
+        if cfg["poi"]["source"] == "reference":
+            draws["poi"], sub = reference_draws(chunk, cfg, s)
+        elif fire_scale is not None:
             fire = fire_draws(chunk, cfg, rngs["poi"], s)
             scale = fire_scale[start : start + len(chunk)]
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()

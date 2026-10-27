@@ -47,6 +47,10 @@ building:
   p_defined_without: 0.2
 
 poi:
+  # constant/fire/model: estimates; reference: exact gaps against USGS structures and ZBP (stages 06, 07).
+  source: estimate
+  establishment_weight: area
+  school_kinds: [schools]
   mode: constant
   # Multiplies the regional POI constant (tuned scalar, decisions log).
   level: 1.0
