@@ -212,3 +212,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Decision informed: new best method and base for the final candidates
 - Public RMSE: pending
 - Submissions used after this one: 16 of 35
+
+## S17 (2026-10-27)
+
+- File: `artifacts/submissions/S17_20261027-2139-03_model-8fffd01.csv`
+- Run ID: `20261027-2139-03_model-8fffd01`
+- Code SHA: `8fffd016d4ccefbfac84f79fd167e9292621296c`
+- Hypothesis: exact transport from TIGER S1100 + S1200 (Zindi staff permission, 27 Oct)
+- Change against current best: S16 with transport.source=tiger: T = gap(Overture named length, TIGER S1100+S1200 length clipped to the tract), defined where TIGER length > 0; TIGER undefined shares match the published rates (0.212, 0.369, 0.284, 0.546 against 0.21, 0.37, 0.28, 0.55); building 0 and POI fire blend as S16
+- Expected direction: a large drop from S14's 0.0745, since transport carries most of the signal and is now computed instead of estimated
+- Decision informed: how much of the remaining error sits in building and POI
+- Public RMSE: pending
+- Submissions used after this one: 17 of 35
