@@ -186,3 +186,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Decision informed: new base for the fire-station structure test
 - Public RMSE: pending
 - Submissions used after this one: 14 of 35
+
+## S15 (2026-10-27)
+
+- File: `artifacts/submissions/S15_20261027-1100-03_model-d43cff5.csv`
+- Run ID: `20261027-1100-03_model-d43cff5`
+- Code SHA: `d43cff5b45872ac1a93f6a0712b7ac451123ae50`
+- Hypothesis: H-P3 POI is driven by fire stations (organisers: fire stations carry the facility half)
+- Change against current best: S14 with poi.mode=fire: POI 0 where Overture has a fire_department place, otherwise the expected gap from uncaptured reference stations spread by population and land area over tracts without one; schools and EMS count as matched where Overture has one; regional POI means equal to S14; transport and building identical
+- Expected direction: below S14 if the true POI is near 0 in tracts with a mapped station and concentrated in tracts without one
+- Decision informed: whether POI keeps tract structure; the S14 to S15 line search sizes the structure
+- Public RMSE: pending
+- Submissions used after this one: 15 of 35
