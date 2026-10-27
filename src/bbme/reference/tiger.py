@@ -28,8 +28,11 @@ def download(cfg: dict, dest: Path) -> list[Path]:
 
 def load_roads(con: duckdb.DuckDBPyConnection, zips: list[Path]) -> None:
     """Create table `tiger`: S1100 and S1200 segments from every state file."""
+    # TIGER ships NAD83 lon/lat; the tract polygons are the same TIGER edges labelled CRS84.
+    # Relabelling (no transform) keeps road and boundary vertices identical, which the
+    # boundary double counting depends on; NAD83 and WGS84 differ by under 2 m in CONUS.
     parts = [
-        f"SELECT LINEARID, MTFCC, geom AS geometry "
+        f"SELECT LINEARID, MTFCC, ST_SetCRS(geom, 'OGC:CRS84') AS geometry "
         f"FROM {db.scan_zipped_vector(z, z.name.replace('.zip', '.shp'))} "
         f"WHERE MTFCC IN ('S1100', 'S1200')"
         for z in zips
