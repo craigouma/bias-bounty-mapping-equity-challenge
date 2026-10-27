@@ -25,6 +25,10 @@ def scan(path: Path | str) -> str:
     return f"read_parquet('{guard.raw(path)}')"
 
 
+def scan_zipped_vector(path: Path | str, member: str) -> str:
+    return f"ST_Read('/vsizip/{guard.raw(path)}/{member}')"
+
+
 def scan_artifact(path: Path | str) -> str:
     return f"read_parquet('{guard.artifact(path)}')"
 
