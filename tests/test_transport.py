@@ -87,3 +87,12 @@ def test_value_scale_multiplies_gaps():
     cfg["transport"]["value_scale"] = 0.5
     half = transport_draws(df, cfg, cal, np.random.default_rng(3), 50)
     assert np.allclose(half.values, base.values * 0.5)
+
+
+def test_tiger_draws_are_exact():
+    from bbme.components.transport import tiger_draws
+
+    df = pd.DataFrame({"road_named_len": [50.0, 200.0, 10.0], "tiger_len_m": [100.0, 100.0, 0.0]})
+    d = tiger_draws(df, 5)
+    assert d.point.tolist() == [0.5, 0.0, 0.0]
+    assert d.p_defined.tolist() == [1.0, 1.0, 0.0]

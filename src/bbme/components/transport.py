@@ -105,3 +105,13 @@ def transport_draws(
     values = gap(overture_length(df, cfg)[:, None], centre * noise)
     values = np.clip(values * t["value_scale"], 0.0, 1.0)
     return Draws(values, bernoulli(rng, p, n_draws), values.mean(axis=1), p)
+
+
+def tiger_draws(df: pd.DataFrame, n_draws: int) -> Draws:
+    """Exact transport gap against TIGER S1100 + S1200 length; undefined where TIGER has none."""
+    reference = df["tiger_len_m"].to_numpy(float)
+    point = np.nan_to_num(gap(df["road_named_len"].to_numpy(float), reference))
+    p = (reference > 0).astype(float)
+    values = np.broadcast_to(point[:, None], (len(df), n_draws))
+    flags = np.broadcast_to((reference > 0)[:, None], (len(df), n_draws))
+    return Draws(values, flags, point, p)

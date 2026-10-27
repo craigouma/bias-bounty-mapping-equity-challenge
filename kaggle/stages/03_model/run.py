@@ -17,6 +17,10 @@ def main(run: dict, code: Path) -> None:
     cfg = apply_overrides(load("model"), run["overrides"])
     features = upstream("features/FEATURES_MANIFEST.json") / "features" / "features.parquet"
     df = pd.read_parquet(guard.artifact(features)).sort_values("GEOID", ignore_index=True)
+    if cfg["transport"]["source"] == "tiger":
+        ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference" / "tiger_tracts.parquet"
+        tiger = pd.read_parquet(guard.artifact(ref))[["GEOID", "tiger_len_m"]]
+        df = df.merge(tiger, on="GEOID", how="left", validate="1:1")
     out = WORKING / "runs" / run["run_id"]
     out.mkdir(parents=True, exist_ok=True)
 
