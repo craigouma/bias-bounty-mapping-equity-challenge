@@ -66,3 +66,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261027-2156-07_establishments-87a0698 | 07_establishments | 87a0698 | defaults | complete | 1.8 | 0.17 |
 | 20261027-2149-06_facilities-76c1cda | 06_facilities | 76c1cda | defaults | error | 26.0 | n/a |
 | 20261027-2145-05_reference-0add93b | 05_reference | 0add93b | defaults | complete | 33.9 | 3.55 |
+| 20261028-0024-03_model-8d8b042 | 03_model | 8d8b042 | transport.source=tiger building.source=microsoft poi.level=0.779 poi.mode=fire poi.fire_strength=0.3 | complete | 1.4 | 0.66 |

@@ -224,3 +224,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Decision informed: how much of the remaining error sits in building and POI
 - Public RMSE: pending
 - Submissions used after this one: 17 of 35
+
+## S18 (2026-10-28)
+
+- File: `artifacts/submissions/S18_20261028-0024-03_model-8d8b042.csv`
+- Run ID: `20261028-0024-03_model-8d8b042`
+- Code SHA: `8d8b04267d09ad98e52724c4e7ed5da15b669905`
+- Hypothesis: exact building gap from Microsoft US Building Footprints (Zindi staff permission, 27 Oct)
+- Change against current best: S17 with building.source=microsoft: B = gap(Overture footprints, Microsoft footprints) per tract by centroid, defined where Microsoft has one (99.99% of tracts); B mean 0.0026; transport TIGER and POI fire blend as S17
+- Expected direction: small gain over S17, since B is close to 0 nearly everywhere
+- Decision informed: building handled exactly; base for the exact POI version
+- Public RMSE: pending
+- Submissions used after this one: 18 of 35
