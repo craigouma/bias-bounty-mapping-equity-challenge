@@ -3,7 +3,7 @@ import pandas as pd
 
 from bbme.components.building import building_draws
 from bbme.components.poi import fire_draws, poi_draws
-from bbme.components.transport import calibrate, transport_draws
+from bbme.components.transport import calibrate, tiger_draws, transport_draws
 from bbme.composite import monte_carlo, plug_in, shrink
 
 POI_SUBS = ["fire", "ems", "schools", "cbp"]
@@ -27,7 +27,8 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
         )
     )
     s = cfg["mc_draws"]
-    cal = calibrate(df, cfg)
+    use_tiger = cfg["transport"]["source"] == "tiger"
+    cal = None if use_tiger else calibrate(df, cfg)
     constant_poi, fire_scale = None, None
     if cfg["poi"]["mode"] in ("constant", "fire"):
         pilot, _ = poi_draws(df, cfg, np.random.default_rng(cfg["seed"] + 1), 200)
@@ -41,7 +42,9 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
         draws = {
-            "transport": transport_draws(chunk, cfg, cal, rngs["transport"], s),
+            "transport": tiger_draws(chunk, s)
+            if use_tiger
+            else transport_draws(chunk, cfg, cal, rngs["transport"], s),
             "building": building_draws(chunk, cfg, rngs["building"], s),
         }
         draws["poi"], sub = poi_draws(chunk, cfg, rngs["poi"], s)
@@ -78,7 +81,8 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     comp = pd.concat(frames, ignore_index=True)
     comp["coverage_gap_score"] = shrink(comp["y_mc"].to_numpy(), cfg["alpha"])
     comp.insert(1, "region", df["region"].to_numpy())
-    return comp, {"calibration": cal.reset_index().to_dict(orient="records")}
+    extra = {} if cal is None else {"calibration": cal.reset_index().to_dict(orient="records")}
+    return comp, extra
 
 
 def submission_frame(comp: pd.DataFrame) -> pd.DataFrame:
