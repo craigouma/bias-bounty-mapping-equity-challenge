@@ -100,8 +100,13 @@ external_reference:
     ems: [74034]
     schools: [73002, 73003, 73004, 73005]
     college: [73006]
+  zbp_url: https://www2.census.gov/programs-surveys/cbp/datasets/2023/zbp23totals.zip
+  zcta_tract_url: https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_tract20_natl.txt
   allowlist:
     - '^tl_2025_\d{2}_prisecroads\.zip$'
+    - '^zbp\d{2}totals\.zip$'
+    - '^tab20_zcta520_tract20_natl\.txt$'
+    - '^establishment_reference_tracts\.parquet$'
     - '^STRUCT_[A-Za-z_]+_State_GPKG\.zip$'
     - '^facility_reference_tracts\.parquet$'
     - '^(Arizona|NewMexico|California|Oklahoma|Texas|Washington)\.geojson\.zip$'
