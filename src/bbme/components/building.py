@@ -81,3 +81,14 @@ def building_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draw
         values = np.where((ref > 0)[:, None], drawn, values)
         point = values.mean(axis=1)
     return Draws(values, bernoulli(rng, p, n_draws), point, p)
+
+
+def microsoft_draws(df: pd.DataFrame, cfg: dict, n_draws: int) -> Draws:
+    """Exact building gap against Microsoft US footprints; undefined where it has none."""
+    count = cfg["building"]["count"]
+    overture = df["bld_n" if count == "centroid" else "bld_n_intersects"].to_numpy(float)
+    reference = df[f"ms_n_{count}"].to_numpy(float)
+    point = np.nan_to_num(gap(overture, reference))
+    values = np.broadcast_to(point[:, None], (len(df), n_draws))
+    flags = np.broadcast_to((reference > 0)[:, None], (len(df), n_draws))
+    return Draws(values, flags, point, (reference > 0).astype(float))

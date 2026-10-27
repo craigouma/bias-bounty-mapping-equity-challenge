@@ -153,3 +153,9 @@ def test_permitted_external_reference_files_open():
 def test_coverage_gap_files_always_rejected(name):
     with pytest.raises(guard.ForbiddenDataError):
         guard.raw(name)
+
+
+def test_permitted_building_reference_files_open():
+    assert guard.raw("external/Texas.geojson.zip").name == "Texas.geojson.zip"
+    with pytest.raises(guard.ForbiddenDataError):
+        guard.raw("external/Florida-footprints.geojson.zip")
