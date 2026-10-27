@@ -1,6 +1,7 @@
 import urllib.request
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from bbme import guard
@@ -46,11 +47,11 @@ def tract_establishments(zbp: pd.Series, relation: Path, tracts: pd.DataFrame) -
     rel["est"] = rel["zcta"].map(zbp).fillna(0)
     rel = rel.merge(tracts[["GEOID", "pop_total"]], on="GEOID", how="left").fillna({"pop_total": 0})
     land = rel["AREALAND_PART"].clip(lower=0)
-    rel["w_area"] = land / rel["AREALAND_ZCTA5_20"].replace(0, pd.NA)
-    rel["w_pop"] = rel["pop_total"] * land / rel["AREALAND_TRACT_20"].replace(0, pd.NA)
-    rel["w_pop"] = rel["w_pop"] / rel.groupby("zcta")["w_pop"].transform("sum").replace(0, pd.NA)
-    rel["est_area"] = (rel["est"] * rel["w_area"]).astype(float).fillna(0)
-    rel["est_pop"] = (rel["est"] * rel["w_pop"]).astype(float).fillna(0)
+    rel["w_area"] = land / rel["AREALAND_ZCTA5_20"].replace(0, np.nan)
+    rel["w_pop"] = rel["pop_total"] * land / rel["AREALAND_TRACT_20"].replace(0, np.nan)
+    rel["w_pop"] = rel["w_pop"] / rel.groupby("zcta")["w_pop"].transform("sum").replace(0, np.nan)
+    rel["est_area"] = (rel["est"] * rel["w_area"]).fillna(0)
+    rel["est_pop"] = (rel["est"] * rel["w_pop"]).fillna(0)
     out = rel.groupby("GEOID", as_index=False)[["est_area", "est_pop"]].sum()
     out = (
         tracts[["GEOID", "region"]]
