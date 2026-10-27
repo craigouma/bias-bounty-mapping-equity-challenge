@@ -174,3 +174,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.078012379
 - Submissions used after this one: 13 of 35
 - Result note: line search t* = -0.39 along S07 to S13: building baseline optimum below 0, set to 0, predicted 0.0749
+
+## S14 (2026-10-27)
+
+- File: `artifacts/submissions/S14_20261027-1001-03_model-c3c5417.csv`
+- Run ID: `20261027-1001-03_model-c3c5417`
+- Code SHA: `c3c541776253aaff68a29f718cce186b17540d9b`
+- Hypothesis: combined level optimum (D032)
+- Change against current best: S07 with transport.value_scale=1.15, building.baseline_gap=0 and poi.level=0.779, each at its line-search optimum; mean 0.054, rms 0.074
+- Expected direction: about 0.0745 from the quadratic model fitted to S05, S07, S12 and S13
+- Decision informed: new base for the fire-station structure test
+- Public RMSE: pending
+- Submissions used after this one: 14 of 35
