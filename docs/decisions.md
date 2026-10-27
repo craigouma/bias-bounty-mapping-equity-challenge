@@ -202,5 +202,6 @@ are rescaled to S14's constant so S14 against S15 isolates the structure.
 
 **D034. S14 is the best method; H-P3 rejected.** S14 (combined level optimum) scored 0.074539,
 matching the 0.0745 predicted from S05, S07, S12 and S13. S15 (fire-station POI structure at the
-same regional level) scored 0.077161; the line search along S14 to S15 confirms the optimum is at
-or below zero structure. POI stays a regional constant.
+same regional level) scored 0.077161, but the line search along S14 to S15 puts the optimum at
+t* = 0.30 (predicted 0.07395): the fire structure carries signal at about 30% of S15's strength.
+`poi.fire_strength` (tuned scalar 5) blends the fire model into the regional constant.
