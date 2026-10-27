@@ -200,3 +200,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.077160715
 - Submissions used after this one: 15 of 35
 - Result note: fire-station POI structure loses against S14
+
+## S16 (2026-10-27)
+
+- File: `artifacts/submissions/S16_20261027-2109-03_model-8d5f2ee.csv`
+- Run ID: `20261027-2109-03_model-8d5f2ee`
+- Code SHA: `8d5f2eed018355d450cc89e9dc679731be3dac40`
+- Hypothesis: H-P3 at its line-search strength (poi.fire_strength=0.3)
+- Change against current best: S14 with 30% of the fire-station POI structure blended into the regional constant; equals S14 + 0.300 x (S15 - S14) to rms 0.0003
+- Expected direction: about 0.0740 from the S14 to S15 parabola
+- Decision informed: new best method and base for the final candidates
+- Public RMSE: pending
+- Submissions used after this one: 16 of 35
