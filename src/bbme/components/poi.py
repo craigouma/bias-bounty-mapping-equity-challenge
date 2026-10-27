@@ -74,7 +74,8 @@ def fire_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: i
 
     Reference fire stations = the tract's Overture fire places plus uncaptured stations,
     ~ Poisson(lambda0); the region's uncaptured total is `fire_uncaptured` per Overture fire
-    place, spread half by population and half by land area. Schools and EMS are defined with
+    place, spread half by population and half by land area over the tracts with no Overture
+    fire place (a tract whose station is mapped is served). Schools and EMS are defined with
     gap 0 where Overture has one and undefined elsewhere (Overture over-covers schools; EMS is
     close to one to one). The establishments half is defined with gap 0 wherever people live.
     P is the mean of the defined halves, the facilities half the mean of the defined types.
@@ -82,7 +83,11 @@ def fire_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draws: i
     p = cfg["poi"]
     n = len(df)
     fire = df["poi_fire"].to_numpy(float)
-    lam0 = p["fire_uncaptured"] * facility_prior(df, "fire", "pop_area")
+    none = df["poi_fire"] == 0
+    pop = _share(df["pop_total"].where(none, 0), df["region"]).fillna(0)
+    area = _share(df["ALAND"].where(none, 0), df["region"]).fillna(0)
+    total = df["poi_fire"].groupby(df["region"]).transform("sum")
+    lam0 = (p["fire_uncaptured"] * total * (0.5 * pop + 0.5 * area)).to_numpy()
     ref = fire[:, None] + rng.poisson(lam0[:, None], (n, n_draws))
     fire_def = ref >= 1
     fire_gap = np.nan_to_num(gap(fire[:, None], ref))
