@@ -84,3 +84,13 @@ denylist:
 sync:
   workers: 8
   attempts: 3
+
+# Public reference sources permitted by Zindi staff on 27 Oct 2026. Only these file names are
+# admitted; organiser coverage-gap files stay forbidden regardless.
+external_reference:
+  enabled: true
+  tiger_prisecroads_url: https://www2.census.gov/geo/tiger/TIGER2025/PRISECROADS/tl_2025_{state}_prisecroads.zip
+  states: ['04', '06', '35', '40', '48', '53']
+  allowlist:
+    - '^tl_2025_\d{2}_prisecroads\.zip$'
+always_denied: [coverage-gap, coverage_gap]

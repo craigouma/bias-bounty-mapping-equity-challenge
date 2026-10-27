@@ -1,7 +1,9 @@
 """Forbidden-data guard.
 
-The removed reference layers (TIGER roads, Microsoft footprints, HIFLD / USGS structures,
-CBP establishments) and any organiser coverage-gap file must never be opened. Every raw
+Organiser coverage-gap files must never be opened. The removed reference layers (TIGER roads,
+Microsoft footprints, HIFLD / USGS structures, CBP establishments) are admitted only under the
+file names listed in `external_reference` in configs/data.yaml (permitted by Zindi staff,
+27 Oct 2026). Every raw
 input passes `raw()`, which admits only the provided file names; derived artifacts pass
 `artifact()`, which rejects denylisted names. A provided name that happens to contain a
 denylisted token (`usgs-combined-tract-table`, a permitted wildfire stratum) is admitted
@@ -33,14 +35,18 @@ def _rules() -> tuple[re.Pattern, tuple[str, ...]]:
         "{table}": alternation(cfg["strata_tables"]),
     }
     patterns = []
-    for pattern in cfg["allowlist"]:
+    external = cfg.get("external_reference", {})
+    extra = external.get("allowlist", []) if external.get("enabled") else []
+    for pattern in [*cfg["allowlist"], *extra]:
         for key, value in subs.items():
             pattern = pattern.replace(key, value)
         patterns.append(f"(?:{pattern})")
-    return re.compile("|".join(patterns)), tuple(cfg["denylist"])
+    return re.compile("|".join(patterns)), tuple(cfg["denylist"]), tuple(cfg["always_denied"])
 
 
 def is_allowed(name: str) -> bool:
+    if any(token in name.lower() for token in _rules()[2]):
+        return False
     return _rules()[0].fullmatch(name) is not None
 
 
@@ -49,7 +55,9 @@ def is_denied(path: str | Path) -> bool:
     if parts and is_allowed(parts[-1]):
         parts = parts[:-1]
     text = "/".join(parts).lower()
-    return any(token in text for token in _rules()[1])
+    return any(token in text for token in _rules()[1]) or any(
+        token in str(path).lower() for token in _rules()[2]
+    )
 
 
 def raw(path: str | Path) -> Path:
