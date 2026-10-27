@@ -13,6 +13,8 @@ published_undefined_rate:
 undefined_other_components: 0.01
 
 transport:
+  # proxy: route-network estimate; tiger: exact gap against TIGER S1100 + S1200 (stage 05).
+  source: proxy
   # A = interstate, US and state routes; B adds secondary state, toll and business routes.
   # Tracts on A (or with motorway or trunk) are the high tier, tracts on B only the mid tier.
   reference_set: A
