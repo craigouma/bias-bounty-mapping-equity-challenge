@@ -59,3 +59,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261027-1100-03_model-d43cff5 | 03_model | d43cff5 | transport.value_scale=1.15 building.baseline_gap=0 poi.level=0.779 poi.mode=fire | complete | 1.3 | 0.65 |
 | 20261027-2109-03_model-8d5f2ee | 03_model | 8d5f2ee | transport.value_scale=1.15 building.baseline_gap=0 poi.level=0.779 poi.mode=fire poi.fire_strength=0.3 | complete | 1.4 | 0.71 |
 | 20261027-2130-05_reference-26817ef | 05_reference | 26817ef | defaults | error | 1.2 | n/a |
+| 20261027-2132-05_reference-5906e20 | 05_reference | 5906e20 | defaults | complete | 2.5 | 0.62 |
