@@ -1,5 +1,6 @@
 import shutil
 import urllib.request
+import zipfile
 from pathlib import Path
 
 import duckdb
@@ -27,7 +28,21 @@ def download(cfg: dict, dest: Path) -> list[Path]:
     return paths
 
 
-def load_points(con: duckdb.DuckDBPyConnection, zips: list[Path], fcodes: dict) -> None:
+def extract(zips: list[Path], dest: Path) -> list[Path]:
+    """Unzip each state GeoPackage; GDAL needs random access a deflated zip member lacks."""
+    out = []
+    for z in zips:
+        with zipfile.ZipFile(z) as archive:
+            member = next(n for n in archive.namelist() if n.endswith(".gpkg"))
+            target = dest / Path(member).name
+            with archive.open(member) as src, target.open("wb") as f:
+                shutil.copyfileobj(src, f, 8 * 1024 * 1024)
+        z.unlink()
+        out.append(target)
+    return out
+
+
+def load_points(con: duckdb.DuckDBPyConnection, gpkgs: list[Path], fcodes: dict) -> None:
     """Create table `facility`: structure points of the configured types, labelled by type."""
     case = " ".join(
         f"WHEN fcode IN ({', '.join(str(c) for c in codes)}) THEN '{name}'"
@@ -36,9 +51,8 @@ def load_points(con: duckdb.DuckDBPyConnection, zips: list[Path], fcodes: dict) 
     every = ", ".join(str(c) for codes in fcodes.values() for c in codes)
     parts = [
         f"SELECT CASE {case} END AS kind, fcode, ST_SetCRS(Shape, 'OGC:CRS84') AS geometry "
-        f"FROM {db.scan_zipped_vector(z, z.name.replace('.zip', '.gpkg'), 'Struct_Point')} "
-        f"WHERE fcode IN ({every})"
-        for z in zips
+        f"FROM {db.scan_vector(g, 'Struct_Point')} WHERE fcode IN ({every})"
+        for g in gpkgs
     ]
     con.sql(f"CREATE OR REPLACE TABLE facility AS {' UNION ALL '.join(parts)}")
 

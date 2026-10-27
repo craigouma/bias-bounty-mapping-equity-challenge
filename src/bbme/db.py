@@ -30,6 +30,11 @@ def scan_zipped_vector(path: Path | str, member: str, layer: str | None = None) 
     return f"ST_Read('/vsizip/{guard.raw(path)}/{member}'{option})"
 
 
+def scan_vector(path: Path | str, layer: str | None = None) -> str:
+    option = f", layer='{layer}'" if layer else ""
+    return f"ST_Read('{guard.raw(path)}'{option})"
+
+
 def scan_artifact(path: Path | str) -> str:
     return f"read_parquet('{guard.artifact(path)}')"
 
