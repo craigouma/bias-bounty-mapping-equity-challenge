@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from bbme.components.building import building_draws
-from bbme.components.poi import poi_draws
+from bbme.components.poi import fire_draws, poi_draws
 from bbme.components.transport import calibrate, transport_draws
 from bbme.composite import monte_carlo, plug_in, shrink
 
@@ -16,7 +16,8 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     chunk in row order: a rerun with the same config and features reproduces every value, and
     changing one component's estimator never moves another component's draws. With
     `poi.mode: constant` (ablation H-P0) every tract's POI value is its region's mean POI
-    point estimate, while POI definedness is unchanged.
+    point estimate, while POI definedness is unchanged. With `poi.mode: fire` POI follows the
+    fire-station model, rescaled per region so its mean equals that same constant.
     """
     rngs = dict(
         zip(
@@ -27,11 +28,15 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     )
     s = cfg["mc_draws"]
     cal = calibrate(df, cfg)
-    constant_poi = None
-    if cfg["poi"]["mode"] == "constant":
+    constant_poi, fire_scale = None, None
+    if cfg["poi"]["mode"] in ("constant", "fire"):
         pilot, _ = poi_draws(df, cfg, np.random.default_rng(cfg["seed"] + 1), 200)
         constant_poi = pd.Series(pilot.point).groupby(df["region"].to_numpy()).transform("mean")
         constant_poi = (constant_poi * cfg["poi"]["level"]).clip(0, 1)
+    if cfg["poi"]["mode"] == "fire":
+        fire_pilot = fire_draws(df, cfg, np.random.default_rng(cfg["seed"] + 2), 200)
+        fire_mean = pd.Series(fire_pilot.point).groupby(df["region"].to_numpy()).transform("mean")
+        fire_scale = (constant_poi / fire_mean.replace(0, np.nan)).fillna(0).to_numpy()
     frames = []
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
@@ -40,7 +45,13 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
             "building": building_draws(chunk, cfg, rngs["building"], s),
         }
         draws["poi"], sub = poi_draws(chunk, cfg, rngs["poi"], s)
-        if constant_poi is not None:
+        if fire_scale is not None:
+            fire = fire_draws(chunk, cfg, rngs["poi"], s)
+            scale = fire_scale[start : start + len(chunk)]
+            fire.values = np.clip(fire.values * scale[:, None], 0, 1)
+            fire.point = np.clip(fire.point * scale, 0, 1)
+            draws["poi"] = fire
+        elif constant_poi is not None:
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
             draws["poi"].values = np.broadcast_to(level[:, None], (len(chunk), s))
             draws["poi"].point = level

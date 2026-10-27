@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from bbme import db
 from bbme.config import load
@@ -68,3 +69,20 @@ def test_component_streams_are_independent(tmp_path):
     model["building"]["reference"] = "usfs"
     changed, _ = predict(df, model)
     assert changed["transport_point"].equals(base["transport_point"])
+
+
+def test_fire_mode_keeps_regional_poi_mean(tmp_path):
+    raw = build_raw(tmp_path / "raw")
+    cfg = {
+        "data": {"regions": [REGION]},
+        "features": load("features"),
+        "poi": load("poi_categories"),
+    }
+    df = build(db.connect(), raw, cfg)
+    model = load("model")
+    model["mc_draws"] = 400
+    model["published_undefined_rate"] = {REGION: 0.5}
+    constant, _ = predict(df, model)
+    model["poi"]["mode"] = "fire"
+    fire, _ = predict(df, model)
+    assert fire["poi_point"].mean() == pytest.approx(constant["poi_point"].mean(), rel=0.15)
