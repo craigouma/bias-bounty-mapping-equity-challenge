@@ -108,6 +108,7 @@ external_reference:
     - '^tab20_zcta520_tract20_natl\.txt$'
     - '^establishment_reference_tracts\.parquet$'
     - '^STRUCT_[A-Za-z_]+_State_GPKG\.zip$'
+    - '^STRUCT_[A-Za-z_]+_State_GPKG\.gpkg$'
     - '^facility_reference_tracts\.parquet$'
     - '^(Arizona|NewMexico|California|Oklahoma|Texas|Washington)\.geojson\.zip$'
     - '^building_reference_tracts\.parquet$'
