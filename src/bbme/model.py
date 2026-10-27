@@ -50,12 +50,16 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
             scale = fire_scale[start : start + len(chunk)]
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
             usable = np.isfinite(scale)
+            k = cfg["poi"]["fire_strength"]
+            scaled = np.clip(fire.values * np.nan_to_num(scale)[:, None], 0, 1)
             fire.values = np.where(
-                usable[:, None],
-                np.clip(fire.values * np.nan_to_num(scale)[:, None], 0, 1),
-                level[:, None],
+                usable[:, None], k * scaled + (1 - k) * level[:, None], level[:, None]
             )
-            fire.point = np.where(usable, np.clip(fire.point * np.nan_to_num(scale), 0, 1), level)
+            fire.point = np.where(
+                usable,
+                k * np.clip(fire.point * np.nan_to_num(scale), 0, 1) + (1 - k) * level,
+                level,
+            )
             draws["poi"] = fire
         elif constant_poi is not None:
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
