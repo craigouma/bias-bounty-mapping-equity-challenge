@@ -145,8 +145,9 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S07 with transport.unclipped=true on both the Overture side and the reference proxy (the 25 m boundary increment kept); POI and building identical; mean 0.057, rms 0.067
 - Expected direction: scaled rmse below S07's 0.0752 if per-tract lengths were computed with an intersects join and no clipping
 - Decision informed: how per-tract road length is measured, which every transport feature depends on
-- Public RMSE: pending
+- Public RMSE: 0.077658872
 - Submissions used after this one: 11 of 35
+- Result note: scaled 0.0773; line search t* = -0.21 along S07 to S11: H-T5 rejected, lengths stay clipped
 
 ## S12 (2026-10-26)
 
@@ -157,8 +158,9 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S07 with every transport gap draw multiplied by 1.5 and clipped to 1; POI and building identical; mean 0.073
 - Expected direction: with S07 it fixes the transport level by line search; S10's t* = -0.40 suggests the optimum lies above 1
 - Decision informed: transport.value_scale for the combined candidate
-- Public RMSE: pending
+- Public RMSE: 0.076317659
 - Submissions used after this one: 12 of 35
+- Result note: line search t* = 0.30 along S07 to S12: transport.value_scale optimum 1.15, predicted 0.0749
 
 ## S13 (2026-10-26)
 
@@ -169,5 +171,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S07 with the building baseline gap at 0.05 instead of 0.01; transport and POI identical; mean 0.078
 - Expected direction: with S07 it fixes the building level by line search
 - Decision informed: building.baseline_gap for the combined candidate
-- Public RMSE: pending
+- Public RMSE: 0.078012379
 - Submissions used after this one: 13 of 35
+- Result note: line search t* = -0.39 along S07 to S13: building baseline optimum below 0, set to 0, predicted 0.0749
