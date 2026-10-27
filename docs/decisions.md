@@ -199,3 +199,8 @@ POI to 0 where Overture has a fire_department place and, elsewhere, to the expec
 uncaptured reference stations (0.5 per Overture fire place, spread by population and land area
 over tracts without one). Schools and EMS count as matched where Overture has one. Region means
 are rescaled to S14's constant so S14 against S15 isolates the structure.
+
+**D034. S14 is the best method; H-P3 rejected.** S14 (combined level optimum) scored 0.074539,
+matching the 0.0745 predicted from S05, S07, S12 and S13. S15 (fire-station POI structure at the
+same regional level) scored 0.077161; the line search along S14 to S15 confirms the optimum is at
+or below zero structure. POI stays a regional constant.

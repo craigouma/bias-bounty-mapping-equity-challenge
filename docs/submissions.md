@@ -184,8 +184,9 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S07 with transport.value_scale=1.15, building.baseline_gap=0 and poi.level=0.779, each at its line-search optimum; mean 0.054, rms 0.074
 - Expected direction: about 0.0745 from the quadratic model fitted to S05, S07, S12 and S13
 - Decision informed: new base for the fire-station structure test
-- Public RMSE: pending
+- Public RMSE: 0.074538803
 - Submissions used after this one: 14 of 35
+- Result note: best so far; predicted 0.0745 by the quadratic model
 
 ## S15 (2026-10-27)
 
@@ -196,5 +197,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S14 with poi.mode=fire: POI 0 where Overture has a fire_department place, otherwise the expected gap from uncaptured reference stations spread by population and land area over tracts without one; schools and EMS count as matched where Overture has one; regional POI means equal to S14; transport and building identical
 - Expected direction: below S14 if the true POI is near 0 in tracts with a mapped station and concentrated in tracts without one
 - Decision informed: whether POI keeps tract structure; the S14 to S15 line search sizes the structure
-- Public RMSE: pending
+- Public RMSE: 0.077160715
 - Submissions used after this one: 15 of 35
+- Result note: fire-station POI structure loses against S14
