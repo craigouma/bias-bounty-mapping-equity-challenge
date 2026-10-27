@@ -191,3 +191,11 @@ to S07, `poi.level` = 0.779 (tuned scalar 2). Unclipped lengths (S11, H-T5) t* =
 lengths stay clipped. Four of six scalars are used (boundary distance, POI level, transport level,
 building level); the global output scale and one more remain. No further level probes: the next
 gains must come from structure, starting with fire stations (D033).
+
+**D033. Fire-station POI model (H-P3).** The organisers' README states that fire stations carry
+the facility half and EMS rarely binds; S07 showed the establishments half is about 0; v1's
+facility model failed mainly through schools, which Overture over-covers. `poi.mode: fire` sets
+POI to 0 where Overture has a fire_department place and, elsewhere, to the expected gap from
+uncaptured reference stations (0.5 per Overture fire place, spread by population and land area
+over tracts without one). Schools and EMS count as matched where Overture has one. Region means
+are rescaled to S14's constant so S14 against S15 isolates the structure.
