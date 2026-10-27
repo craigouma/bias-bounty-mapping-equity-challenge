@@ -93,4 +93,5 @@ external_reference:
   states: ['04', '06', '35', '40', '48', '53']
   allowlist:
     - '^tl_2025_\d{2}_prisecroads\.zip$'
+    - '^tiger_tracts\.parquet$'
 always_denied: [coverage-gap, coverage_gap]

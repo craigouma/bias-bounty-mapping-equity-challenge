@@ -139,6 +139,7 @@ def test_scored_pipeline_never_imports_analysis():
 
 def test_permitted_external_reference_files_open():
     assert guard.raw("external/tl_2025_48_prisecroads.zip").name == "tl_2025_48_prisecroads.zip"
+    assert guard.artifact("/kaggle/input/bbme-05-reference/reference/tiger_tracts.parquet")
 
 
 @pytest.mark.parametrize(
