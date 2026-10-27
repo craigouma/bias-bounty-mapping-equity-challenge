@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from bbme.components.building import building_draws
+from bbme.components.building import building_draws, microsoft_draws
 from bbme.components.poi import fire_draws, poi_draws
 from bbme.components.transport import calibrate, tiger_draws, transport_draws
 from bbme.composite import monte_carlo, plug_in, shrink
@@ -45,7 +45,9 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
             "transport": tiger_draws(chunk, s)
             if use_tiger
             else transport_draws(chunk, cfg, cal, rngs["transport"], s),
-            "building": building_draws(chunk, cfg, rngs["building"], s),
+            "building": microsoft_draws(chunk, cfg, s)
+            if cfg["building"]["source"] == "microsoft"
+            else building_draws(chunk, cfg, rngs["building"], s),
         }
         draws["poi"], sub = poi_draws(chunk, cfg, rngs["poi"], s)
         if fire_scale is not None:

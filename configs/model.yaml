@@ -30,6 +30,9 @@ transport:
   fallback_sigma: 1.0
 
 building:
+  # proxy: baseline estimate; microsoft: exact gap against Microsoft US footprints (stage 05).
+  source: proxy
+  count: centroid
   baseline_gap: 0.01
   # The per-unit floor flags metro apartment tracts, where few footprints per unit is real.
   use_hu_deficit: false

@@ -21,6 +21,10 @@ def main(run: dict, code: Path) -> None:
         ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference" / "tiger_tracts.parquet"
         tiger = pd.read_parquet(guard.artifact(ref))[["GEOID", "tiger_len_m"]]
         df = df.merge(tiger, on="GEOID", how="left", validate="1:1")
+    if cfg["building"]["source"] == "microsoft":
+        ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference"
+        ms = pd.read_parquet(guard.artifact(ref / "building_reference_tracts.parquet"))
+        df = df.merge(ms.drop(columns="region"), on="GEOID", how="left", validate="1:1")
     out = WORKING / "runs" / run["run_id"]
     out.mkdir(parents=True, exist_ok=True)
 

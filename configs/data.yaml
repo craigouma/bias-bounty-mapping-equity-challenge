@@ -91,7 +91,11 @@ external_reference:
   enabled: true
   tiger_prisecroads_url: https://www2.census.gov/geo/tiger/TIGER2025/PRISECROADS/tl_2025_{state}_prisecroads.zip
   states: ['04', '06', '35', '40', '48', '53']
+  building_url: https://minedbuildings.z5.web.core.windows.net/legacy/usbuildings-v2/{state}.geojson.zip
+  building_states: [Arizona, NewMexico, California, Oklahoma, Texas, Washington]
   allowlist:
     - '^tl_2025_\d{2}_prisecroads\.zip$'
+    - '^(Arizona|NewMexico|California|Oklahoma|Texas|Washington)\.geojson\.zip$'
+    - '^building_reference_tracts\.parquet$'
     - '^tiger_tracts\.parquet$'
 always_denied: [coverage-gap, coverage_gap]

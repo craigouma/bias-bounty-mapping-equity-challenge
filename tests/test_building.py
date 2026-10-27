@@ -51,3 +51,18 @@ def test_usfs_reference_learns_ratio_and_flags_shortfall():
     d = building_draws(df, cfg, np.random.default_rng(0), 200)
     assert d.point[0] == pytest.approx(0.9, abs=0.01)
     assert d.point[5] == pytest.approx(0.0, abs=0.01)
+
+
+def test_microsoft_draws_are_exact():
+    from bbme.components.building import microsoft_draws
+
+    df = pd.DataFrame(
+        {
+            "bld_n": [5.0, 20.0, 3.0],
+            "bld_n_intersects": [6.0, 20.0, 3.0],
+            "ms_n_centroid": [10.0, 10.0, 0.0],
+        }
+    )
+    d = microsoft_draws(df, load("model"), 4)
+    assert d.point.tolist() == [0.5, 0.0, 0.0]
+    assert d.p_defined.tolist() == [1.0, 1.0, 0.0]
