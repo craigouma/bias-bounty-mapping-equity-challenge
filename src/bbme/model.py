@@ -36,7 +36,7 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
     if cfg["poi"]["mode"] == "fire":
         fire_pilot = fire_draws(df, cfg, np.random.default_rng(cfg["seed"] + 2), 200)
         fire_mean = pd.Series(fire_pilot.point).groupby(df["region"].to_numpy()).transform("mean")
-        fire_scale = (constant_poi / fire_mean.replace(0, np.nan)).fillna(0).to_numpy()
+        fire_scale = (constant_poi / fire_mean.replace(0, np.nan)).to_numpy()
     frames = []
     for start in range(0, len(df), cfg["chunk_rows"]):
         chunk = df.iloc[start : start + cfg["chunk_rows"]].reset_index(drop=True)
@@ -48,8 +48,14 @@ def predict(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
         if fire_scale is not None:
             fire = fire_draws(chunk, cfg, rngs["poi"], s)
             scale = fire_scale[start : start + len(chunk)]
-            fire.values = np.clip(fire.values * scale[:, None], 0, 1)
-            fire.point = np.clip(fire.point * scale, 0, 1)
+            level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
+            usable = np.isfinite(scale)
+            fire.values = np.where(
+                usable[:, None],
+                np.clip(fire.values * np.nan_to_num(scale)[:, None], 0, 1),
+                level[:, None],
+            )
+            fire.point = np.where(usable, np.clip(fire.point * np.nan_to_num(scale), 0, 1), level)
             draws["poi"] = fire
         elif constant_poi is not None:
             level = constant_poi.iloc[start : start + len(chunk)].to_numpy()
