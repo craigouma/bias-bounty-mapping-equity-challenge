@@ -238,3 +238,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.05461568
 - Submissions used after this one: 18 of 35
 - Result note: exact Microsoft buildings worse than S17: line search t* = -0.84; the organisers' footprint release differs from the public US v2 file, building stays 0
+
+## S19 (2026-10-28)
+
+- File: `artifacts/submissions/S19_20261028-0947-03_model-672866c.csv`
+- Run ID: `20261028-0947-03_model-672866c`
+- Code SHA: `672866c709f24ae75954ac55c3f66d2d1d04df9a`
+- Hypothesis: exact facility gaps from USGS National Structures (fire 74026, schools 73002-73005)
+- Change against current best: S17 with poi.source=reference: fire and school gaps against USGS structure counts per tract, EMS left out (the ambulance layer breaks the S01 bound) and the establishments half at gap 0; transport TIGER, building 0; mean 0.054, rms 0.101 (true rms 0.107)
+- Expected direction: below S17's 0.0491 if the organisers' fire and school reference matches USGS structures
+- Decision informed: whether POI is now exact; the remaining gap to the bound points at EMS or establishments
+- Public RMSE: pending
+- Submissions used after this one: 19 of 35
