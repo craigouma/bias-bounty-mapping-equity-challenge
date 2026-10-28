@@ -51,6 +51,7 @@ poi:
   source: estimate
   establishment_weight: area
   school_kinds: [schools]
+  reference_types: [fire, ems, schools]
   mode: constant
   # Multiplies the regional POI constant (tuned scalar, decisions log).
   level: 1.0

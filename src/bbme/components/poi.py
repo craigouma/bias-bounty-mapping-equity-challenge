@@ -128,8 +128,9 @@ def reference_draws(
     sub = {}
     for name, (overture, reference) in pairs.items():
         sub[name] = (np.nan_to_num(gap(overture, reference)), (reference > 0).astype(float))
-    fac_gap = np.stack([sub[t][0] for t in ["fire", "ems", "schools"]], 1)
-    fac_def = np.stack([sub[t][1] > 0 for t in ["fire", "ems", "schools"]], 1)
+    types = p["reference_types"]
+    fac_gap = np.stack([sub[t][0] for t in types], 1)
+    fac_def = np.stack([sub[t][1] > 0 for t in types], 1)
     facilities, fac_any = mean_defined(fac_gap, fac_def, axis=1)
     halves = np.stack([facilities, sub["cbp"][0]], 1)
     halves_def = np.stack([fac_any, sub["cbp"][1] > 0], 1)
