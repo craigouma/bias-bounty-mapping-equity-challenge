@@ -261,5 +261,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S19 with poi.establishment_weight=places: E = gap(Overture places, ZBP 2023 establishments apportioned to tracts by place share within each ZCTA); positive in 1.4% of tracts; rms 0.1031 (true 0.107, S19 0.1014)
 - Expected direction: small gain over S19's 0.0300 if the organisers apportioned establishments by business addresses
 - Decision informed: the establishments half; whether the remaining variance sits there
-- Public RMSE: pending
+- Public RMSE: 0.031525136
 - Submissions used after this one: 20 of 35
+- Result note: worse than S19; line search t* = 0.24 along S19 to S20 (predicted 0.02978): establishment gaps exist but weaker or placed differently
