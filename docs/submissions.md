@@ -248,5 +248,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S17 with poi.source=reference: fire and school gaps against USGS structure counts per tract, EMS left out (the ambulance layer breaks the S01 bound) and the establishments half at gap 0; transport TIGER, building 0; mean 0.054, rms 0.101 (true rms 0.107)
 - Expected direction: below S17's 0.0491 if the organisers' fire and school reference matches USGS structures
 - Decision informed: whether POI is now exact; the remaining gap to the bound points at EMS or establishments
-- Public RMSE: pending
+- Public RMSE: 0.029960976
 - Submissions used after this one: 19 of 35
+- Result note: rank 21; scale 1.016; line search t* = 0.93 along S17 to S19
