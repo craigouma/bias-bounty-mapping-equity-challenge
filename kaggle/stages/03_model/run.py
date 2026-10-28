@@ -24,10 +24,13 @@ def main(run: dict, code: Path) -> None:
     if cfg["poi"]["source"] == "reference":
         fac = upstream("facilities/FACILITY_MANIFEST.json") / "facilities"
         est = upstream("establishments/ESTABLISHMENT_MANIFEST.json") / "establishments"
-        for path in [
-            fac / "facility_reference_tracts.parquet",
-            est / "establishment_reference_tracts.parquet",
-        ]:
+        paths = [fac / "facility_reference_tracts.parquet"]
+        paths.append(est / "establishment_reference_tracts.parquet")
+        if cfg["poi"]["facility_source"] == "hifld":
+            paths.append(
+                upstream("hifld/HIFLD_MANIFEST.json") / "hifld" / "hifld_reference_tracts.parquet"
+            )
+        for path in paths:
             table = pd.read_parquet(guard.artifact(path)).drop(columns="region")
             df = df.merge(table, on="GEOID", how="left", validate="1:1")
     if cfg["building"]["source"] == "microsoft":

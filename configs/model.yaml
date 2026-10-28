@@ -52,6 +52,8 @@ poi:
   establishment_weight: area
   school_kinds: [schools]
   reference_types: [fire, ems, schools]
+  # usgs: National Structures 2026 (stage 06); hifld: HIFLD Open archive, NCES schools (stage 08).
+  facility_source: usgs
   # Hold the EMS gap at 0 where defined (organisers: EMS is close to 1:1 and rarely binds).
   ems_gap_zero: false
   mode: constant

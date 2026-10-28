@@ -116,9 +116,14 @@ def reference_draws(
     """
     p = cfg["poi"]
     n = len(df)
-    school_ref = sum(df[f"ref_{k}"].to_numpy(float) for k in p["school_kinds"])
+    if p["facility_source"] == "hifld":
+        fire_ref = df["hifld_fire_stations"].to_numpy(float)
+        school_ref = (df["hifld_public_schools"] + df["hifld_private_schools"]).to_numpy(float)
+    else:
+        fire_ref = df["ref_fire"].to_numpy(float)
+        school_ref = sum(df[f"ref_{k}"].to_numpy(float) for k in p["school_kinds"])
     pairs = {
-        "fire": (df["poi_fire"].to_numpy(float), df["ref_fire"].to_numpy(float)),
+        "fire": (df["poi_fire"].to_numpy(float), fire_ref),
         "ems": (df["poi_ems"].to_numpy(float), df["ref_ems"].to_numpy(float)),
         "schools": (df["poi_school"].to_numpy(float), school_ref),
     }
