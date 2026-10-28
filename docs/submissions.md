@@ -222,8 +222,9 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S16 with transport.source=tiger: T = gap(Overture named length, TIGER S1100+S1200 length clipped to the tract), defined where TIGER length > 0; TIGER undefined shares match the published rates (0.212, 0.369, 0.284, 0.546 against 0.21, 0.37, 0.28, 0.55); building 0 and POI fire blend as S16
 - Expected direction: a large drop from S14's 0.0745, since transport carries most of the signal and is now computed instead of estimated
 - Decision informed: how much of the remaining error sits in building and POI
-- Public RMSE: pending
+- Public RMSE: 0.04905907
 - Submissions used after this one: 17 of 35
+- Result note: rank 21 at upload; exact TIGER transport; scale 0.989
 
 ## S18 (2026-10-28)
 
@@ -234,5 +235,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S17 with building.source=microsoft: B = gap(Overture footprints, Microsoft footprints) per tract by centroid, defined where Microsoft has one (99.99% of tracts); B mean 0.0026; transport TIGER and POI fire blend as S17
 - Expected direction: small gain over S17, since B is close to 0 nearly everywhere
 - Decision informed: building handled exactly; base for the exact POI version
-- Public RMSE: pending
+- Public RMSE: 0.05461568
 - Submissions used after this one: 18 of 35
+- Result note: exact Microsoft buildings worse than S17: line search t* = -0.84; the organisers' footprint release differs from the public US v2 file, building stays 0
