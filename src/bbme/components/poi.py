@@ -130,6 +130,8 @@ def reference_draws(
     sub = {}
     for name, (overture, reference) in pairs.items():
         sub[name] = (np.nan_to_num(gap(overture, reference)), (reference > 0).astype(float))
+    if p["ems_gap_zero"]:
+        sub["ems"] = (np.zeros(n), sub["ems"][1])
     if "cbp" not in sub:
         sub["cbp"] = (np.zeros(n), (df["pop_total"].fillna(0) > 0).to_numpy(float))
     types = p["reference_types"]

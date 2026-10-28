@@ -52,6 +52,8 @@ poi:
   establishment_weight: area
   school_kinds: [schools]
   reference_types: [fire, ems, schools]
+  # Hold the EMS gap at 0 where defined (organisers: EMS is close to 1:1 and rarely binds).
+  ems_gap_zero: false
   mode: constant
   # Multiplies the regional POI constant (tuned scalar, decisions log).
   level: 1.0
