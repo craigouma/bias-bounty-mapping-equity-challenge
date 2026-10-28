@@ -274,5 +274,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S19 with EMS added to the facility half (reference_types fire, ems, schools; establishments at 0); rms 0.1125 against S19's 0.1014 and the true 0.107
 - Expected direction: raw score may be worse than S19; the S19 to S21 line search fixes how much EMS binding the target holds
 - Decision informed: EMS weight in the final candidate
-- Public RMSE: pending
+- Public RMSE: 0.042893728
 - Submissions used after this one: 21 of 35
+- Result note: line search t* = 0.07 along S19 to S21: EMS binding is essentially absent
