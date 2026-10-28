@@ -277,3 +277,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.042893728
 - Submissions used after this one: 21 of 35
 - Result note: line search t* = 0.07 along S19 to S21: EMS binding is essentially absent
+
+## S22 (2026-10-28)
+
+- File: `artifacts/submissions/S22_20261028-1057-03_model-0619878.csv`
+- Run ID: `20261028-1057-03_model-0619878`
+- Code SHA: `061987864e5ef9b38d0bab2b8eef996e55708f02`
+- Hypothesis: HIFLD Open reference: fire/EMS stations (USGS, refreshed Jan 2025) and NCES public plus private schools
+- Change against current best: S19 with poi.facility_source=hifld: fire against HIFLD fire/EMS stations (same as USGS to within 1 station per region), schools against HIFLD public + private schools (NCES, 9,490 in the Texas region against 7,654 USGS points); school gap where defined 0.066 against 0.031; rms 0.1051 (true 0.107, S19 0.1014)
+- Expected direction: clear gain over S19's 0.0300 if the organisers' school reference is the HIFLD NCES layers
+- Decision informed: the school reference; base for the final candidates
+- Public RMSE: pending
+- Submissions used after this one: 22 of 35
