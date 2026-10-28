@@ -77,3 +77,4 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261028-1001-03_model-4b63973 | 03_model | 4b63973 | transport.source=tiger building.baseline_gap=0 poi.source=reference poi.reference_types=[fire,schools] poi.establishment_weight=places | complete | 1.3 | 0.55 |
 | 20261028-1006-03_model-c0207a1 | 03_model | c0207a1 | transport.source=tiger building.baseline_gap=0 poi.source=reference poi.reference_types=[fire,ems,schools] poi.ems_gap_zero=true poi.establishment_weight=none | complete | 1.2 | 0.57 |
 | 20261028-1009-03_model-c6d4bb5 | 03_model | c6d4bb5 | transport.source=tiger building.baseline_gap=0 poi.source=reference poi.reference_types=[fire,ems,schools] poi.establishment_weight=none | complete | 1.5 | 0.56 |
+| 20261028-1047-08_hifld-b6f6f7c | 08_hifld | b6f6f7c | defaults | complete | 1.9 | 0.45 |
