@@ -109,9 +109,10 @@ def reference_draws(
 ) -> tuple[Draws, dict[str, tuple[np.ndarray, np.ndarray]]]:
     """Exact POI gap against USGS facility counts and apportioned ZBP establishments.
 
-    Each facility type is defined where the reference has one; the facilities half is the mean
-    of the defined types, the establishments half compares all Overture places with the
-    apportioned establishments, and P is the mean of the defined halves.
+    Each facility type is defined where the reference has one. The facilities half is the mean
+    of the defined types; the establishments half compares all Overture places with the
+    apportioned establishments (with `establishment_weight: none` it is defined with gap 0
+    wherever people live); P is the mean of the defined halves.
     """
     p = cfg["poi"]
     n = len(df)
@@ -120,14 +121,17 @@ def reference_draws(
         "fire": (df["poi_fire"].to_numpy(float), df["ref_fire"].to_numpy(float)),
         "ems": (df["poi_ems"].to_numpy(float), df["ref_ems"].to_numpy(float)),
         "schools": (df["poi_school"].to_numpy(float), school_ref),
-        "cbp": (
+    }
+    if p["establishment_weight"] != "none":
+        pairs["cbp"] = (
             df["poi_n"].to_numpy(float),
             df[f"est_{p['establishment_weight']}"].to_numpy(float),
-        ),
-    }
+        )
     sub = {}
     for name, (overture, reference) in pairs.items():
         sub[name] = (np.nan_to_num(gap(overture, reference)), (reference > 0).astype(float))
+    if "cbp" not in sub:
+        sub["cbp"] = (np.zeros(n), (df["pop_total"].fillna(0) > 0).to_numpy(float))
     types = p["reference_types"]
     fac_gap = np.stack([sub[t][0] for t in types], 1)
     fac_def = np.stack([sub[t][1] > 0 for t in types], 1)
