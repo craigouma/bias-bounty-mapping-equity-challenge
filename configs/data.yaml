@@ -102,8 +102,15 @@ external_reference:
     college: [73006]
   zbp_url: https://www2.census.gov/programs-surveys/cbp/datasets/2023/zbp23totals.zip
   zcta_tract_url: https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_tract20_natl.txt
+  hifld_base: https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/seerai/hifld
+  hifld_layers:
+    fire_stations: fire-and-emergency-medical-service-ems-stations/fire-stationsems-stations/fire-stationsems-stations.parquet/part-00000-tid-7977766793926817672-2a03bc88-2dfd-4a8d-ac3a-1fefd549728e-481-1-c000.zstd.parquet
+    public_schools: public-schools/public-schools/public-schools.parquet/part-00000-tid-1969800580966380026-8d89c874-03c0-4b4e-b102-71327611e71c-368-1-c000.zstd.parquet
+    private_schools: private-schools/private-schools/private-schools.parquet/part-00000-tid-8824118763146891236-c6f1f7dc-37d0-4112-bbde-6caf582b3e4e-59-1-c000.zstd.parquet
   allowlist:
     - '^tl_2025_\d{2}_prisecroads\.zip$'
+    - '^hifld_(fire_stations|public_schools|private_schools)\.parquet$'
+    - '^hifld_reference_tracts\.parquet$'
     - '^zbp\d{2}totals\.zip$'
     - '^tab20_zcta520_tract20_natl\.txt$'
     - '^establishment_reference_tracts\.parquet$'
