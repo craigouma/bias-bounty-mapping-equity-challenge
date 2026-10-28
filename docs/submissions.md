@@ -251,3 +251,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.029960976
 - Submissions used after this one: 19 of 35
 - Result note: rank 21; scale 1.016; line search t* = 0.93 along S17 to S19
+
+## S20 (2026-10-28)
+
+- File: `artifacts/submissions/S20_20261028-1001-03_model-4b63973.csv`
+- Run ID: `20261028-1001-03_model-4b63973`
+- Code SHA: `4b63973fbbe6f60909c9b7c31f60a1f4d9ddc206`
+- Hypothesis: establishments half: ZIP Business Patterns apportioned by business share (Overture places as the stand-in for HUD business-address ratios)
+- Change against current best: S19 with poi.establishment_weight=places: E = gap(Overture places, ZBP 2023 establishments apportioned to tracts by place share within each ZCTA); positive in 1.4% of tracts; rms 0.1031 (true 0.107, S19 0.1014)
+- Expected direction: small gain over S19's 0.0300 if the organisers apportioned establishments by business addresses
+- Decision informed: the establishments half; whether the remaining variance sits there
+- Public RMSE: pending
+- Submissions used after this one: 20 of 35
