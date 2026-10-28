@@ -264,3 +264,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.031525136
 - Submissions used after this one: 20 of 35
 - Result note: worse than S19; line search t* = 0.24 along S19 to S20 (predicted 0.02978): establishment gaps exist but weaker or placed differently
+
+## S21 (2026-10-28)
+
+- File: `artifacts/submissions/S21_20261028-1009-03_model-c6d4bb5.csv`
+- Run ID: `20261028-1009-03_model-c6d4bb5`
+- Code SHA: `c6d4bb51b051d0c613c485d4258cfd879eb2b95a`
+- Hypothesis: EMS strength probe: EMS gaps against USGS ambulance services (74034)
+- Change against current best: S19 with EMS added to the facility half (reference_types fire, ems, schools; establishments at 0); rms 0.1125 against S19's 0.1014 and the true 0.107
+- Expected direction: raw score may be worse than S19; the S19 to S21 line search fixes how much EMS binding the target holds
+- Decision informed: EMS weight in the final candidate
+- Public RMSE: pending
+- Submissions used after this one: 21 of 35
