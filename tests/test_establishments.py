@@ -18,6 +18,7 @@ def test_apportioning_by_area_and_population(tmp_path):
             "GEOID": ["48453000100", "48453000200", "48453000300"],
             "region": ["south-central-tx"] * 3,
             "pop_total": [1000, 3000, 50],
+            "poi_n": [40, 0, 5],
         }
     )
     out = tract_establishments(zbp, rel, tracts).set_index("GEOID")
@@ -26,3 +27,4 @@ def test_apportioning_by_area_and_population(tmp_path):
     w1, w2 = 1000 * 300 / 300, 3000 * 100 / 200
     assert out.loc["48453000100", "est_pop"] == pytest.approx(100 * w1 / (w1 + w2))
     assert out.loc["48453000300", "est_area"] == 0
+    assert out.loc["48453000100", "est_places"] == pytest.approx(100)

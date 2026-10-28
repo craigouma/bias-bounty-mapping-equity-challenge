@@ -14,7 +14,9 @@ def main(run: dict, code: Path) -> None:
     started = time.time()
     ext = load("data")["external_reference"]
     features = upstream("features/FEATURES_MANIFEST.json") / "features" / "features.parquet"
-    tracts = pd.read_parquet(guard.artifact(features), columns=["GEOID", "region", "pop_total"])
+    tracts = pd.read_parquet(
+        guard.artifact(features), columns=["GEOID", "region", "pop_total", "poi_n"]
+    )
     out = WORKING / "establishments"
     out.mkdir(parents=True, exist_ok=True)
     zbp = est.zip_establishments(est.download(ext["zbp_url"], Path("/tmp/external")))
