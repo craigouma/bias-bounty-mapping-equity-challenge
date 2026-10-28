@@ -29,7 +29,9 @@ def tract_establishments(zbp: pd.Series, relation: Path, tracts: pd.DataFrame) -
     """ZIP establishments apportioned to tracts through the 2020 ZCTA-tract relationship.
 
     `est_area`: by the share of the ZCTA's land in the tract. `est_pop`: by tract population
-    times the tract's land fraction inside the ZCTA, normalised within each ZCTA.
+    times the tract's land fraction inside the ZCTA, normalised within each ZCTA. `est_places`:
+    the same with Overture places in place of population, a stand-in for the business-address
+    shares of the HUD ZIP-tract crosswalk.
     """
     rel = pd.read_csv(
         guard.raw(relation),
@@ -45,18 +47,25 @@ def tract_establishments(zbp: pd.Series, relation: Path, tracts: pd.DataFrame) -
     ).dropna(subset=["GEOID_ZCTA5_20"])
     rel = rel.rename(columns={"GEOID_ZCTA5_20": "zcta", "GEOID_TRACT_20": "GEOID"})
     rel["est"] = rel["zcta"].map(zbp).fillna(0)
-    rel = rel.merge(tracts[["GEOID", "pop_total"]], on="GEOID", how="left").fillna({"pop_total": 0})
+    rel = rel.merge(tracts[["GEOID", "pop_total", "poi_n"]], on="GEOID", how="left")
+    rel = rel.fillna({"pop_total": 0, "poi_n": 0})
     land = rel["AREALAND_PART"].clip(lower=0)
     rel["w_area"] = land / rel["AREALAND_ZCTA5_20"].replace(0, np.nan)
     rel["w_pop"] = rel["pop_total"] * land / rel["AREALAND_TRACT_20"].replace(0, np.nan)
     rel["w_pop"] = rel["w_pop"] / rel.groupby("zcta")["w_pop"].transform("sum").replace(0, np.nan)
+    rel["w_places"] = rel["poi_n"] * land / rel["AREALAND_TRACT_20"].replace(0, np.nan)
+    rel["w_places"] = rel["w_places"] / rel.groupby("zcta")["w_places"].transform("sum").replace(
+        0, np.nan
+    )
+    rel["est_places"] = (rel["est"] * rel["w_places"]).fillna(0)
     rel["est_area"] = (rel["est"] * rel["w_area"]).fillna(0)
     rel["est_pop"] = (rel["est"] * rel["w_pop"]).fillna(0)
-    out = rel.groupby("GEOID", as_index=False)[["est_area", "est_pop"]].sum()
+    cols = ["est_area", "est_pop", "est_places"]
+    out = rel.groupby("GEOID", as_index=False)[cols].sum()
     out = (
         tracts[["GEOID", "region"]]
         .merge(out, on="GEOID", how="left")
-        .fillna({"est_area": 0, "est_pop": 0})
+        .fillna(dict.fromkeys(cols, 0))
     )
     assert_geoids(out["GEOID"])
     return out
