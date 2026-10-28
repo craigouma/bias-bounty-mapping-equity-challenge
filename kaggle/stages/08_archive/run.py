@@ -13,7 +13,7 @@ def main(run: dict, code: Path) -> None:
     started = time.time()
     cfg = load("data")
     raw = upstream("audit/MANIFEST.json") / "raw"
-    out = WORKING / "hifld"
+    out = WORKING / "archive"
     out.mkdir(parents=True, exist_ok=True)
     con = db.connect(memory_limit="22GB", threads=4, temp_dir="/tmp/duckdb")
     layers = hifld.download(cfg, Path("/tmp/external"))
@@ -27,6 +27,6 @@ def main(run: dict, code: Path) -> None:
         "totals_by_region": counts.groupby("region")[cols].sum().to_dict(),
         "tracts_with": {c: int((counts[c] > 0).sum()) for c in cols},
     }
-    (out / "HIFLD_MANIFEST.json").write_text(json.dumps(summary, indent=2, default=int))
+    (out / "ARCHIVE_MANIFEST.json").write_text(json.dumps(summary, indent=2, default=int))
     write_run_meta(out, run, code, started)
     print(json.dumps(summary, indent=2, default=int), flush=True)

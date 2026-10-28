@@ -28,7 +28,9 @@ def main(run: dict, code: Path) -> None:
         paths.append(est / "establishment_reference_tracts.parquet")
         if cfg["poi"]["facility_source"] == "hifld":
             paths.append(
-                upstream("hifld/HIFLD_MANIFEST.json") / "hifld" / "hifld_reference_tracts.parquet"
+                upstream("archive/ARCHIVE_MANIFEST.json")
+                / "archive"
+                / "hifld_reference_tracts.parquet"
             )
         for path in paths:
             table = pd.read_parquet(guard.artifact(path)).drop(columns="region")
