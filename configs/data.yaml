@@ -120,4 +120,5 @@ external_reference:
     - '^(Arizona|NewMexico|California|Oklahoma|Texas|Washington)\.geojson\.zip$'
     - '^building_reference_tracts\.parquet$'
     - '^tiger_tracts\.parquet$'
+    - '^tiger_boundary_tracts\.parquet$'
 always_denied: [coverage-gap, coverage_gap]

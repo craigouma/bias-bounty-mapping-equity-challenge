@@ -287,5 +287,6 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S19 with poi.facility_source=hifld: fire against HIFLD fire/EMS stations (same as USGS to within 1 station per region), schools against HIFLD public + private schools (NCES, 9,490 in the Texas region against 7,654 USGS points); school gap where defined 0.066 against 0.031; rms 0.1051 (true 0.107, S19 0.1014)
 - Expected direction: clear gain over S19's 0.0300 if the organisers' school reference is the HIFLD NCES layers
 - Decision informed: the school reference; base for the final candidates
-- Public RMSE: pending
+- Public RMSE: 0.041355756
+- Result note: line search t* = 0.002 along S19 to S22: the HIFLD NCES school layers carry no signal; USGS schools stay
 - Submissions used after this one: 22 of 35
