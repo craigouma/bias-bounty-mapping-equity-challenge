@@ -62,3 +62,11 @@ def test_bootstrap_skips_resamples_without_tribal_tracts():
     assert np.isnan(bd.matched_difference(df[~df["tribal"]]))
     lo, hi = bd.bootstrap_by_county(df, np.random.default_rng(0), n_boot=200)
     assert np.isfinite(lo) and np.isfinite(hi)
+
+
+def test_share_over_reweights_non_tribal_tracts_to_tribal_rurality():
+    df = bd.unnamed_table(_frame(), pd.DataFrame({"GEOID": []}))
+    out = bd.share_over(df, "legal", "unnamed_share", 0.2)
+    assert out["tracts"] == 5 and out["tracts_over"] == 5 and out["population_over"] == 500
+    assert out["share_over"] == 1.0
+    assert out["non_tribal_share_over"] == 0.0
