@@ -34,14 +34,44 @@ def tract_context(raw: Path, regions: list[str]) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+MEASURES = {
+    "all": "unnamed_share",
+    "local": "local_unnamed_share",
+    "named_class": "named_unnamed_share",
+}
+
+
+def _share(part: pd.Series, whole: pd.Series) -> pd.Series:
+    return part / whole.where(whole > 0)
+
+
 def unnamed_table(features: pd.DataFrame, context: pd.DataFrame) -> pd.DataFrame:
+    """Unnamed shares per tract: all drivable classes, local classes (tertiary, residential,
+    unclassified) and the named classes (motorway to secondary)."""
     df = features.merge(context, on="GEOID", how="left")
     df["ruca_class"] = ruca_class(df["ruca_primary"])
     df["tribal"] = df["tribal_any"].fillna(False).astype(bool)
+    legal = df["tribal_legal"].fillna(False).astype(bool)
+    df["tribal_kind"] = np.where(legal, "legal", np.where(df["tribal"], "statistical", "none"))
     df["unnamed_km"] = df["road_len_unnamed"] / 1000
     df["drivable_km"] = df["road_len_total"] / 1000
-    df["unnamed_share"] = df["unnamed_km"] / df["drivable_km"].replace(0, np.nan)
+    df["unnamed_share"] = _share(df["unnamed_km"], df["drivable_km"])
+    named, named_unnamed = df["road_named_len"], df["road_named_unnamed_len"]
+    df["named_unnamed_share"] = _share(named_unnamed, named)
+    df["local_unnamed_share"] = _share(
+        df["road_len_unnamed"] - named_unnamed, df["road_len_total"] - named
+    )
     return df[df["drivable_km"] > 0]
+
+
+def contrast(df: pd.DataFrame, kind: str) -> pd.DataFrame:
+    """Tribal tracts of one kind (`legal` reservations and trust land, or `statistical` areas
+    such as OTSAs) against non-tribal tracts; `any` keeps every tribal tract."""
+    if kind == "any":
+        return df
+    keep = df[df["tribal_kind"].isin(["none", kind])].copy()
+    keep["tribal"] = keep["tribal_kind"] == kind
+    return keep
 
 
 def matched_difference(df: pd.DataFrame, value: str = "unnamed_share") -> float:
@@ -92,8 +122,9 @@ def stratum_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def worst_tracts(df: pd.DataFrame, n: int = 25) -> pd.DataFrame:
-    cols = ["GEOID", "region", "tract_name", "county_fips", "aiannh_name", "ruca_class"]
-    cols += ["drivable_km", "unnamed_km", "unnamed_share", "pop_total"]
+    cols = ["GEOID", "region", "tract_name", "county_fips", "county_name", "aiannh_name"]
+    cols += ["tribal_kind", "ruca_class", "drivable_km", "unnamed_km", "unnamed_share"]
+    cols += ["local_unnamed_share", "pop_total"]
     tribal = df[df["tribal"] & (df["drivable_km"] >= 20)]
     return tribal.sort_values("unnamed_km", ascending=False)[cols].head(n)
 
@@ -101,7 +132,7 @@ def worst_tracts(df: pd.DataFrame, n: int = 25) -> pd.DataFrame:
 def by_tribal_area(df: pd.DataFrame) -> pd.DataFrame:
     return (
         df[df["tribal"]]
-        .groupby(["region", "aiannh_name"])
+        .groupby(["region", "aiannh_name", "tribal_kind"])
         .agg(
             tracts=("GEOID", "size"),
             unnamed_km=("unnamed_km", "sum"),
