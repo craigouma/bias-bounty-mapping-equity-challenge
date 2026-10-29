@@ -65,3 +65,40 @@ def tract_lengths(
     lengths = pd.concat(frames, ignore_index=True).groupby("GEOID", as_index=False).sum()
     out = scored[["GEOID", "region"]].merge(lengths, on="GEOID", how="left")
     return out.fillna({"tiger_len_m": 0.0, "tiger_s1100_m": 0.0})
+
+
+def boundary_lengths(
+    con: duckdb.DuckDBPyConnection,
+    raw: Path,
+    regions: list[str],
+    scored: pd.DataFrame,
+    tolerances: dict[str, float],
+) -> pd.DataFrame:
+    """Clipped TIGER length per tract, and the part of it within each tolerance of the boundary.
+
+    Tolerances are in degrees (1e-5 is about 1 m). The boundary part is what a clipped
+    computation counts in both neighbouring tracts when a highway forms the tract edge.
+    """
+    near = "ST_CollectionExtract(ST_Intersection(clip, ST_Buffer(ST_Boundary(tract), {})), 2)"
+    cols = ", ".join(
+        f"sum({db.length_m(near.format(tol))}) AS tiger_bnd_{name}_m"
+        for name, tol in tolerances.items()
+    )
+    frames = []
+    for region in regions:
+        load_tracts(con, raw, region)
+        frames.append(
+            con.sql(
+                f"""
+                WITH c AS (
+                    SELECT t.GEOID, t.geometry AS tract, {CLIP} AS clip
+                    FROM tiger g JOIN tracts t ON ST_Intersects(t.geometry, g.geometry)
+                )
+                SELECT GEOID, sum({db.length_m("clip")}) AS tiger_len_m, {cols}
+                FROM c GROUP BY GEOID
+                """
+            ).df()
+        )
+    lengths = pd.concat(frames, ignore_index=True).groupby("GEOID", as_index=False).sum()
+    out = scored[["GEOID", "region"]].merge(lengths, on="GEOID", how="left")
+    return out.fillna({c: 0.0 for c in lengths.columns if c != "GEOID"})
