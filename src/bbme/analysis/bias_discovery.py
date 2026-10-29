@@ -143,3 +143,24 @@ def by_tribal_area(df: pd.DataFrame) -> pd.DataFrame:
         .sort_values("unnamed_km", ascending=False)
         .reset_index()
     )
+
+
+def share_over(
+    df: pd.DataFrame, kind: str = "legal", value: str = "local_unnamed_share", level: float = 0.3
+) -> dict[str, float]:
+    """Tracts and residents of one tribal kind with `value` at or above `level`, against
+    non-tribal tracts reweighted to the same RUCA class mix."""
+    tribal = df[df["tribal_kind"] == kind]
+    other = df[df["tribal_kind"] == "none"]
+    over = tribal[value] >= level
+    mix = tribal["ruca_class"].value_counts(normalize=True)
+    other_rate = (other[value] >= level).groupby(other["ruca_class"]).mean()
+    return {
+        "tracts": len(tribal),
+        "population": int(tribal["pop_total"].sum()),
+        "unnamed_km": float(tribal["unnamed_km"].sum()),
+        "tracts_over": int(over.sum()),
+        "population_over": int(tribal.loc[over, "pop_total"].sum()),
+        "share_over": float(over.mean()),
+        "non_tribal_share_over": float((other_rate.reindex(mix.index) * mix).sum()),
+    }
