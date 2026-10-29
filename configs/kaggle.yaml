@@ -48,3 +48,8 @@ stages:
     gpu: false
     kernel_sources: [bbme-01-ingest]
     pull: ['archive/.*']
+  09_edges:
+    slug: bbme-09-road-edges
+    gpu: false
+    kernel_sources: [bbme-01-ingest]
+    pull: ['edges/.*']
