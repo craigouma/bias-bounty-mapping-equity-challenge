@@ -34,3 +34,12 @@ def test_matched_difference_and_bootstrap():
     assert bd.matched_difference(df) == pytest.approx(0.2)
     lo, hi = bd.bootstrap_by_county(df, np.random.default_rng(0), n_boot=200)
     assert lo <= 0.2 <= hi
+
+
+def test_bootstrap_skips_resamples_without_tribal_tracts():
+    frame = _frame()
+    frame.loc[frame["county_fips"] == "40003", "tribal_any"] = False
+    df = bd.unnamed_table(frame, pd.DataFrame({"GEOID": []}))
+    assert np.isnan(bd.matched_difference(df[~df["tribal"]]))
+    lo, hi = bd.bootstrap_by_county(df, np.random.default_rng(0), n_boot=200)
+    assert np.isfinite(lo) and np.isfinite(hi)
