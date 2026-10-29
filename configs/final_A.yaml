@@ -1,0 +1,12 @@
+# Final submission A: S19, the best public score (0.029960976). Rebuilt transport (TIGER),
+# building held at 0 where Overture has footprints, fire and school gaps from USGS structures,
+# establishments half at 0.
+submission: S19
+file: S19_20261028-0947-03_model-672866c.csv
+commit: 672866c709f24ae75954ac55c3f66d2d1d04df9a
+overrides:
+  - transport.source=tiger
+  - building.baseline_gap=0
+  - poi.source=reference
+  - poi.reference_types=[fire,schools]
+  - poi.establishment_weight=none

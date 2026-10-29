@@ -1,0 +1,11 @@
+# Final submission B: S20 (0.031525136). S19 with the establishments half rebuilt from ZIP
+# Business Patterns 2023, apportioned to tracts by Overture place share within each ZCTA.
+submission: S20
+file: S20_20261028-1001-03_model-4b63973.csv
+commit: 4b63973fbbe6f60909c9b7c31f60a1f4d9ddc206
+overrides:
+  - transport.source=tiger
+  - building.baseline_gap=0
+  - poi.source=reference
+  - poi.reference_types=[fire,schools]
+  - poi.establishment_weight=places

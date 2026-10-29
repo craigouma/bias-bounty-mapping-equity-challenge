@@ -1,4 +1,4 @@
-.PHONY: setup lint test validate sub-ready kaggle-code kaggle-run
+.PHONY: setup lint test validate sub-ready kaggle-code kaggle-run reproduce
 
 setup:
 	uv sync
@@ -25,3 +25,6 @@ kaggle-code:
 
 kaggle-run:
 	cd scripts && uv run python kaggle_run.py $(STAGE) --set "$(SET)"
+
+reproduce:
+	cd scripts && uv run python reproduce.py $(FINAL)

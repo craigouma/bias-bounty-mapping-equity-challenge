@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from bbme.submit import COLUMNS, assert_valid, read_text_table, validate, write
+from bbme.submit import COLUMNS, assert_valid, compare, read_text_table, validate, write
 
 REPO = Path(__file__).resolve().parents[1]
 REAL_SAMPLE = REPO / "data" / "SampleSubmission.csv"
@@ -176,3 +176,16 @@ def test_rejects_numeric_geoid(mini_sample):
     broken = _rewrite(mini_sample, _drop_leading_zero)
     with pytest.raises(ValueError):
         validate(broken, mini_sample)
+
+
+def test_compare_reports_float_and_flag_differences(mini_sample, tmp_path):
+    sample = read_text_table(mini_sample)
+    a = write(_pred(sample), sample, tmp_path / "a.csv")
+    assert compare(a, a) == {"max_abs_diff": 0.0, "flag_mismatches": 0}
+    edited = _pred(sample)
+    edited.loc[0, "coverage_gap_score"] += 1e-3
+    edited.loc[1, "transport_defined"] = not edited.loc[1, "transport_defined"]
+    b = write(edited, sample, tmp_path / "b.csv")
+    out = compare(a, b)
+    assert out["max_abs_diff"] >= 1e-3 - 1e-9
+    assert out["flag_mismatches"] == 1

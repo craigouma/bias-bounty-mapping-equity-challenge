@@ -175,3 +175,16 @@ def assert_valid(path: Path, sample_path: Path) -> None:
     errors = validate(path, sample_path)
     if errors:
         raise ValueError(f"{path} is invalid:\n" + "\n".join(errors))
+
+
+def compare(a: Path, b: Path) -> dict[str, float | int]:
+    """Largest absolute difference over the float columns and the number of differing flags
+    between two submissions with the same rows."""
+    left, right = read_text_table(a), read_text_table(b)
+    if not left["GEOID"].equals(right["GEOID"]):
+        raise ValueError(f"{a} and {b} hold different rows")
+    diff = (left[FLOATS].astype(float) - right[FLOATS].astype(float)).abs()
+    return {
+        "max_abs_diff": float(diff.to_numpy().max()),
+        "flag_mismatches": int((left[FLAGS] != right[FLAGS]).to_numpy().sum()),
+    }

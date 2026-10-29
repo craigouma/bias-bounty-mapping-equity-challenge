@@ -86,28 +86,23 @@ def log_run(run: dict, state: str, wall_min: float, dest: Path) -> None:
         f.write(row)
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Render, push, follow and pull a Kaggle stage.")
-    parser.add_argument("stage")
-    parser.add_argument("--set", default="", help="space-separated key=value overrides")
-    parser.add_argument("--timeout-h", type=float, default=11.5)
-    args = parser.parse_args()
-
+def run_stage(stage: str, overrides: list[str], timeout_h: float = 11.5) -> tuple[str, str, Path]:
+    """Render, push, follow and pull one stage; returns run ID, final state and output folder."""
     kcfg = load("kaggle")
-    scfg = kcfg["stages"][args.stage]
+    scfg = kcfg["stages"][stage]
     require_clean_tree()
     sha = head_sha()
     if remote_sha() != sha:
         push()
-    run_id = f"{datetime.now():%Y%m%d-%H%M}-{args.stage}-{sha[:7]}"
+    run_id = f"{datetime.now():%Y%m%d-%H%M}-{stage}-{sha[:7]}"
     run = {
         "run_id": run_id,
-        "stage": args.stage,
+        "stage": stage,
         "sha": sha,
-        "overrides": args.set.split(),
-        "install": args.stage != "00_env",
+        "overrides": overrides,
+        "install": stage != "00_env",
     }
-    folder = render(args.stage, run)
+    folder = render(stage, run)
     ref = f"{kcfg['username']}/{scfg['slug']}"
     cmd = ["kaggle", "kernels", "push", "-p", str(folder)]
     if scfg["gpu"]:
@@ -117,9 +112,9 @@ def main() -> int:
     print(f"run {run_id} pushed to {ref}", flush=True)
     time.sleep(20)
     subprocess.run(["kaggle", "kernels", "logs", ref, "--follow"], cwd=ROOT, check=False)
-    state = wait(ref, args.timeout_h)
+    state = wait(ref, timeout_h)
     wall_min = (time.time() - started) / 60
-    dest = ROOT / load("paths")["kaggle_artifacts"] / args.stage / run_id
+    dest = ROOT / load("paths")["kaggle_artifacts"] / stage / run_id
     if state.startswith("complete"):
         pull(ref, [p.replace("{run_id}", run_id) for p in scfg["pull"]], dest)
     else:
@@ -128,6 +123,16 @@ def main() -> int:
         (dest / "kernel.log").write_text(log)
     log_run(run, state, wall_min, dest)
     print(f"{run_id}: {state} after {wall_min:.1f} min, outputs in {dest}")
+    return run_id, state, dest
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Render, push, follow and pull a Kaggle stage.")
+    parser.add_argument("stage")
+    parser.add_argument("--set", default="", help="space-separated key=value overrides")
+    parser.add_argument("--timeout-h", type=float, default=11.5)
+    args = parser.parse_args()
+    _, state, _ = run_stage(args.stage, args.set.split(), args.timeout_h)
     return 0 if state.startswith("complete") else 1
 
 
