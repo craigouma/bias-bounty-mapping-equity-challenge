@@ -50,6 +50,8 @@ def main(run: dict, code: Path) -> None:
                     "ci95": [lo, hi],
                 }
     (out / "findings.json").write_text(json.dumps(results, indent=2))
+    summary_over = {kind: bd.share_over(df, kind) for kind in ["legal", "statistical"]}
+    (out / "share_over.json").write_text(json.dumps(summary_over, indent=2))
     unnamed_share_by_stratum(summary, out / "figures" / "unnamed_share_by_stratum.png")
     for measure in bd.MEASURES:
         contrast_intervals(results, measure, out / "figures" / f"contrast_{measure}.png")
