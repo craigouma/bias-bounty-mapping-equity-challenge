@@ -44,27 +44,38 @@ def unnamed_table(features: pd.DataFrame, context: pd.DataFrame) -> pd.DataFrame
     return df[df["drivable_km"] > 0]
 
 
-def matched_difference(df: pd.DataFrame) -> float:
-    """Tribal minus non-tribal mean unnamed share within region x RUCA cells, tribal-weighted."""
+def matched_difference(df: pd.DataFrame, value: str = "unnamed_share") -> float:
+    """Tribal minus non-tribal mean of `value` within region x RUCA cells, tribal-weighted.
+
+    NaN when no cell holds both tribal and non-tribal tracts.
+    """
     cells = df.pivot_table(
-        index=["region", "ruca_class"], columns="tribal", values="unnamed_share", aggfunc="mean"
+        index=["region", "ruca_class"], columns="tribal", values=value, aggfunc="mean"
     )
+    if True not in cells or False not in cells:
+        return float("nan")
     weights = df[df["tribal"]].groupby(["region", "ruca_class"]).size()
     cells = cells.dropna().join(weights.rename("w"), how="inner")
+    if cells.empty:
+        return float("nan")
     return float(((cells[True] - cells[False]) * cells["w"]).sum() / cells["w"].sum())
 
 
 def bootstrap_by_county(
-    df: pd.DataFrame, rng: np.random.Generator, n_boot: int = 1000
+    df: pd.DataFrame, rng: np.random.Generator, n_boot: int = 1000, value: str = "unnamed_share"
 ) -> tuple[float, float]:
-    """95% interval for the matched difference, resampling whole counties."""
+    """95% interval for the matched difference, resampling whole counties.
+
+    Resamples with no tribal and non-tribal tracts in a shared cell are left out.
+    """
     groups = {c: g for c, g in df.groupby("county_fips")}
     counties = np.array(list(groups))
     stats = []
     for _ in range(n_boot):
         pick = rng.choice(counties, size=len(counties), replace=True)
-        stats.append(matched_difference(pd.concat([groups[c] for c in pick], ignore_index=True)))
-    return tuple(np.quantile(stats, [0.025, 0.975]))
+        sample = pd.concat([groups[c] for c in pick], ignore_index=True)
+        stats.append(matched_difference(sample, value))
+    return tuple(np.nanquantile(stats, [0.025, 0.975]))
 
 
 def stratum_summary(df: pd.DataFrame) -> pd.DataFrame:
