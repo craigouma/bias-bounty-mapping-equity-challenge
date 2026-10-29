@@ -121,4 +121,8 @@ external_reference:
     - '^building_reference_tracts\.parquet$'
     - '^tiger_tracts\.parquet$'
     - '^tiger_boundary_tracts\.parquet$'
+    - '^national_county2020\.txt$'
+# Context for the bias discovery analysis only (docs/external_data.md); never a scored input.
+analysis_external:
+  county_names_url: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
 always_denied: [coverage-gap, coverage_gap]
