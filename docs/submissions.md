@@ -314,3 +314,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.023796476
 - Result note: best of this pipeline; line search t* = 1.17 along S19 to S24, so the organisers apportion establishments by HUD business-address ratios. Becomes final A (S19 final B). Craig also uploaded the S23 competitor file a second time (`5vt7QQag`, `h1dnvjWd`, both 0.0022655) and a second competitor file (github.com/kevin9327/ZindiBiasBounty, 0.002420912); neither is produced by this pipeline
 - Submissions used after this one: 24 of 35
+
+## S25 (2026-10-30)
+
+- File: `artifacts/submissions/S25_20261030-1227-03_model-45a6fcc.csv`
+- Run ID: `20261030-1227-03_model-45a6fcc`
+- Code SHA: `45a6fcc97de9d257aa0267133da92b0592892009`
+- Hypothesis: H-B4, the organisers' Microsoft reference is the Global ML Building Footprints release (2026-02-03), counted by centroid; the public US v2 file (S18) is a different release
+- Change against current best: S24 with building.source=microsoft building.count=globalml: B = gap(Overture footprints by centroid, Global ML footprints by centroid); B positive in 31% of tracts, mean 0.005599 over the four documented regions (US v2 gives 0.002708); 5,644 tracts change, rms change 0.0085. Our centroid counting was checked first: Overture and US v2 counts match a competitor's public-source eastern-wa counts in all 415 tracts
+- Expected direction: offline span estimate 0.022 to 0.025 against S24's 0.0238; nearly orthogonal to S18 (cosine 0.09), so the leaderboard decides
+- Decision informed: whether Global ML replaces the zero building gap in final A
+- Public RMSE: pending
+- Submissions used after this one: 25 of 35
