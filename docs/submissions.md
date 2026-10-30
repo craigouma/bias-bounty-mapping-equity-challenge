@@ -291,3 +291,12 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.041355756
 - Result note: line search t* = 0.002 along S19 to S22: the HIFLD NCES school layers carry no signal; USGS schools stay
 - Submissions used after this one: 22 of 35
+
+## S23 (2026-10-30)
+
+- File: competitor file `submission.csv` from the public repository github.com/adamstra/bias-bounty-mapping-equity (downloaded to ~/Downloads, 30 Oct 09:34), uploaded by Craig to compare
+- Run ID: none; not produced by this pipeline
+- Hypothesis: none; benchmark of a competitor's published output
+- Public RMSE: 0.0022655
+- Decision: not a final candidate. The competitor's inputs manifest lists the organisers' removed reference files (census-tiger-roads, microsoft-buildings, hifld-*, census-cbp, all marked removed), which this project does not use, and this pipeline cannot reproduce the file. Finals stay S19 and S20 (Craig, 30 Oct 2026). The manifest showed that the organisers' CBP reference has columns `cbp_estab` and `cbp_estab_res`, which motivates the HUD BUS_RATIO hypothesis
+- Submissions used after this one: 23 of 35
