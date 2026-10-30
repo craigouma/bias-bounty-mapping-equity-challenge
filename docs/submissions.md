@@ -251,6 +251,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.029960976
 - Submissions used after this one: 19 of 35
 - Result note: rank 21; scale 1.016; line search t* = 0.93 along S17 to S19
+- Zindi submission ID: `Ekx9Rx3y`. Final A; cited on both special prize forms (Best Documentation with `methodology.pdf`, Best Bias Discovery with `bias_discovery.pdf`), submitted 30 Oct 2026
 
 ## S20 (2026-10-28)
 
