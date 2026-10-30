@@ -66,3 +66,15 @@ def test_microsoft_draws_are_exact():
     d = microsoft_draws(df, load("model"), 4)
     assert d.point.tolist() == [0.5, 0.0, 0.0]
     assert d.p_defined.tolist() == [1.0, 1.0, 0.0]
+
+
+def test_microsoft_draws_count_overture_by_centroid_for_global_ml():
+    from bbme.components.building import microsoft_draws
+
+    cfg = load("model")
+    cfg["building"]["count"] = "globalml"
+    df = pd.DataFrame(
+        {"bld_n": [5.0, 12.0], "bld_n_intersects": [9.0, 12.0], "ms_n_globalml": [10.0, 8.0]}
+    )
+    d = microsoft_draws(df, cfg, 2)
+    assert d.point.tolist() == [0.5, 0.0]
