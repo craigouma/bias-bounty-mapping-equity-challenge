@@ -44,7 +44,7 @@ full methodology is submitted separately for Best Documentation.}}
 \noindent
 The challenge's coverage measures and every Bias Scorecard metric count road
 length and features, so a road drawn without a name counts as fully covered.
-Using only the challenge data (Overture Maps release 2026-08-19.0 and the
+Using the challenge data (Overture Maps release 2026-08-19.0 and the
 strata tables), this entry measures the share of drivable road length with no
 name in each of 9,794 scored tracts and compares tribal with non-tribal
 tracts within the same region and rurality class. On 80 federally recognised
@@ -70,7 +70,7 @@ are all drawn but half unnamed scores as fully covered. The name is what
 emergency services use. A caller gives an address, computer-aided dispatch
 validates it against road centrelines that carry street names and address
 ranges \cite{nena006}, and routing tools give instructions by street name.
-This section shows that on federally recognised reservations a much larger
+This entry shows that on federally recognised reservations a much larger
 share of the local street network has no name in Overture than on comparable
 non-tribal tracts, while the highways through the same reservations are
 named as often as anywhere else.
@@ -95,7 +95,7 @@ differences are averaged with weights equal to the number of tribal tracts
 in each cell. Intervals come from 1,000 bootstrap resamples of whole
 counties, which keeps neighbouring tracts that share mapping history
 together. All numbers come from stage 04 run
-\texttt{20261029-2348-04\_analysis-503f5c5} on the challenge data only;
+\texttt{20261030-1019-04\_analysis-8a838bb} on the challenge data only;
 county names come from the Census 2020 county code list \cite{countycodes}.
 
 \paragraph{Reproducing the finding.} Road length comes from
@@ -119,6 +119,7 @@ which no cell holds both groups.
 
 \section{Evidence}
 
+Figure~\ref{fig:map_unnamed} maps the measure.
 Table~\ref{tab:contrast} and Figure~\ref{fig:contrast} give the matched
 differences. On the 80 reservation tracts, local streets are unnamed 9.5
 percentage points more often than on matched non-tribal tracts (95\,\%
@@ -161,6 +162,16 @@ OTSAs, Eastern Oklahoma & local & 792 & $+3.0$ & $-6.0$ to 7.5 \\
 tribal minus non-tribal tracts, with 95\,\% county bootstrap intervals.
 Numbers in brackets are tribal tracts.}
 \label{fig:contrast}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{fig_map_unnamed.png}
+\caption{Unnamed share of local street length by tract (Overture
+2026-08-19.0). Reservation tracts are outlined in black; the Osage Reservation
+is the outlined block in north-central Oklahoma. Oklahoma Tribal Statistical
+Areas are not outlined. Grey tracts have no local road.}
+\label{fig:map_unnamed}
 \end{figure}
 
 The OTSAs hold the largest unnamed networks in absolute terms: 13,066\,km of
@@ -250,11 +261,12 @@ the name, that none of them reads.
 \section{Reproducibility}
 
 Every number comes from stage 04 run
-\texttt{20261029-2348-04\_analysis-503f5c5} of the challenge pipeline (seed
+\texttt{20261030-1019-04\_analysis-8a838bb} of the challenge pipeline (seed
 20261025, 1,000 county bootstrap resamples per interval), which read only the
 challenge bucket \cite{bucket} and the Census 2020 county code list \cite{countycodes}, retrieved 29
-October 2026, for county names. A
-second run with the same code reproduced every number and figure exactly.
+October 2026, for county names. Runs \texttt{20261029-2348-04\_analysis-503f5c5} and
+\texttt{20261030-1019-04\_analysis-8a838bb} of the same analysis code produced
+identical numbers; the maps come from the second.
 The tract-level tables (\texttt{unnamed\_worst\_reservation\_tracts.csv},
 \texttt{unnamed\_by\_tribal\_area.csv}) are produced by the same run.
 The measure reads Overture names as published. A road may carry a name in a
