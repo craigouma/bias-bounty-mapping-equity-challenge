@@ -31,7 +31,7 @@ Bias Bounty Mapping Equity Challenge}}
 
 \author[1]{Craig Carlos Ouma\thanks{%
 Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi: \zindiuser. Final
-submissions: S24 (\texttt{EC3xBxjr}) and S19 (\texttt{Ekx9Rx3y}). Code:
+submissions: S25 (\texttt{2ncgdcQQ}) and S24 (\texttt{EC3xBxjr}). Code:
 private repository, released to Zindi reviewers on request.}}
 \affil[1]{Independent Researcher}
 \date{\today}
@@ -51,8 +51,10 @@ layers that the organisers removed from the challenge bucket on 25 September
 challenge package brought the public RMSE from 0.1072 for the all-zero file to
 0.0745. After Zindi staff confirmed on 27 October that the public versions of
 those layers could be used, the pipeline rebuilt the reference side of each component from those sources and
-reached 0.02996 (submission S19), then 0.02380 (S24) once ZIP establishment
-counts were apportioned to tracts by HUD business-address ratios. The rebuilt
+reached 0.02996 (submission S19), 0.02380 (S24) once ZIP establishment
+counts were apportioned to tracts by HUD business-address ratios, and 0.02152
+(S25) once the building reference was rebuilt from Microsoft's Global ML
+footprints. The rebuilt
 transport component reproduces
 the organisers' published undefined rates to within one percentage point in
 all four documented regions, and their published spread of road length ratios
@@ -101,8 +103,8 @@ Section~\ref{sec:scorecard} reflects on the scorecard and
 Section~\ref{sec:bias} presents the bias discovery.
 
 All submissions were made by Zindi user \zindiuser{}, entering solo.
-The two submissions selected for private scoring are S24 (public RMSE
-0.023796, Zindi ID \texttt{EC3xBxjr}) and S19 (0.029961, \texttt{Ekx9Rx3y}),
+The two submissions selected for private scoring are S25 (public RMSE
+0.021520, Zindi ID \texttt{2ncgdcQQ}) and S24 (0.023796, \texttt{EC3xBxjr}),
 described in Section~\ref{sec:final}; the
 others referred to in this paper are listed in Table~\ref{tab:history}.
 
@@ -160,20 +162,21 @@ if any reader bypasses it.
 \centering
 \small
 \caption{Reference sources rebuilt from their publishers. ``Final'' marks the
-sources used by the selected submissions S24 and S19.}
+sources used by the selected submissions S25 and S24.}
 \label{tab:sources}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llll}
 \toprule
 Source & Vintage & Used for & Final \\
 \midrule
-Census TIGER/Line primary and secondary roads (S1100, S1200) & 2025 & transport reference & S24, S19 \\
-USGS National Map structures, fire stations (FCODE 74026) & 2026 & fire reference & S24, S19 \\
-USGS National Map structures, schools (FCODE 73002 to 73005) & 2026 & school reference & S24, S19 \\
-Census ZIP Code Business Patterns, establishments per ZIP & 2023 & establishments reference & S24 \\
-HUD USPS ZIP-TRACT crosswalk, business-address ratios & Q4 2024 & apportioning ZIP counts & S24 \\
+Census TIGER/Line primary and secondary roads (S1100, S1200) & 2025 & transport reference & S25, S24 \\
+USGS National Map structures, fire stations (FCODE 74026) & 2026 & fire reference & S25, S24 \\
+USGS National Map structures, schools (FCODE 73002 to 73005) & 2026 & school reference & S25, S24 \\
+Census ZIP Code Business Patterns, establishments per ZIP & 2023 & establishments reference & S25, S24 \\
+HUD USPS ZIP-TRACT crosswalk, business-address ratios & Q4 2024 & apportioning ZIP counts & S25, S24 \\
 Census 2020 ZCTA to tract relationship file & 2020 & apportioning ZIP counts (S20) & no \\
 USGS National Map structures, ambulance services (FCODE 74034) & 2026 & EMS reference (S21) & no \\
+Microsoft Global ML Building Footprints & 2026-02-03 & building reference & S25 \\
 Microsoft US Building Footprints & v2 & building reference (S18) & no \\
 HIFLD Open archive: fire and EMS stations, public and private schools & 2025 & S22 & no \\
 \bottomrule
@@ -206,7 +209,7 @@ Table~\ref{tab:stages} their measured cost.
   arr/.style={-{Stealth[length=2mm]}, draw=navy}]
 \node[box] (feat) at (4.2, 2.4) {02 features\\per-tract Overture};
 \node[ext] (est) at (4.2, 0.8) {07 establishments\\ZBP, HUD crosswalk};
-\node[ext] (ref) at (4.2, -0.8) {05 reference\\TIGER, Microsoft};
+\node[ext] (ref) at (4.2, -0.8) {05, 10 reference\\TIGER, Microsoft};
 \node[ext] (fac) at (4.2, -2.4) {06 facilities\\USGS structures};
 \node[box] (ingest) at (0, 0) {01 ingest\\bucket sync, audit};
 \node[box] (model) at (8.4, 0) {03 model\\components, composite};
@@ -240,9 +243,11 @@ Stage & Run & Wall (min) & Peak RSS (GB) \\
 05 reference & 20261027-2145-05\_reference-0add93b & 33.9 & 3.55 \\
 06 facilities & 20261028-0024-06\_facilities-8d8b042 & 8.7 & 0.49 \\
 07 establishments & 20261030-0946-07\_establishments-decc7f9 & 1.2 & 0.22 \\
+10 Global ML & 20261030-1127-10\_globalml-2221625 & 33.8 & 2.13 \\
+03 model (S25) & 20261030-1227-03\_model-45a6fcc & 1.7 & 0.56 \\
 03 model (S24) & 20261030-0947-03\_model-30d804e & 1.4 & 0.55 \\
-03 model (S19) & 20261028-0947-03\_model-672866c & 3.6 & 0.60 \\
 04 analysis & 20261030-1019-04\_analysis-8a838bb & 24.3 & 0.80 \\
+04 analysis (S25 map) & 20261030-1514-04\_analysis-7cec170 & 21.6 & 0.80 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -325,16 +330,22 @@ Eastern Washington & 0.248 & n/a & 0.965 & 0.199 \\
 \subsection{Building}
 
 $O$ is the count of Overture footprints whose centroid falls in the tract and
-$R$ the Microsoft footprint count. The public Microsoft US Building Footprints
-v2 release was rebuilt per tract (S18); it gives a mean $B$ of 0.003 and
-raised the public RMSE from 0.0491 to 0.0546, so the organisers' footprint
-release differs from the public file in ways that matter at tract level. The
-final submissions therefore set $B = 0$ wherever Overture has footprints, and
-$B = 1$ where it has none and the tract is still expected to hold structures
-(Section~\ref{sec:edge}). $B$ is defined wherever Overture has footprints or
-ACS reports housing units. The level of $B$ is the one leaderboard-tuned
-scalar in S19: a constant baseline gap tested at 0.01 and 0.05 (S13), with 0
-chosen.
+$R$ the Microsoft footprint count, also by centroid. The public Microsoft US
+Building Footprints v2 release, rebuilt per tract (S18), gives a mean $B$ of
+0.003 and raised the public RMSE from 0.0491 to 0.0546. The centroid counting
+was checked independently: the Overture and US v2 counts per tract equal a
+competitor's published counts from the same public files in all 415 Eastern
+Washington tracts. The organisers' release is therefore a different one.
+Microsoft's Global ML Building Footprints \cite{globalml}, release 2026-02-03,
+downloaded by stage 10 as the zoom-9 quadkey files covering each region, holds
+6 to 17\,\% more footprints than US v2 in every region. Used as $R$ in S25,
+it makes $B$ positive in 31\,\% of tracts with a mean of 0.0056, changes 5,644
+tracts, and lowered the public RMSE from 0.0238 to 0.0215; the line search along
+S24 to S25 gave $t^\ast = 1.22$. $B$ is defined wherever Global ML has a
+footprint in the tract. S24 instead sets $B = 0$ wherever Overture has
+footprints and $B = 1$ where it has none and the tract holds housing units,
+with the level of $B$ the one leaderboard-tuned scalar it uses (a constant
+baseline gap tested at 0.01 and 0.05 in S13, with 0 chosen).
 
 \subsection{Points of interest}
 
@@ -401,7 +412,7 @@ probability is 0 or 1.
 \section{Edge cases}
 \label{sec:edge}
 
-\paragraph{Zero-population tracts.} Population enters no formula. In S24, $E$
+\paragraph{Zero-population tracts.} Population enters no formula. In S25 and S24, $E$
 is defined wherever the apportioned establishment count is positive, which
 holds in 22 of the 27 scored tracts without residents (airports, parks,
 industrial land); its gap is 0 in all of them because Overture holds more
@@ -414,11 +425,11 @@ dropped from the scored list by the organisers. Two remain,
 \texttt{48039990000} (Brazoria County) and \texttt{48057990000} (Calhoun
 County). Neither has residents, a TIGER primary or secondary road, a USGS
 fire station or school, an Overture place or an Overture footprint. The
-public Microsoft file holds five footprints in the first, likely offshore
-structures, and none in the second. Because a scored tract must have a
-defined component, the building component is the only one that can be
-defined, and with no Overture footprints its gap is 1. Both are written with $B = 1$ and a
-composite of 1.
+Global ML file holds one footprint in the first and 48 in the second, likely
+offshore and shoreline structures, so the building component is defined in
+both; with no Overture footprints its gap is 1. Both are written with $B = 1$
+and a composite of 1, which is also the only value consistent with a scored
+tract having a defined component.
 
 \paragraph{Tracts with no Overture data in a layer.} The Overture count or
 length is 0, so the gap is 1 wherever the reference is positive and the
@@ -479,12 +490,13 @@ S14 & Combined levels & 0.07454 & Best estimate-only method \\
 S15 & Fire stations drive the facility half & 0.07716 & Partly kept \\
 S17 & Transport rebuilt from TIGER 2025 & 0.04906 & Kept \\
 S18 & Building rebuilt from Microsoft US v2 & 0.05462 & Dropped \\
-S19 & Fire and school gaps from USGS structures, $E = 0$ & 0.02996 & Final B \\
+S19 & Fire and school gaps from USGS structures, $E = 0$ & 0.02996 & Superseded \\
 S20 & S19 with ZBP establishments apportioned by places & 0.03153 & Dropped \\
 S21 & S19 with EMS from USGS ambulance services & 0.04289 & Dropped \\
 S22 & S19 with HIFLD schools & 0.04136 & Dropped \\
 S23 & A competitor's published file, uploaded as a benchmark & 0.00227 & Not ours \\
-S24 & S19 with ZBP establishments apportioned by HUD business ratios & 0.02380 & Final A \\
+S24 & S19 with ZBP establishments apportioned by HUD business ratios & 0.02380 & Final B \\
+S25 & S24 with the building gap against Microsoft Global ML & 0.02152 & Final A \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -513,7 +525,8 @@ The project allowed at most six global scalars tuned on the public
 leaderboard. Five were used during the estimation phase: the boundary
 distance (25\,m from 0, 25, 50), the POI level (0.779), the transport value
 scale (1.15), the building baseline gap (0 from 0.01 and 0.05) and the fire
-model strength (0.3). The rebuilt method uses only the building baseline gap.
+model strength (0.3). S25 uses none of them; S24 uses only the building
+baseline gap.
 
 \subsection{Final selection}
 \label{sec:final}
@@ -521,17 +534,19 @@ model strength (0.3). The rebuilt method uses only the building baseline gap.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_map_scores.png}
-\caption{S24 coverage gap score by tract, drawn by stage 04 from the S24
-reproduction run. Scores above 0.5 share the top colour.}
+\caption{S25 coverage gap score by tract, drawn by stage 04 from the S25
+reproduction run (analysis run \nolinkurl{20261030-1514-04_analysis-7cec170}). Scores above 0.5 share the top colour.}
 \label{fig:map_scores}
 \end{figure}
 
-Figure~\ref{fig:map_scores} maps the S24 scores.
+Figure~\ref{fig:map_scores} maps the S25 scores.
 
-S24 is the best public score of this pipeline and depends on one tuned
-scalar. S19 is the same method with the establishments half at 0. It differs
-from S24 in 253 tracts and hedges the private split against the case where the
-HUD apportionment fits the public tracts better than the private ones. S23 was
+S25 is the best public score of this pipeline and depends on no tuned
+scalar: every component is computed from a public reference. S24 is the same
+method with the building gap held at 0 where Overture has footprints. It
+differs from S25 in 5,644 tracts by small amounts and hedges the private split
+against the case where the Global ML reference fits the public tracts better
+than the private ones. S23 was
 a competitor's published file, uploaded once to see its score. It was not
 produced by this pipeline, its inputs include the organisers' removed
 reference files, and it is not selected.
@@ -542,10 +557,10 @@ reference files, and it is not selected.
 The scorecard reports disparity ratios of the predicted score between strata.
 For the all-zero file every ratio was unavailable. Under the estimation phase
 (S13) the tribal ratio was 1.30 and the rural ratio 1.25. On the scorecard for
-S24 they are 2.92 for tribal against non-tribal tracts, 2.42 for rural against
-urban, 1.22 for high social vulnerability, 1.46 for high climate
-vulnerability and 1.81 for wildfire hazard, with summer heat the one stratum
-where the gap is smaller (0.54). The rise comes
+S25 they are 2.85 for tribal against non-tribal tracts, 2.41 for rural against
+urban, 1.21 for high social vulnerability, 1.46 for high climate
+vulnerability, 1.47 for winter drought and 1.81 for wildfire hazard, with
+summer heat the one stratum where the gap is smaller (0.56). The rise comes
 mostly from transport in Eastern Oklahoma, where 805 of 1,192 scored tracts
 overlap a tribal area and the mean transport gap where defined is 0.355,
 against 0.123 in South-Central Texas, and from fire stations, whose gap where
@@ -758,11 +773,11 @@ The gap form in Equation~\ref{eq:gap} is taken from the organisers'
 description and README; their code was not available. The establishments
 apportionment is undocumented; the HUD business-address ratios fit it well
 ($t^\ast = 1.17$), but the organisers' crosswalk quarter and Business
-Patterns year are unknown. The organisers' Microsoft footprint release is unknown, and
-the public release made the score worse, so the building component is held
-at 0 where Overture has footprints. The TIGER 2025 and USGS 2026 files may
+Patterns year are unknown. The Global ML release fits the building reference
+($t^\ast = 1.22$), but the organisers may have used an earlier one. The TIGER
+2025 and USGS 2026 files may
 differ from the vintages the organisers used, and their EMS reference could
-not be rebuilt from public data. The remaining public error of 0.024 sits in
+not be rebuilt from public data. The remaining public error of 0.0215 sits in
 these components. The bias discovery uses Overture names as
 published. A road may carry a name in a local addressing system that
 Overture does not hold; in that case the open map lacks the name, which is
@@ -773,20 +788,20 @@ the gap being measured.
 Code, configuration and logs are in a private git repository that will be
 released to Zindi reviewers on request. Every compute stage runs on Kaggle
 from a code dataset built from a clean commit, with the commit hash written to
-each output. The final submissions come from commits \texttt{30d804e} (S24)
-and \texttt{672866c} (S19) with the overrides in Table~\ref{tab:overrides}.
+each output. The final submissions come from commits \texttt{45a6fcc} (S25)
+and \texttt{30d804e} (S24) with the overrides in Table~\ref{tab:overrides}.
 Python 3.13.15 on the Kaggle image, DuckDB 1.5.4, numpy 2.1.3, pandas 2.3.3;
 the full \texttt{pip freeze} is saved with each run. The seed is 20261025 for
 every random generator. The rebuilt components involve no random draws. Both
 final configurations were rerun on Kaggle from later code with
-\texttt{make reproduce}: S19 on 29 October (run
-\texttt{20261029-2244-03\_model-50be6bb}) and S24 on 30 October (run
-\texttt{20261030-1008-03\_model-c516b52}). Each output matched the uploaded
+\texttt{make reproduce} on 30 October: S24 (run
+\texttt{20261030-1008-03\_model-c516b52}) and S25 (run
+\texttt{20261030-1512-03\_model-8f446f4}). Each output matched the uploaded
 file in every cell, with a largest float difference of 0 and no differing
 flag. Runtimes and
 memory are in Table~\ref{tab:stages}. The commands are
 \texttt{make kaggle-run STAGE=<stage> SET="<overrides>"} for each stage in
-the order 01, 02, 05, 06, 07, 03.
+the order 01, 02, 05, 06, 07, 10, 03.
 
 \begin{table}[htbp]
 \centering
@@ -797,9 +812,10 @@ the order 01, 02, 05, 06, 07, 03.
 \toprule
 Submission & Overrides on \texttt{configs/model.yaml} \\
 \midrule
-S24 & \texttt{transport.source=tiger building.baseline\_gap=0 poi.source=reference} \\
-    & \texttt{poi.reference\_types=[fire,schools] poi.establishment\_weight=bus} \\
-S19 & as S24 with \texttt{poi.establishment\_weight=none} \\
+S25 & \texttt{transport.source=tiger building.source=microsoft building.count=globalml} \\
+    & \texttt{poi.source=reference poi.reference\_types=[fire,schools]} \\
+    & \texttt{poi.establishment\_weight=bus} \\
+S24 & as S25 with \texttt{building.source=proxy building.baseline\_gap=0} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -844,6 +860,11 @@ US Department of Housing and Urban Development. HUD USPS ZIP Code
 Crosswalk Files, ZIP-TRACT, fourth quarter 2024. Archived copy: DataLumos
 project 219325, version V2, retrieved 29 October 2026.
 \url{https://www.datalumos.org/datalumos/project/219325/version/V2/view}
+
+\bibitem{globalml}
+Microsoft (2026). Global ML Building Footprints, release 2026-02-03. Index
+retrieved 30 October 2026.
+\url{https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv}
 
 \bibitem{msbuildings}
 Microsoft (2020). US Building Footprints, version 2.

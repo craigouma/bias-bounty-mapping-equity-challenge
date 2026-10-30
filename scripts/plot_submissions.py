@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-PHASES = [(1, 1, "Constant"), (2, 16, "Estimated components"), (17, 24, "Reference rebuilt")]
+PHASES = [(1, 1, "Constant"), (2, 16, "Estimated components"), (17, 25, "Reference rebuilt")]
 # S23 was a competitor's published file uploaded as a benchmark, not a submission of this pipeline.
 EXCLUDE = {23}
 COLORS = ["#440154", "#21918c", "#fde725"]
