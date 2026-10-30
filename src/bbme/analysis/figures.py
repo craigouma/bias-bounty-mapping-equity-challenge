@@ -54,3 +54,39 @@ def contrast_intervals(findings: dict, measure: str, path: Path) -> Path:
     fig.savefig(path, dpi=200)
     plt.close(fig)
     return path
+
+
+def region_maps(
+    tracts, column: str, label: str, title: str, path: Path, outline=None, vmax: float = 1.0
+) -> Path:
+    """One choropleth panel per region; tracts where `outline` is true get a dark edge."""
+    regions = list(dict.fromkeys(tracts["region"]))
+    cols = 3 if len(regions) > 4 else 2
+    rows = -(-len(regions) // cols)
+    fig, axes = plt.subplots(rows, cols, figsize=(4.2 * cols, 3.9 * rows))
+    axes = axes.ravel()
+    for ax, region in zip(axes, regions, strict=False):
+        sub = tracts[tracts["region"] == region]
+        sub.plot(
+            column=column,
+            ax=ax,
+            cmap="viridis",
+            vmin=0,
+            vmax=vmax,
+            linewidth=0.05,
+            edgecolor="0.85",
+            missing_kwds={"color": "0.9"},
+        )
+        if outline is not None:
+            sub[outline.loc[sub.index]].boundary.plot(ax=ax, color="black", linewidth=0.5)
+        ax.set_title(region, fontsize=10)
+        ax.set_axis_off()
+    for ax in axes[len(regions) :]:
+        ax.set_axis_off()
+    mappable = plt.cm.ScalarMappable(cmap="viridis", norm=plt.Normalize(0, vmax))
+    extend = "max" if vmax < 1 else "neither"
+    fig.colorbar(mappable, ax=axes.tolist(), shrink=0.6, label=label, extend=extend)
+    fig.suptitle(title, fontsize=11)
+    fig.savefig(path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    return path
