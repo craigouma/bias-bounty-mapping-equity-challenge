@@ -84,9 +84,13 @@ def building_draws(df: pd.DataFrame, cfg: dict, rng: np.random.Generator, n_draw
 
 
 def microsoft_draws(df: pd.DataFrame, cfg: dict, n_draws: int) -> Draws:
-    """Exact building gap against Microsoft US footprints; undefined where it has none."""
+    """Exact building gap against Microsoft footprints; undefined where it has none.
+
+    `count` names the reference column (`ms_n_centroid`, `ms_n_intersects` or the Global ML
+    `ms_n_globalml`, counted by centroid); Overture is counted the same way.
+    """
     count = cfg["building"]["count"]
-    overture = df["bld_n" if count == "centroid" else "bld_n_intersects"].to_numpy(float)
+    overture = df["bld_n_intersects" if count == "intersects" else "bld_n"].to_numpy(float)
     reference = df[f"ms_n_{count}"].to_numpy(float)
     point = np.nan_to_num(gap(overture, reference))
     values = np.broadcast_to(point[:, None], (len(df), n_draws))
