@@ -49,7 +49,9 @@ layers that the organisers removed from the challenge bucket on 25 September
 challenge package brought the public RMSE from 0.1072 for the all-zero file to
 0.0745. After Zindi staff confirmed on 27 October that the public versions of
 those layers could be used, the pipeline rebuilt the reference side of each component from those sources and
-reached 0.02996 (submission S19). The rebuilt transport component reproduces
+reached 0.02996 (submission S19), then 0.02380 (S24) once ZIP establishment
+counts were apportioned to tracts by HUD business-address ratios. The rebuilt
+transport component reproduces
 the organisers' published undefined rates to within one percentage point in
 all four documented regions, and their published spread of road length ratios
 (0.71 to 1.59) once road length on shared tract boundaries is counted once.
@@ -97,8 +99,8 @@ Section~\ref{sec:scorecard} reflects on the scorecard and
 Section~\ref{sec:bias} presents the bias discovery.
 
 All submissions were made by Zindi user \zindiuser{}, entering solo.
-The two submissions selected for private scoring are S19 (public RMSE
-0.029961) and S20 (0.031525), described in Section~\ref{sec:final}; the
+The two submissions selected for private scoring are S24 (public RMSE
+0.023796) and S19 (0.029961), described in Section~\ref{sec:final}; the
 others referred to in this paper are listed in Table~\ref{tab:history}.
 
 \section{Data}
@@ -138,7 +140,13 @@ Census Business Patterns) could be used. Facility counts were taken from the
 USGS National Map structures, which the challenge page names as the facility
 reference and which is the source of the HIFLD fire station layer. The pipeline then
 downloaded the sources in Table~\ref{tab:sources} directly from their
-publishers inside Kaggle kernels. No earlier version of the challenge bucket,
+publishers inside Kaggle kernels. The one exception is the HUD USPS ZIP-TRACT
+crosswalk \cite{hud}, which HUD now serves only through a token API. Its
+archived copy on DataLumos (project 219325, version V2) was downloaded on 29
+October 2026, the Q4 2024 ZIP-TRACT file was converted from xlsx to parquet
+with ZIP and tract codes kept as text (\texttt{scripts/hud\_dataset.py}), and
+the result was published as a private Kaggle dataset read by stage 07. No
+earlier version of the challenge bucket,
 no old challenge zip and no third-party mirror of the removed layers was
 used. Organiser score files of any kind were never opened; a file guard
 rejects any path containing \texttt{coverage-gap} or
@@ -149,18 +157,19 @@ if any reader bypasses it.
 \centering
 \small
 \caption{Reference sources rebuilt from their publishers. ``Final'' marks the
-sources used by the selected submissions S19 and S20.}
+sources used by the selected submissions S24 and S19.}
 \label{tab:sources}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llll}
 \toprule
 Source & Vintage & Used for & Final \\
 \midrule
-Census TIGER/Line primary and secondary roads (S1100, S1200) & 2025 & transport reference & S19, S20 \\
-USGS National Map structures, fire stations (FCODE 74026) & 2026 & fire reference & S19, S20 \\
-USGS National Map structures, schools (FCODE 73002 to 73005) & 2026 & school reference & S19, S20 \\
-Census ZIP Code Business Patterns, establishments per ZIP & 2023 & establishments reference & S20 \\
-Census 2020 ZCTA to tract relationship file & 2020 & apportioning ZIP counts & S20 \\
+Census TIGER/Line primary and secondary roads (S1100, S1200) & 2025 & transport reference & S24, S19 \\
+USGS National Map structures, fire stations (FCODE 74026) & 2026 & fire reference & S24, S19 \\
+USGS National Map structures, schools (FCODE 73002 to 73005) & 2026 & school reference & S24, S19 \\
+Census ZIP Code Business Patterns, establishments per ZIP & 2023 & establishments reference & S24 \\
+HUD USPS ZIP-TRACT crosswalk, business-address ratios & Q4 2024 & apportioning ZIP counts & S24 \\
+Census 2020 ZCTA to tract relationship file & 2020 & apportioning ZIP counts (S20) & no \\
 USGS National Map structures, ambulance services (FCODE 74034) & 2026 & EMS reference (S21) & no \\
 Microsoft US Building Footprints & v2 & building reference (S18) & no \\
 HIFLD Open archive: fire and EMS stations, public and private schools & 2025 & S22 & no \\
@@ -193,7 +202,7 @@ Table~\ref{tab:stages} their measured cost.
   ext/.style={box, draw=accent, dashed},
   arr/.style={-{Stealth[length=2mm]}, draw=navy}]
 \node[box] (feat) at (4.2, 2.4) {02 features\\per-tract Overture};
-\node[ext] (est) at (4.2, 0.8) {07 establishments\\ZBP, ZCTA-tract};
+\node[ext] (est) at (4.2, 0.8) {07 establishments\\ZBP, HUD crosswalk};
 \node[ext] (ref) at (4.2, -0.8) {05 reference\\TIGER, Microsoft};
 \node[ext] (fac) at (4.2, -2.4) {06 facilities\\USGS structures};
 \node[box] (ingest) at (0, 0) {01 ingest\\bucket sync, audit};
@@ -227,9 +236,9 @@ Stage & Run & Wall (min) & Peak RSS (GB) \\
 02 features & 20261026-1136-02\_features-c1f6404 & 27.9 & 6.99 \\
 05 reference & 20261027-2145-05\_reference-0add93b & 33.9 & 3.55 \\
 06 facilities & 20261028-0024-06\_facilities-8d8b042 & 8.7 & 0.49 \\
-07 establishments & 20261028-0959-07\_establishments-71cca39 & 1.1 & 0.17 \\
+07 establishments & 20261030-0946-07\_establishments-decc7f9 & 1.2 & 0.22 \\
+03 model (S24) & 20261030-0947-03\_model-30d804e & 1.4 & 0.55 \\
 03 model (S19) & 20261028-0947-03\_model-672866c & 3.6 & 0.60 \\
-03 model (S20) & 20261028-1001-03\_model-4b63973 & 1.3 & 0.55 \\
 04 analysis & 20261029-2348-04\_analysis-503f5c5 & 22.7 & 0.38 \\
 \bottomrule
 \end{tabular}
@@ -358,6 +367,23 @@ place count as a stand-in for business addresses, which makes $E$ positive in
 24\,\% of the S20 change: some establishment gaps exist, placed differently
 from this apportionment.
 
+The standard tool for moving ZIP-level business counts to tracts is the HUD
+USPS ZIP-TRACT crosswalk, which gives for each ZIP the share of its business
+addresses (\texttt{BUS\_RATIO}) and residential addresses
+(\texttt{RES\_RATIO}) in each tract. A competitor's public repository,
+posted to the challenge discussion, lists the organisers' establishment
+reference columns as \texttt{cbp\_estab} and \texttt{cbp\_estab\_res}, which
+match these two ratios; no file from that repository was used. S24 therefore
+sets the reference to ZIP Business Patterns 2023 establishments times
+\texttt{BUS\_RATIO} from the Q4 2024 crosswalk, summed over the ZIPs that
+reach each tract, compares it with all Overture places in the tract, and
+leaves $E$ undefined where the result is 0. $E$ becomes positive in 2.4\,\%
+of tracts and 253 tracts change. The public RMSE fell from 0.0300 to 0.0238,
+and the line search along S19 to S24 gave $t^\ast = 1.17$, so the change is
+right in full. Offline checks of the 2023 crosswalk quarters, ZBP 2022, the
+residential and total ratios, and scale factors from 0.9 to 1.3 found no
+variant clearly better than S24.
+
 \subsection{Composite and definedness}
 
 With every component rebuilt from counts and lengths, definedness follows
@@ -414,7 +440,8 @@ lists them and Figure~\ref{fig:history} plots the scores.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{fig_submissions.png}
-\caption{Public RMSE by submission. S16 was not scored.}
+\caption{Public RMSE by submission. S16 was not scored; S23, a competitor's
+file uploaded as a benchmark, is left out.}
 \label{fig:history}
 \end{figure}
 
@@ -445,10 +472,12 @@ S14 & Combined levels & 0.07454 & Best estimate-only method \\
 S15 & Fire stations drive the facility half & 0.07716 & Partly kept \\
 S17 & Transport rebuilt from TIGER 2025 & 0.04906 & Kept \\
 S18 & Building rebuilt from Microsoft US v2 & 0.05462 & Dropped \\
-S19 & Fire and school gaps from USGS structures, $E = 0$ & 0.02996 & Final A \\
-S20 & S19 with ZBP establishments apportioned by places & 0.03153 & Final B \\
+S19 & Fire and school gaps from USGS structures, $E = 0$ & 0.02996 & Final B \\
+S20 & S19 with ZBP establishments apportioned by places & 0.03153 & Dropped \\
 S21 & S19 with EMS from USGS ambulance services & 0.04289 & Dropped \\
 S22 & S19 with HIFLD schools & 0.04136 & Dropped \\
+S23 & A competitor's published file, uploaded as a benchmark & 0.00227 & Not ours \\
+S24 & S19 with ZBP establishments apportioned by HUD business ratios & 0.02380 & Final A \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -482,21 +511,24 @@ model strength (0.3). The rebuilt method uses only the building baseline gap.
 \subsection{Final selection}
 \label{sec:final}
 
-S19 is the best public score and depends on one tuned scalar. S20 is the same
-method with the establishments half rebuilt from public counts, the only
-other part of the formula with independent evidence of signal ($t^\ast =
-0.24$). It differs from S19 in 143 tracts (1.5\,\%) and hedges the private
-split against the case where establishment gaps matter more there.
+S24 is the best public score of this pipeline and depends on one tuned
+scalar. S19 is the same method with the establishments half at 0. It differs
+from S24 in 253 tracts and hedges the private split against the case where the
+HUD apportionment fits the public tracts better than the private ones. S23 was
+a competitor's published file, uploaded once to see its score. It was not
+produced by this pipeline, its inputs include the organisers' removed
+reference files, and it is not selected.
 
 \section{Bias Scorecard reflections}
 \label{sec:scorecard}
 
 The scorecard reports disparity ratios of the predicted score between strata.
 For the all-zero file every ratio was unavailable. Under the estimation phase
-(S13) the tribal ratio was 1.30 and the rural ratio 1.25. Under the rebuilt
-method the ratios, recomputed from the S19 predictions with the scorecard's
-strata, are 3.02 for tribal against non-tribal tracts, 2.5 for rural against
-urban and 1.15 for high against other social vulnerability. The rise comes
+(S13) the tribal ratio was 1.30 and the rural ratio 1.25. On the scorecard for
+S24 they are 2.92 for tribal against non-tribal tracts, 2.42 for rural against
+urban, 1.22 for high social vulnerability, 1.46 for high climate
+vulnerability and 1.81 for wildfire hazard, with summer heat the one stratum
+where the gap is smaller (0.54). The rise comes
 mostly from transport in Eastern Oklahoma, where 805 of 1,192 scored tracts
 overlap a tribal area and the mean transport gap where defined is 0.355,
 against 0.123 in South-Central Texas, and from fire stations, whose gap where
@@ -677,13 +709,14 @@ the name, that none of them reads.
 
 The gap form in Equation~\ref{eq:gap} is taken from the organisers'
 description and README; their code was not available. The establishments
-apportionment is undocumented, and the best evidence (S20) is that some
-establishment gaps exist but fall in different tracts from a place-weighted
-apportionment. The organisers' Microsoft footprint release is unknown, and
+apportionment is undocumented; the HUD business-address ratios fit it well
+($t^\ast = 1.17$), but the organisers' crosswalk quarter and Business
+Patterns year are unknown. The organisers' Microsoft footprint release is unknown, and
 the public release made the score worse, so the building component is held
 at 0 where Overture has footprints. The TIGER 2025 and USGS 2026 files may
-differ from the vintages the organisers used. The remaining public error of
-0.030 sits in these components. The bias discovery uses Overture names as
+differ from the vintages the organisers used, and their EMS reference could
+not be rebuilt from public data. The remaining public error of 0.024 sits in
+these components. The bias discovery uses Overture names as
 published. A road may carry a name in a local addressing system that
 Overture does not hold; in that case the open map lacks the name, which is
 the gap being measured.
@@ -693,15 +726,15 @@ the gap being measured.
 Code, configuration and logs are in a private git repository that will be
 released to Zindi reviewers on request. Every compute stage runs on Kaggle
 from a code dataset built from a clean commit, with the commit hash written to
-each output. The final submissions come from commits \texttt{672866c} (S19)
-and \texttt{4b63973} (S20) with the overrides in Table~\ref{tab:overrides}.
+each output. The final submissions come from commits \texttt{30d804e} (S24)
+and \texttt{672866c} (S19) with the overrides in Table~\ref{tab:overrides}.
 Python 3.13.15 on the Kaggle image, DuckDB 1.5.4, numpy 2.1.3, pandas 2.3.3;
 the full \texttt{pip freeze} is saved with each run. The seed is 20261025 for
-every random generator. The rebuilt components involve no random draws. On
-29 October both final configurations were rerun on Kaggle from the current
-code (\texttt{make reproduce FINAL=A} and \texttt{FINAL=B}, runs
-\texttt{20261029-2244-03\_model-50be6bb} and
-\texttt{20261029-2345-03\_model-efe2776}); each output matched the uploaded
+every random generator. The rebuilt components involve no random draws. Both
+final configurations were rerun on Kaggle from later code with
+\texttt{make reproduce}: S19 on 29 October (run
+\texttt{20261029-2244-03\_model-50be6bb}) and S24 on 30 October (run
+\texttt{20261030-1008-03\_model-c516b52}). Each output matched the uploaded
 file in every cell, with a largest float difference of 0 and no differing
 flag. Runtimes and
 memory are in Table~\ref{tab:stages}. The commands are
@@ -717,9 +750,9 @@ the order 01, 02, 05, 06, 07, 03.
 \toprule
 Submission & Overrides on \texttt{configs/model.yaml} \\
 \midrule
-S19 & \texttt{transport.source=tiger building.baseline\_gap=0 poi.source=reference} \\
-    & \texttt{poi.reference\_types=[fire,schools] poi.establishment\_weight=none} \\
-S20 & as S19 with \texttt{poi.establishment\_weight=places} \\
+S24 & \texttt{transport.source=tiger building.baseline\_gap=0 poi.source=reference} \\
+    & \texttt{poi.reference\_types=[fire,schools] poi.establishment\_weight=bus} \\
+S19 & as S24 with \texttt{poi.establishment\_weight=none} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -758,6 +791,12 @@ US Census Bureau (2025). ZIP Code Business Patterns 2023, totals file.
 \bibitem{zcta}
 US Census Bureau (2022). 2020 ZCTA to census tract relationship file.
 \url{https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/}
+
+\bibitem{hud}
+US Department of Housing and Urban Development. HUD USPS ZIP Code
+Crosswalk Files, ZIP-TRACT, fourth quarter 2024. Archived copy: DataLumos
+project 219325, version V2, retrieved 29 October 2026.
+\url{https://www.datalumos.org/datalumos/project/219325/version/V2/view}
 
 \bibitem{msbuildings}
 Microsoft (2020). US Building Footprints, version 2.

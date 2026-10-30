@@ -9,7 +9,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-PHASES = [(1, 1, "Constant"), (2, 16, "Estimated components"), (17, 22, "Reference rebuilt")]
+PHASES = [(1, 1, "Constant"), (2, 16, "Estimated components"), (17, 24, "Reference rebuilt")]
+# S23 was a competitor's published file uploaded as a benchmark, not a submission of this pipeline.
+EXCLUDE = {23}
 COLORS = ["#440154", "#21918c", "#fde725"]
 
 
@@ -19,6 +21,8 @@ def scores(log: Path) -> dict[int, float]:
         rmse = re.search(r"^- Public RMSE: ([0-9.]+)", section, flags=re.M)
         if rmse:
             out[int(section.split()[0])] = float(rmse.group(1))
+    for i in EXCLUDE:
+        out.pop(i, None)
     return out
 
 
