@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from bbme import db
+from bbme import db, guard
 from bbme.components.building import ruca_class
 from bbme.features import strata_path
 
@@ -164,3 +164,17 @@ def share_over(
         "share_over": float(over.mean()),
         "non_tribal_share_over": float((other_rate.reindex(mix.index) * mix).sum()),
     }
+
+
+def tract_geometry(raw: Path, regions: list[str]):
+    """Tract polygons for every region as one GeoDataFrame in EPSG:5070, for maps."""
+    import geopandas as gpd
+
+    frames = []
+    for region in regions:
+        path = strata_path(raw, region, "census-tracts")
+        tracts = gpd.read_parquet(guard.raw(path), columns=["GEOID", "geometry"])
+        frames.append(tracts.assign(region=region))
+    return (
+        pd.concat(frames, ignore_index=True).set_crs("OGC:CRS84", allow_override=True).to_crs(5070)
+    )
