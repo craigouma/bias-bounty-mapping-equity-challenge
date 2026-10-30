@@ -3,7 +3,7 @@
 # centroid.
 submission: S25
 file: S25_20261030-1227-03_model-45a6fcc.csv
-commit: 45a6fcc
+commit: 45a6fcc97de9d257aa0267133da92b0592892009
 overrides:
   - transport.source=tiger
   - building.source=microsoft
