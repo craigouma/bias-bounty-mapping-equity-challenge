@@ -1,12 +1,12 @@
-# Final submission A: S19, the best public score (0.029960976). Rebuilt transport (TIGER),
-# building held at 0 where Overture has footprints, fire and school gaps from USGS structures,
-# establishments half at 0.
-submission: S19
-file: S19_20261028-0947-03_model-672866c.csv
-commit: 672866c709f24ae75954ac55c3f66d2d1d04df9a
+# Final submission A: S24, the best public score of this pipeline (0.023796476). S19 with the
+# establishments half rebuilt from ZIP Business Patterns 2023 apportioned to tracts by HUD
+# USPS ZIP-TRACT business-address ratios (Q4 2024).
+submission: S24
+file: S24_20261030-0947-03_model-30d804e.csv
+commit: 30d804eda3d8b33760e99fe793e9adfb07ce3823
 overrides:
   - transport.source=tiger
   - building.baseline_gap=0
   - poi.source=reference
   - poi.reference_types=[fire,schools]
-  - poi.establishment_weight=none
+  - poi.establishment_weight=bus
