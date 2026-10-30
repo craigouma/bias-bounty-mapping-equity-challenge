@@ -21,16 +21,20 @@ def main(run: dict, code: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
     zbp = est.zip_establishments(est.download(ext["zbp_url"], Path("/tmp/external")))
     relation = est.download(ext["zcta_tract_url"], Path("/tmp/external"))
-    table = est.tract_establishments(zbp, relation, tracts)
+    xw_name = f"ZIP_TRACT_{ext['hud_crosswalk']['quarter']}.parquet"
+    crosswalk = est.crosswalk_establishments(zbp, upstream(xw_name) / xw_name, tracts)
+    table = est.tract_establishments(zbp, relation, tracts).merge(crosswalk, on="GEOID")
     table.to_parquet(out / "establishment_reference_tracts.parquet", index=False)
     summary = {
         "run_id": run["run_id"],
         "zip_codes": int(len(zbp)),
-        "totals_by_region": table.groupby("region")[["est_area", "est_pop"]]
+        "totals_by_region": table.groupby("region")[["est_area", "est_pop", "est_bus", "est_res"]]
         .sum()
         .round(0)
         .to_dict(),
-        "zero_share": {c: float((table[c] == 0).mean()) for c in ["est_area", "est_pop"]},
+        "zero_share": {
+            c: float((table[c] == 0).mean()) for c in ["est_area", "est_pop", "est_bus", "est_res"]
+        },
     }
     (out / "ESTABLISHMENT_MANIFEST.json").write_text(json.dumps(summary, indent=2))
     write_run_meta(out, run, code, started)
