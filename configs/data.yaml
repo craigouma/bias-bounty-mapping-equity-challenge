@@ -106,6 +106,10 @@ external_reference:
   hud_crosswalk:
     quarter: '122024'
     dataset: bbme-hud-crosswalk
+  # Microsoft Global ML Building Footprints (release 2026-02-03), zoom-9 quadkey files.
+  globalml_index_url: https://minedbuildings.z5.web.core.windows.net/global-buildings/dataset-links.csv
+  globalml_location: UnitedStates
+  globalml_zoom: 9
   zcta_tract_url: https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_tract20_natl.txt
   hifld_base: https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/seerai/hifld
   hifld_layers:
@@ -128,6 +132,9 @@ external_reference:
     - '^tiger_boundary_tracts\.parquet$'
     - '^national_county2020\.txt$'
     - '^ZIP_TRACT_\d{6}\.parquet$'
+    - '^dataset-links\.csv$'
+    - '^\d{9}-part-\d{5}-[0-9a-f-]+\.c000\.csv\.gz$'
+    - '^globalml_tracts\.parquet$'
 # Context for the bias discovery analysis only (docs/external_data.md); never a scored input.
 analysis_external:
   county_names_url: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt

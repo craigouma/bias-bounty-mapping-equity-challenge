@@ -21,7 +21,7 @@ stages:
   03_model:
     slug: bbme-03-model
     gpu: false
-    kernel_sources: [bbme-02-features, bbme-05-reference, bbme-06-facilities, bbme-07-establishments, bbme-08-facility-archive]
+    kernel_sources: [bbme-02-features, bbme-05-reference, bbme-06-facilities, bbme-07-establishments, bbme-08-facility-archive, bbme-10-globalml]
     pull: ['runs/{run_id}/.*']
   04_analysis:
     slug: bbme-04-analysis
@@ -54,3 +54,8 @@ stages:
     gpu: false
     kernel_sources: [bbme-01-ingest]
     pull: ['edges/.*']
+  10_globalml:
+    slug: bbme-10-globalml
+    gpu: false
+    kernel_sources: [bbme-01-ingest]
+    pull: ['globalml/.*']
