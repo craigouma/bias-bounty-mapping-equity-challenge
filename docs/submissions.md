@@ -324,5 +324,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S24 with building.source=microsoft building.count=globalml: B = gap(Overture footprints by centroid, Global ML footprints by centroid); B positive in 31% of tracts, mean 0.005599 over the four documented regions (US v2 gives 0.002708); 5,644 tracts change, rms change 0.0085. Our centroid counting was checked first: Overture and US v2 counts match a competitor's public-source eastern-wa counts in all 415 tracts
 - Expected direction: offline span estimate 0.022 to 0.025 against S24's 0.0238; nearly orthogonal to S18 (cosine 0.09), so the leaderboard decides
 - Decision informed: whether Global ML replaces the zero building gap in final A
-- Public RMSE: pending
+- Zindi submission ID: `2ncgdcQQ`
+- Public RMSE: 0.021520001
+- Result note: best of this pipeline; line search t* = 1.22 along S24 to S25, so the organisers' Microsoft reference is Global ML. Becomes final A, S24 final B. Facility variants screened offline on top of S25 (schools with colleges, HIFLD fire, EMS defined at gap 0) were all worse; no public EMS layer matching the organisers' reference was found (HIFLD EMS Stations copies on ArcGIS Online hold about 9 times the Overture EMS count)
 - Submissions used after this one: 25 of 35
