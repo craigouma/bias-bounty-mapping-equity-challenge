@@ -5,3 +5,4 @@ submissions: artifacts/submissions
 build: build
 kernels_build: build/kernels
 code_build: build/kaggle_code
+hud_build: build/hud_crosswalk

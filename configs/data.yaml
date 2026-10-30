@@ -101,6 +101,11 @@ external_reference:
     schools: [73002, 73003, 73004, 73005]
     college: [73006]
   zbp_url: https://www2.census.gov/programs-surveys/cbp/datasets/2023/zbp23totals.zip
+  # HUD USPS ZIP-TRACT crosswalk (DataLumos project 219325 V2), published by scripts/hud_dataset.py
+  # as a private Kaggle dataset. BUS_RATIO apportions ZIP establishments to tracts.
+  hud_crosswalk:
+    quarter: '122024'
+    dataset: bbme-hud-crosswalk
   zcta_tract_url: https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_tract20_natl.txt
   hifld_base: https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/seerai/hifld
   hifld_layers:
@@ -122,6 +127,7 @@ external_reference:
     - '^tiger_tracts\.parquet$'
     - '^tiger_boundary_tracts\.parquet$'
     - '^national_county2020\.txt$'
+    - '^ZIP_TRACT_\d{6}\.parquet$'
 # Context for the bias discovery analysis only (docs/external_data.md); never a scored input.
 analysis_external:
   county_names_url: https://www2.census.gov/geo/docs/reference/codes2020/national_county2020.txt
