@@ -10,9 +10,9 @@ def main(run: dict, code: Path) -> None:
     from bbme import guard
     from bbme.analysis import bias_discovery as bd
     from bbme.analysis.external.counties import county_names
-    from bbme.analysis.figures import contrast_intervals, unnamed_share_by_stratum
+    from bbme.analysis.figures import contrast_intervals, region_maps, unnamed_share_by_stratum
     from bbme.config import load
-    from bbme.runtime import WORKING, upstream, write_run_meta
+    from bbme.runtime import INPUT, WORKING, upstream, write_run_meta
 
     started = time.time()
     cfg = load("data")
@@ -55,5 +55,30 @@ def main(run: dict, code: Path) -> None:
     unnamed_share_by_stratum(summary, out / "figures" / "unnamed_share_by_stratum.png")
     for measure in bd.MEASURES:
         contrast_intervals(results, measure, out / "figures" / f"contrast_{measure}.png")
+    geo = bd.tract_geometry(raw, cfg["regions"])
+    tribal_regions = ["eastern-ok", "maricopa-az", "eastern-wa", "northern-ca"]
+    unnamed = geo[geo["region"].isin(tribal_regions)].merge(
+        df[["GEOID", "local_unnamed_share", "tribal_kind"]], on="GEOID", how="left"
+    )
+    region_maps(
+        unnamed,
+        "local_unnamed_share",
+        "Unnamed share of local street length",
+        "Unnamed local streets by tract; reservation tracts outlined",
+        out / "figures" / "map_unnamed_local.png",
+        outline=unnamed["tribal_kind"].eq("legal"),
+    )
+    latest = sorted(INPUT.rglob("runs/*/submission.csv"), key=lambda p: p.parent.name)[-1]
+    scores = pd.read_csv(guard.artifact(latest), dtype={"GEOID": str})
+    scored = geo.merge(scores[["GEOID", "coverage_gap_score"]], on="GEOID", how="left")
+    region_maps(
+        scored,
+        "coverage_gap_score",
+        "Predicted coverage gap score",
+        f"Coverage gap score by tract, run {latest.parent.name}",
+        out / "figures" / "map_coverage_gap.png",
+        vmax=0.5,
+    )
+    (out / "maps.json").write_text(json.dumps({"score_run": latest.parent.name}, indent=2))
     write_run_meta(out, run, code, started)
     print(json.dumps(results, indent=2), flush=True)
