@@ -8,6 +8,7 @@
 \geometry{margin=1in}
 \usepackage{authblk}
 \usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
 \usepackage{caption}
 \usepackage{xcolor}
 \usepackage{titlesec}
@@ -29,7 +30,8 @@ Data, and Unnamed Local Roads on Tribal Reservations: Methodology for the
 Bias Bounty Mapping Equity Challenge}}
 
 \author[1]{Craig Carlos Ouma\thanks{%
-Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi: \zindiuser. Code:
+Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi: \zindiuser. Final
+submissions: S24 (\texttt{EC3xBxjr}) and S19 (\texttt{Ekx9Rx3y}). Code:
 private repository, released to Zindi reviewers on request.}}
 \affil[1]{Independent Researcher}
 \date{\today}
@@ -100,7 +102,8 @@ Section~\ref{sec:bias} presents the bias discovery.
 
 All submissions were made by Zindi user \zindiuser{}, entering solo.
 The two submissions selected for private scoring are S24 (public RMSE
-0.023796) and S19 (0.029961), described in Section~\ref{sec:final}; the
+0.023796, Zindi ID \texttt{EC3xBxjr}) and S19 (0.029961, \texttt{Ekx9Rx3y}),
+described in Section~\ref{sec:final}; the
 others referred to in this paper are listed in Table~\ref{tab:history}.
 
 \section{Data}
@@ -573,6 +576,25 @@ counties, which keeps neighbouring tracts that share mapping history
 together. All numbers come from stage 04 run
 \texttt{20261029-2348-04\_analysis-503f5c5} on the challenge data only;
 county names come from the Census 2020 county code list \cite{countycodes}.
+
+\paragraph{Reproducing the finding.} Road length comes from
+\nolinkurl{<region>-overture-roads.parquet} (classes motorway, trunk, primary,
+secondary, tertiary, residential, unclassified), as geodesic metres of each
+segment clipped to the tract polygons in \nolinkurl{<region>-census-tracts.parquet};
+a segment is unnamed when \texttt{names.primary} is null. The tribal kind comes
+from \nolinkurl{<region>-strata-tract-table.parquet}: a tract is a reservation
+tract when \texttt{tribal\_legal} is true and a statistical-area tract when
+\texttt{tribal\_any} is true and \texttt{tribal\_legal} is false; area names come
+from \texttt{aiannh\_name} in \nolinkurl{<region>-tribal-tract-table.parquet}. The
+rurality class maps \texttt{ruca\_primary} 1 to 3 to metropolitan, 4 to 6 to
+micropolitan, 7 to 9 to small town and 10 to rural. Tracts with no drivable
+road are left out, and tracts with no local road are left out of the local
+comparison. In each region and class cell holding both groups, the mean
+tribal share minus the mean non-tribal share is taken, and the cells are
+averaged with weights equal to their tribal tract counts. The interval
+resamples counties (the first five GEOID digits) with replacement 1,000
+times and reports the 2.5th and 97.5th percentiles, dropping resamples in
+which no cell holds both groups.
 
 \subsection{Evidence}
 
