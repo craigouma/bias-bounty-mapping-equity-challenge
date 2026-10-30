@@ -39,6 +39,10 @@ def main(run: dict, code: Path) -> None:
         ref = upstream("reference/REFERENCE_MANIFEST.json") / "reference"
         ms = pd.read_parquet(guard.artifact(ref / "building_reference_tracts.parquet"))
         df = df.merge(ms.drop(columns="region"), on="GEOID", how="left", validate="1:1")
+        if cfg["building"]["count"] == "globalml":
+            gml = upstream("globalml/GLOBALML_MANIFEST.json") / "globalml"
+            gml = pd.read_parquet(guard.artifact(gml / "globalml_tracts.parquet"))
+            df = df.merge(gml.drop(columns="region"), on="GEOID", how="left", validate="1:1")
     out = WORKING / "runs" / run["run_id"]
     out.mkdir(parents=True, exist_ok=True)
 
