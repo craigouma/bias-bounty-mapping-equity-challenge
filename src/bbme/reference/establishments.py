@@ -69,3 +69,23 @@ def tract_establishments(zbp: pd.Series, relation: Path, tracts: pd.DataFrame) -
     )
     assert_geoids(out["GEOID"])
     return out
+
+
+def crosswalk_establishments(zbp: pd.Series, crosswalk: Path, tracts: pd.DataFrame) -> pd.DataFrame:
+    """ZIP establishments apportioned to tracts by the HUD USPS ZIP-TRACT address ratios.
+
+    `est_bus` uses each tract's share of the ZIP's business addresses (BUS_RATIO), `est_res`
+    its share of residential addresses (RES_RATIO). ZIPs with no business address in any tract
+    contribute nothing to `est_bus`.
+    """
+    xw = pd.read_parquet(guard.raw(crosswalk), columns=["ZIP", "TRACT", "BUS_RATIO", "RES_RATIO"])
+    est = xw["ZIP"].map(zbp).fillna(0)
+    xw = xw.assign(est_bus=est * xw["BUS_RATIO"], est_res=est * xw["RES_RATIO"])
+    out = xw.groupby("TRACT", as_index=False)[["est_bus", "est_res"]].sum()
+    out = (
+        tracts[["GEOID"]]
+        .merge(out.rename(columns={"TRACT": "GEOID"}), on="GEOID", how="left")
+        .fillna({"est_bus": 0.0, "est_res": 0.0})
+    )
+    assert_geoids(out["GEOID"])
+    return out
