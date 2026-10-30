@@ -300,3 +300,15 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Public RMSE: 0.0022655
 - Decision: not a final candidate. The competitor's inputs manifest lists the organisers' removed reference files (census-tiger-roads, microsoft-buildings, hifld-*, census-cbp, all marked removed), which this project does not use, and this pipeline cannot reproduce the file. Finals stay S19 and S20 (Craig, 30 Oct 2026). The manifest showed that the organisers' CBP reference has columns `cbp_estab` and `cbp_estab_res`, which motivates the HUD BUS_RATIO hypothesis
 - Submissions used after this one: 23 of 35
+
+## S24 (2026-10-30)
+
+- File: `artifacts/submissions/S24_20261030-0947-03_model-30d804e.csv`
+- Run ID: `20261030-0947-03_model-30d804e`
+- Code SHA: `30d804eda3d8b33760e99fe793e9adfb07ce3823`
+- Hypothesis: H-E2, the organisers apportioned ZIP establishments to tracts by HUD USPS ZIP-TRACT business-address ratios (their CBP reference columns are `cbp_estab` and `cbp_estab_res`, matching BUS_RATIO and RES_RATIO)
+- Change against current best: S19 with poi.establishment_weight=bus: E = gap(all Overture places by intersects, ZBP 2023 establishments x BUS_RATIO from the HUD Q4 2024 crosswalk, DataLumos 219325 V2); E positive in 2.4% of tracts, 253 tracts change, rms change 0.0157; HUD crosswalk approved by Craig 30 Oct 2026
+- Expected direction: offline span estimate 0.025 to 0.033 against S19's 0.0300; the change is almost orthogonal to every earlier submission, so the leaderboard decides
+- Decision informed: whether the HUD apportionment replaces S20 as final B
+- Public RMSE: pending
+- Submissions used after this one: 24 of 35
