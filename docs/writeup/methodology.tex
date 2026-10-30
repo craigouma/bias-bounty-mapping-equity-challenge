@@ -12,6 +12,7 @@
 \usepackage{xcolor}
 \usepackage{titlesec}
 \usepackage{tikz}
+\usepackage[section]{placeins}
 \usetikzlibrary{positioning,arrows.meta}
 \definecolor{navy}{HTML}{1A3A5C}
 \definecolor{accent}{HTML}{2563EB}
@@ -20,7 +21,7 @@
 \graphicspath{{figures/}}
 \setlength{\emergencystretch}{2em}
 
-\newcommand{\zindiuser}{\textbf{[Zindi username]}}
+\newcommand{\zindiuser}{\texttt{craigouma}}
 \newcommand{\gap}{\operatorname{gap}}
 
 \title{\textbf{Rebuilding the Coverage Gap Score from Public Reference
@@ -57,7 +58,7 @@ establishment references show where the remaining error sits.
 For the Best Bias Discovery track, this paper reports that on federally
 recognised reservations the share of local street length with no name in
 Overture is 9.5 percentage points higher than on non-tribal tracts of the same
-region and rurality (95\,\% county bootstrap interval 3.4 to 13.7), rising to
+region and rurality (95\,\% county bootstrap interval 3.5 to 14.7), rising to
 27.6 points on the Osage Reservation, while highways there are named at the
 same rate as elsewhere. The scorecard cannot see this because it measures
 length and counts. Emergency dispatch and evacuation messaging depend on the
@@ -95,8 +96,10 @@ the full submission history with the evidence each one produced.
 Section~\ref{sec:scorecard} reflects on the scorecard and
 Section~\ref{sec:bias} presents the bias discovery.
 
+All submissions were made by Zindi user \zindiuser{}, entering solo.
 The two submissions selected for private scoring are S19 (public RMSE
-0.029961) and S20 (0.031525), described in Section~\ref{sec:final}.
+0.029961) and S20 (0.031525), described in Section~\ref{sec:final}; the
+others referred to in this paper are listed in Table~\ref{tab:history}.
 
 \section{Data}
 \label{sec:data}
@@ -142,7 +145,7 @@ rejects any path containing \texttt{coverage-gap} or
 \texttt{coverage\_gap} regardless of other permissions, and a unit test fails
 if any reader bypasses it.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{Reference sources rebuilt from their publishers. ``Final'' marks the
@@ -182,7 +185,7 @@ kernel stops if the commit hash in the dataset differs from the one it was
 rendered with. Figure~\ref{fig:pipeline} shows the stages and
 Table~\ref{tab:stages} their measured cost.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
   box/.style={draw=navy, rounded corners=2pt, align=center, font=\small,
@@ -209,11 +212,12 @@ boxes download public reference sources. Stage 08 (HIFLD archive) and stage
 \label{fig:pipeline}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{Stage cost on Kaggle CPU sessions (4 cores, 32.9\,GB RAM), from the
-runs that fed the final submissions. Wall time includes queueing.}
+runs that fed the final submissions and the bias analysis. Wall time includes
+queueing.}
 \label{tab:stages}
 \begin{tabular}{llrr}
 \toprule
@@ -226,6 +230,7 @@ Stage & Run & Wall (min) & Peak RSS (GB) \\
 07 establishments & 20261028-0959-07\_establishments-71cca39 & 1.1 & 0.17 \\
 03 model (S19) & 20261028-0947-03\_model-672866c & 3.6 & 0.60 \\
 03 model (S20) & 20261028-1001-03\_model-4b63973 & 1.3 & 0.55 \\
+04 analysis & 20261029-2348-04\_analysis-503f5c5 & 22.7 & 0.38 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -284,7 +289,7 @@ the published range. The organisers' region totals therefore count each road
 once while their per-tract values count boundary roads in both tracts, which
 is the rule used here.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{Transport checks against published values. Undefined: share of
@@ -406,14 +411,14 @@ Every submission was registered before upload with a hypothesis, the change
 against the current best and the expected direction. Table~\ref{tab:history}
 lists them and Figure~\ref{fig:history} plots the scores.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{fig_submissions.png}
 \caption{Public RMSE by submission. S16 was not scored.}
 \label{fig:history}
 \end{figure}
 
-\begin{table}[p]
+\begin{table}[htbp]
 \centering
 \small
 \caption{Every scored submission, what it tested and what was decided.}
@@ -500,7 +505,172 @@ defined averages 0.44 in Eastern Oklahoma against 0.24 in Texas.
 \section{Best Bias Discovery: unnamed local roads on tribal reservations}
 \label{sec:bias}
 
-% BIAS SECTION
+\subsection{The pattern and why the scorecard cannot see it}
+
+Every coverage measure in this challenge, and every metric on the Bias
+Scorecard, counts length or features. A road segment that Overture holds
+without a name adds as much length as a named one, so a tract whose roads
+are all drawn but half unnamed scores as fully covered. The name is what
+emergency services use. A caller gives an address, computer-aided dispatch
+validates it against road centrelines that carry street names and address
+ranges \cite{nena006}, and routing tools give instructions by street name.
+This section shows that on federally recognised reservations a much larger
+share of the local street network has no name in Overture than on comparable
+non-tribal tracts, while the highways through the same reservations are
+named as often as anywhere else.
+
+\subsection{Measure and comparison}
+
+For each scored tract the measure is the share of drivable road length
+(Overture \texttt{roads} layer, classes motorway to unclassified, clipped to
+the tract) whose \texttt{names.primary} is empty. It is computed separately
+for the local classes (tertiary, residential, unclassified) and the named
+classes (motorway, trunk, primary, secondary). Tracts are tribal when the
+challenge's tribal overlap table links them to an American Indian, Alaska
+Native or Native Hawaiian area, split into legal areas (reservations and
+off-reservation trust land) and statistical areas (Oklahoma Tribal
+Statistical Areas, OTSAs).
+
+Rurality changes naming a great deal: in South-Central Texas the unnamed
+share is 8\,\% in metropolitan tracts and 29\,\% in rural ones. Tribal tracts
+are therefore compared with non-tribal tracts in the same region and RUCA
+class (metropolitan, micropolitan, small town, rural), and the cell
+differences are averaged with weights equal to the number of tribal tracts
+in each cell. Intervals come from 1,000 bootstrap resamples of whole
+counties, which keeps neighbouring tracts that share mapping history
+together. All numbers come from stage 04 run
+\texttt{20261029-2348-04\_analysis-503f5c5} on the challenge data only;
+county names come from the Census 2020 county code list.
+
+\subsection{Evidence}
+
+Table~\ref{tab:contrast} and Figure~\ref{fig:contrast} give the matched
+differences. On the 80 reservation tracts, local streets are unnamed 9.5
+percentage points more often than on matched non-tribal tracts (95\,\%
+interval 3.5 to 14.7). The highways on the same tracts show no difference
+($-0.4$, interval $-7.3$ to 5.6), so the gap sits on the streets where people
+live and the measure is not picking up a regional habit of leaving highways
+unnamed. The difference holds in each region with enough reservation tracts
+to test: Maricopa (37 tracts, $+7.3$), Eastern Washington (16, $+4.5$) and
+Eastern Oklahoma, where the Osage Reservation reaches $+27.6$ (9.8 to 29.6).
+Northern California's 13 reservation tracts point the same way with an
+interval that includes zero.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Tribal minus non-tribal unnamed share of drivable length, matched
+within region and RUCA class, in percentage points, with 95\,\% county
+bootstrap intervals.}
+\label{tab:contrast}
+\begin{tabular}{llrrr}
+\toprule
+Tribal tracts & Roads & Tracts & Difference & Interval \\
+\midrule
+Reservations, all regions & local & 80 & $+9.5$ & 3.5 to 14.7 \\
+Reservations, all regions & all drivable & 80 & $+8.3$ & 2.9 to 13.5 \\
+Reservations, all regions & named classes & 79 & $-0.4$ & $-7.3$ to 5.6 \\
+Osage Reservation, Eastern Oklahoma & local & 13 & $+27.6$ & 9.8 to 29.6 \\
+Reservations, Maricopa & local & 37 & $+7.3$ & 3.0 to 10.9 \\
+Reservations, Eastern Washington & local & 16 & $+4.5$ & 0.0 to 14.8 \\
+Reservations, Northern California & local & 13 & $+3.8$ & $-2.9$ to 10.1 \\
+OTSAs, Eastern Oklahoma & local & 792 & $+3.0$ & $-6.0$ to 7.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.68\textwidth]{fig_contrast_local.png}
+\caption{Matched difference in the unnamed share of local street length,
+tribal minus non-tribal tracts, with 95\,\% county bootstrap intervals.
+Numbers in brackets are tribal tracts.}
+\label{fig:contrast}
+\end{figure}
+
+The OTSAs hold the largest unnamed networks in absolute terms: 13,066\,km of
+unnamed drivable road in the Cheyenne and Arapaho OTSA (47\,\% of its
+network) and 8,831\,km in the Choctaw OTSA (34\,\%). After matching they do
+not separate from non-tribal tracts, because 792 of Eastern Oklahoma's 1,192
+scored tracts lie in an OTSA and only 43 non-tribal tracts outside its
+metropolitan areas remain to compare with. The OTSA result is therefore
+unresolved by this design, and the claim made here is limited to
+reservations.
+
+The 80 reservation tracts hold 294,612 residents and 8,266\,km of unnamed
+drivable road. In 19 of them, home to 55,092 people, at least 30\,\% of local
+street length has no name. That is 24\,\% of reservation tracts, against
+13\,\% of non-tribal tracts once those are weighted to the same mix of
+rurality.
+
+Table~\ref{tab:tracts} names the reservation tracts with the most unnamed
+road, with their wildfire history and social vulnerability from the
+challenge's strata tables. Several of them combine a largely unnamed street
+network with recent fire and high vulnerability. Tract 9400.04 in Osage
+County, Oklahoma has 78\,\% of its drivable length unnamed and 29\,\% of its
+land burned between 2015 and 2023. Tract 9400 in Ferry County, Washington,
+on the Colville Reservation, has 498\,km of unnamed road, 27\,\% of its land
+burned since 2015 and an SVI percentile of 0.84. Tracts 9408 and 9411 in
+Pima County, Arizona, on the Tohono O'odham Nation Reservation in the
+Sonoran Desert, have SVI percentiles of 0.96 and a third or more of local
+street length unnamed.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Reservation tracts with the most unnamed drivable road. Local:
+unnamed share of local street length. Burned: share of land burned
+2015 to 2023 (MTBS). SVI: CDC SVI 2022 overall percentile.}
+\label{tab:tracts}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llllrrrrr}
+\toprule
+GEOID & Tract & County & Reservation & Unnamed km & All & Local & Burned & SVI \\
+\midrule
+40113940004 & 9400.04 & Osage, OK & Osage & 606 & 0.78 & 0.86 & 0.29 & 0.48 \\
+40113940003 & 9400.03 & Osage, OK & Osage & 524 & 0.62 & 0.62 & 0.12 & 0.74 \\
+53019940000 & 9400 & Ferry, WA & Colville & 498 & 0.34 & 0.36 & 0.27 & 0.84 \\
+04001970202 & 9702.02 & Apache, AZ & Zuni & 462 & 0.35 & 0.39 & 0.00 & 0.54 \\
+40113940011 & 9400.11 & Osage, OK & Osage & 454 & 0.74 & 0.71 & 0.12 & 0.58 \\
+06023010102 & 101.02 & Humboldt, CA & Yurok & 387 & 0.32 & 0.32 & 0.20 & 0.61 \\
+04001970502 & 9705.02 & Apache, AZ & Fort Apache & 385 & 0.23 & 0.23 & 0.02 & 0.66 \\
+04019940800 & 9408 & Pima, AZ & Tohono O'odham & 384 & 0.40 & 0.45 & 0.03 & 0.96 \\
+40113940001 & 9400.01 & Osage, OK & Osage & 327 & 0.61 & 0.68 & 0.37 & 0.83 \\
+04017940100 & 9401 & Navajo, AZ & Fort Apache & 324 & 0.47 & 0.52 & 0.07 & 0.87 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Consequences}
+
+\paragraph{Emergency dispatch.} An address on a road with no name in the map
+cannot be matched to a centreline, so a 911 call from it geocodes to a
+nearby named road, a ZIP centroid or nothing. On a reservation, response is
+often shared between tribal, county, state and federal agencies, and units
+arriving from outside lack the local knowledge that substitutes for a street
+name. On the Osage Reservation, where 57\,\% of the drivable length has no
+name and single tracts reach 78\,\%, a crew from a neighbouring county
+routed by a tool built on open map data receives instructions in which most
+turns are onto an unnamed road.
+
+\paragraph{Evacuation routing.} Wildfire evacuation orders name the roads
+to leave by and the zones they bound. Where a third of the local network is
+unnamed, as on the Colville and Yurok tracts with a fifth to a quarter of
+their land burned since 2015, zone maps and routing products drawn from open
+data cannot describe the egress routes that residents of those roads would
+need.
+
+\paragraph{Disaster relief.} Damage assessment, supply distribution and
+welfare checks during extreme heat, which the Tohono O'odham tracts face each
+summer, are organised by address. Households on unnamed roads drop out of
+address-based lists and have to be found by coordinates.
+
+\paragraph{Why the scorecard misses it.} The Road Network Equity Ratio and
+the other scorecard metrics compare lengths and counts, and the transport
+component itself compares only motorway to secondary length. A reservation
+whose streets are drawn but unnamed has full road coverage by every one of
+these measures. The disparity becomes visible only through an attribute,
+the name, that none of them reads.
 
 \section{Limitations}
 \label{sec:limits}
@@ -514,8 +684,9 @@ the public release made the score worse, so the building component is held
 at 0 where Overture has footprints. The TIGER 2025 and USGS 2026 files may
 differ from the vintages the organisers used. The remaining public error of
 0.030 sits in these components. The bias discovery uses Overture names as
-published; a road may carry a name in local addressing systems that Overture
-does not hold, which is the gap itself rather than a flaw in the measure.
+published. A road may carry a name in a local addressing system that
+Overture does not hold; in that case the open map lacks the name, which is
+the gap being measured.
 
 \section*{Reproducibility statement}
 
@@ -526,13 +697,18 @@ each output. The final submissions come from commits \texttt{672866c} (S19)
 and \texttt{4b63973} (S20) with the overrides in Table~\ref{tab:overrides}.
 Python 3.13.15 on the Kaggle image, DuckDB 1.5.4, numpy 2.1.3, pandas 2.3.3;
 the full \texttt{pip freeze} is saved with each run. The seed is 20261025 for
-every random generator. The rebuilt components involve no random draws, and
-two runs of the same configuration produce identical files. Runtimes and
+every random generator. The rebuilt components involve no random draws. On
+29 October both final configurations were rerun on Kaggle from the current
+code (\texttt{make reproduce FINAL=A} and \texttt{FINAL=B}, runs
+\texttt{20261029-2244-03\_model-50be6bb} and
+\texttt{20261029-2345-03\_model-efe2776}); each output matched the uploaded
+file in every cell, with a largest float difference of 0 and no differing
+flag. Runtimes and
 memory are in Table~\ref{tab:stages}. The commands are
 \texttt{make kaggle-run STAGE=<stage> SET="<overrides>"} for each stage in
 the order 01, 02, 05, 06, 07, 03.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{Configuration overrides for the final submissions.}
@@ -562,6 +738,10 @@ Zindi (2026). Bias Bounty Mapping Equity Challenge.
 \bibitem{overture}
 Overture Maps Foundation (2026). Overture Maps release 2026-08-19.0 and
 schema documentation. \url{https://docs.overturemaps.org/}
+
+\bibitem{nena006}
+National Emergency Number Association (2022). NENA Standard for NG9-1-1 GIS
+Data Model, NENA-STA-006.2-2022.
 
 \bibitem{tiger}
 US Census Bureau (2025). TIGER/Line Shapefiles 2025: primary and secondary
