@@ -8,6 +8,7 @@
 \geometry{margin=1in}
 \usepackage{authblk}
 \usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
 \usepackage{caption}
 \usepackage{xcolor}
 \usepackage{titlesec}
@@ -29,7 +30,8 @@ Data, and Unnamed Local Roads on Tribal Reservations: Methodology for the
 Bias Bounty Mapping Equity Challenge}}
 
 \author[1]{Craig Carlos Ouma\thanks{%
-Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi: \zindiuser. Code:
+Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi: \zindiuser. Final
+submissions: S24 (\texttt{EC3xBxjr}) and S19 (\texttt{Ekx9Rx3y}). Code:
 private repository, released to Zindi reviewers on request.}}
 \affil[1]{Independent Researcher}
 \date{\today}
@@ -100,7 +102,8 @@ Section~\ref{sec:bias} presents the bias discovery.
 
 All submissions were made by Zindi user \zindiuser{}, entering solo.
 The two submissions selected for private scoring are S24 (public RMSE
-0.023796) and S19 (0.029961), described in Section~\ref{sec:final}; the
+0.023796, Zindi ID \texttt{EC3xBxjr}) and S19 (0.029961, \texttt{Ekx9Rx3y}),
+described in Section~\ref{sec:final}; the
 others referred to in this paper are listed in Table~\ref{tab:history}.
 
 \section{Data}
@@ -239,7 +242,7 @@ Stage & Run & Wall (min) & Peak RSS (GB) \\
 07 establishments & 20261030-0946-07\_establishments-decc7f9 & 1.2 & 0.22 \\
 03 model (S24) & 20261030-0947-03\_model-30d804e & 1.4 & 0.55 \\
 03 model (S19) & 20261028-0947-03\_model-672866c & 3.6 & 0.60 \\
-04 analysis & 20261029-2348-04\_analysis-503f5c5 & 22.7 & 0.38 \\
+04 analysis & 20261030-1019-04\_analysis-8a838bb & 24.3 & 0.80 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -398,9 +401,13 @@ probability is 0 or 1.
 \section{Edge cases}
 \label{sec:edge}
 
-\paragraph{Zero-population tracts.} $E$ is undefined. The facility gaps are
-unaffected because they depend on facility points, which can exist in a tract
-without residents.
+\paragraph{Zero-population tracts.} Population enters no formula. In S24, $E$
+is defined wherever the apportioned establishment count is positive, which
+holds in 22 of the 27 scored tracts without residents (airports, parks,
+industrial land); its gap is 0 in all of them because Overture holds more
+places than the apportioned count. S19 leaves $E$ undefined in these tracts.
+The facility gaps are unaffected because they depend on facility points,
+which can exist in a tract without residents.
 
 \paragraph{Water-dominated tracts.} Seven Texas water tracts (codes 99xx) were
 dropped from the scored list by the organisers. Two remain,
@@ -511,6 +518,16 @@ model strength (0.3). The rebuilt method uses only the building baseline gap.
 \subsection{Final selection}
 \label{sec:final}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_map_scores.png}
+\caption{S24 coverage gap score by tract, drawn by stage 04 from the S24
+reproduction run. Scores above 0.5 share the top colour.}
+\label{fig:map_scores}
+\end{figure}
+
+Figure~\ref{fig:map_scores} maps the S24 scores.
+
 S24 is the best public score of this pipeline and depends on one tuned
 scalar. S19 is the same method with the establishments half at 0. It differs
 from S24 in 253 tracts and hedges the private split against the case where the
@@ -571,11 +588,31 @@ differences are averaged with weights equal to the number of tribal tracts
 in each cell. Intervals come from 1,000 bootstrap resamples of whole
 counties, which keeps neighbouring tracts that share mapping history
 together. All numbers come from stage 04 run
-\texttt{20261029-2348-04\_analysis-503f5c5} on the challenge data only;
+\texttt{20261030-1019-04\_analysis-8a838bb} on the challenge data only;
 county names come from the Census 2020 county code list \cite{countycodes}.
+
+\paragraph{Reproducing the finding.} Road length comes from
+\nolinkurl{<region>-overture-roads.parquet} (classes motorway, trunk, primary,
+secondary, tertiary, residential, unclassified), as geodesic metres of each
+segment clipped to the tract polygons in \nolinkurl{<region>-census-tracts.parquet};
+a segment is unnamed when \texttt{names.primary} is null. The tribal kind comes
+from \nolinkurl{<region>-strata-tract-table.parquet}: a tract is a reservation
+tract when \texttt{tribal\_legal} is true and a statistical-area tract when
+\texttt{tribal\_any} is true and \texttt{tribal\_legal} is false; area names come
+from \texttt{aiannh\_name} in \nolinkurl{<region>-tribal-tract-table.parquet}. The
+rurality class maps \texttt{ruca\_primary} 1 to 3 to metropolitan, 4 to 6 to
+micropolitan, 7 to 9 to small town and 10 to rural. Tracts with no drivable
+road are left out, and tracts with no local road are left out of the local
+comparison. In each region and class cell holding both groups, the mean
+tribal share minus the mean non-tribal share is taken, and the cells are
+averaged with weights equal to their tribal tract counts. The interval
+resamples counties (the first five GEOID digits) with replacement 1,000
+times and reports the 2.5th and 97.5th percentiles, dropping resamples in
+which no cell holds both groups.
 
 \subsection{Evidence}
 
+Figure~\ref{fig:map_unnamed} maps the measure.
 Table~\ref{tab:contrast} and Figure~\ref{fig:contrast} give the matched
 differences. On the 80 reservation tracts, local streets are unnamed 9.5
 percentage points more often than on matched non-tribal tracts (95\,\%
@@ -618,6 +655,16 @@ OTSAs, Eastern Oklahoma & local & 792 & $+3.0$ & $-6.0$ to 7.5 \\
 tribal minus non-tribal tracts, with 95\,\% county bootstrap intervals.
 Numbers in brackets are tribal tracts.}
 \label{fig:contrast}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{fig_map_unnamed.png}
+\caption{Unnamed share of local street length by tract (Overture
+2026-08-19.0). Reservation tracts are outlined in black; the Osage Reservation
+is the outlined block in north-central Oklahoma. Oklahoma Tribal Statistical
+Areas are not outlined. Grey tracts have no local road.}
+\label{fig:map_unnamed}
 \end{figure}
 
 The OTSAs hold the largest unnamed networks in absolute terms: 13,066\,km of
