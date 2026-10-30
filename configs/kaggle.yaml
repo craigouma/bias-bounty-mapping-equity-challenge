@@ -41,6 +41,7 @@ stages:
   07_establishments:
     slug: bbme-07-establishments
     gpu: false
+    datasets: [bbme-hud-crosswalk]
     kernel_sources: [bbme-02-features]
     pull: ['establishments/.*']
   08_archive:

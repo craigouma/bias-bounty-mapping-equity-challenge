@@ -37,7 +37,9 @@ def render(stage: str, run: dict) -> Path:
         "enable_gpu": "true" if scfg["gpu"] else "false",
         "enable_internet": "true",
         "machine_shape": kcfg["accelerator"] if scfg["gpu"] else "",
-        "dataset_sources": [f"{user}/{kcfg['code_dataset']}"],
+        "dataset_sources": [
+            f"{user}/{d}" for d in [kcfg["code_dataset"], *scfg.get("datasets", [])]
+        ],
         "competition_sources": [],
         "kernel_sources": [f"{user}/{s}" for s in scfg["kernel_sources"]],
         "model_sources": [],
