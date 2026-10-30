@@ -310,5 +310,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - Change against current best: S19 with poi.establishment_weight=bus: E = gap(all Overture places by intersects, ZBP 2023 establishments x BUS_RATIO from the HUD Q4 2024 crosswalk, DataLumos 219325 V2); E positive in 2.4% of tracts, 253 tracts change, rms change 0.0157; HUD crosswalk approved by Craig 30 Oct 2026
 - Expected direction: offline span estimate 0.025 to 0.033 against S19's 0.0300; the change is almost orthogonal to every earlier submission, so the leaderboard decides
 - Decision informed: whether the HUD apportionment replaces S20 as final B
-- Public RMSE: pending
+- Zindi submission ID: `EC3xBxjr`
+- Public RMSE: 0.023796476
+- Result note: best of this pipeline; line search t* = 1.17 along S19 to S24, so the organisers apportion establishments by HUD business-address ratios. Becomes final A (S19 final B). Craig also uploaded the S23 competitor file a second time (`5vt7QQag`, `h1dnvjWd`, both 0.0022655) and a second competitor file (github.com/kevin9327/ZindiBiasBounty, 0.002420912); neither is produced by this pipeline
 - Submissions used after this one: 24 of 35
