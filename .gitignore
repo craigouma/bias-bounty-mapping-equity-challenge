@@ -16,6 +16,3 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 .ruff_cache/
-
-# compiled writeup
-docs/writeup/*.pdf
