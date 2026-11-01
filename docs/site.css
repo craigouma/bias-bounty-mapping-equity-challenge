@@ -133,7 +133,7 @@ h2 {
   padding: 22px 26px;
   margin-bottom: 36px;
 }
-.abstract-box p { font-family: var(--serif); font-size: 15.5px; line-height: 1.75; }
+.abstract-box p { font-family: var(--serif); font-size: 15.5px; line-height: 1.75; text-align: justify; hyphens: auto; }
 
 figure { margin-bottom: 36px; }
 figure img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; }
