@@ -1,9 +1,22 @@
 # bias-bounty-mapping-equity-challenge
 
 Coverage gap estimates per Census tract for the Bias Bounty Mapping Equity Challenge (Zindi,
-Humane Intelligence, Reliabl, Radiant Earth). The pipeline estimates the transport, building and
-POI coverage gaps of Overture Maps against the organisers' removed reference layers using only
-the data in the challenge package, and combines them as the expectation of the composite score.
+Humane Intelligence, Reliabl, Radiant Earth). The pipeline compares Overture Maps with reference
+data for roads, buildings and points of interest per tract and combines the transport, building
+and POI gaps into the composite score. Submissions up to S16 estimate the reference side from the
+challenge package alone. From S19 the reference side is rebuilt from the public sources that
+Zindi staff permitted on 27 Oct 2026. Final submission S25 finished 11th on the private
+leaderboard (private RMSE 0.01933).
+
+## Papers
+
+- Methodology (Best Documentation entry):
+  https://craigouma.github.io/bias-bounty-mapping-equity-challenge/methodology/
+- Unnamed local roads on tribal reservations (Best Bias Discovery entry):
+  https://craigouma.github.io/bias-bounty-mapping-equity-challenge/bias-discovery/
+
+The PDFs and their LaTeX sources are in `docs/writeup/`. The pages are served by GitHub Pages
+from `docs/`.
 
 ## Layout
 
