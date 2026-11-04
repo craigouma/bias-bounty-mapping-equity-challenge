@@ -98,3 +98,5 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261104-1434-08_archive-db9b78d | 08_archive | db9b78d | defaults | complete | 1.2 | 0.5 |
 | 20261104-1435-10_globalml-db9b78d | 10_globalml | db9b78d | defaults | complete | 16.1 | 2.22 |
 | 20261104-1434-02_features-db9b78d | 02_features | db9b78d | defaults | complete | 25.5 | 6.87 |
+| 20261104-1434-06_facilities-db9b78d | 06_facilities | db9b78d | defaults | complete | 26.8 | 0.5 |
+| 20261104-1434-05_reference-db9b78d | 05_reference | db9b78d | defaults | complete | 32.5 | 3.51 |
