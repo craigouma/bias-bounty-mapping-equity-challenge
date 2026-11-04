@@ -33,7 +33,7 @@ Challenge, Submission S25}}
 Correspondence: \texttt{craigcarlos95@gmail.com}. Zindi:
 \texttt{craigouma}. Reviewed submission: \texttt{2ncgdcQQ}, file
 \texttt{S25\_20261030-1227-03\_model-45a6fcc.csv}. Code: \repo, tag
-\texttt{code-review}.}}
+\texttt{s25-code-review}.}}
 \affil[1]{Independent Researcher}
 \date{November 4, 2026}
 
@@ -406,7 +406,7 @@ Kaggle command-line client authenticated on the machine, \texttt{git},
 \texttt{uv} and GNU Make.
 
 \begin{enumerate}[itemsep=3pt]
-\item Clone \repo{} and check out the tag \texttt{code-review}. Run
+\item Clone \repo{} and check out the tag \texttt{s25-code-review}. Run
 \texttt{make setup}.
 \item Put the challenge \texttt{SampleSubmission.csv} in \texttt{data/} and
 the uploaded S25 file at
@@ -416,7 +416,7 @@ Kaggle user name and commit the change; the code dataset is built only from
 a clean tree.
 \item Download \texttt{ZIP\_TRACT\_122024.xlsx} (Table~\ref{tab:sources},
 note $a$) into \texttt{data/hud\_crosswalk/} and run
-\path{cd scripts && uv run python hud_dataset.py}.
+\texttt{cd scripts \&\& uv run python hud\_dataset.py}.
 \item \texttt{make kaggle-code}, then \texttt{make kaggle-run STAGE=01\_ingest}.
 \item Run stages \texttt{02\_features}, \texttt{05\_reference},
 \texttt{06\_facilities}, \texttt{08\_archive} and \texttt{10\_globalml}
@@ -451,10 +451,11 @@ byte-identical to the uploaded S25 file:
 SHA-256 \texttt{03678f50bac04dea7c2f03abb446deb1fba45b5f55f1a7e716f2d95dbd9ff48d}
 \end{center}
 The installed versions of every pinned package equalled those of the original
-S25 run. The commits from \texttt{64296a6} to the tag \texttt{code-review}
-change comments, documentation and logs only, which
-\path{git diff 64296a6 code-review -- src kaggle configs requirements-kaggle.txt}
-shows.
+S25 run. The commits from \texttt{64296a6} to the tag \texttt{s25-code-review}
+change comments, documentation and logs only, as this command shows:
+\begin{center}\small
+\texttt{git diff 64296a6 s25-code-review -{}- src kaggle configs requirements-kaggle.txt}
+\end{center}
 
 \section{Data insights}
 
