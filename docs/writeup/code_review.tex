@@ -288,8 +288,9 @@ peak memory.
 Table~\ref{tab:runtime} gives the wall time and peak memory of each stage on
 Kaggle CPU sessions (4 cores, 32.9\,GB RAM), for the runs that produced S25
 and for the from-scratch rerun of 4 November 2026. Wall time is measured from
-push to completion and includes queueing. The full chain takes about
-TODO minutes when the independent stages run in parallel.
+push to completion and includes queueing. The full chain takes about 45
+minutes when the independent stages run in parallel: stage 01, then stage 05
+(the longest of the parallel group), then stage 03.
 
 \begin{table}[htbp]
 \centering
@@ -301,14 +302,14 @@ TODO minutes when the independent stages run in parallel.
 & \multicolumn{2}{c}{Runs behind S25} & \multicolumn{2}{c}{Rerun, 4 Nov} \\
 Stage & Wall (min) & Peak RSS (GB) & Wall (min) & Peak RSS (GB) \\
 \midrule
-01 ingest & 5.4 & 1.39 & 7.8 & TODO \\
-02 features & 27.9 & 6.99 & TODO & TODO \\
-05 reference & 33.9 & 3.55 & TODO & TODO \\
-06 facilities & 8.7 & 0.49 & TODO & TODO \\
-07 establishments & 1.2 & 0.22 & TODO & TODO \\
-08 archive & 1.2 & 0.45 & 1.2 & TODO \\
-10 Global ML & 33.8 & 2.13 & TODO & TODO \\
-03 model & 1.7 & 0.56 & TODO & TODO \\
+01 ingest & 5.4 & 1.39 & 7.8 & 1.47 \\
+02 features & 27.9 & 6.99 & 25.5 & 6.87 \\
+05 reference & 33.9 & 3.55 & 32.5 & 3.51 \\
+06 facilities & 8.7 & 0.49 & 26.8 & 0.50 \\
+07 establishments & 1.2 & 0.22 & 1.1 & 0.22 \\
+08 archive & 1.2 & 0.45 & 1.2 & 0.50 \\
+10 Global ML & 33.8 & 2.13 & 16.1 & 2.22 \\
+03 model & 1.7 & 0.56 & 1.5 & 0.56 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -323,9 +324,9 @@ estimate from the challenge package alone (S16) 0.0745; transport, building,
 facility and establishment references rebuilt from public sources (S19)
 0.0300; establishments apportioned by HUD business-address ratios (S24)
 0.0238; building reference from Global ML (S25) 0.0215.
-\item Reproduction: maximum absolute difference between a rerun of stage 03
-and the uploaded file, over every float cell, and the number of differing
-flags (Section~\ref{sec:repro}).
+\item Reproduction: a from-scratch rerun gives a file byte-identical to the
+upload, so the largest absolute difference over every float cell is 0 and no
+flag differs (Section~\ref{sec:repro}).
 \item Calibration of the transport component against the organisers'
 published rates and ratios, described above.
 \end{itemize}
@@ -437,7 +438,23 @@ configuration on 30 October 2026 (run
 produced S25, and matched the uploaded file in every cell with a largest
 difference of 0. On 4 November 2026 the whole chain was rerun from scratch
 under new kernel names (\texttt{repro-bbme-*}), downloading the challenge
-package and every public source again. TODO result.
+package and every public source again (stage 01 at commit \texttt{0f182ec},
+stages 02 to 10 at \texttt{db9b78d}, stage 07 at \texttt{b11465b}, stage 03 at
+\texttt{64296a6}; these commits differ only in run log entries). Every
+intermediate table read by S25 (TIGER lengths, USGS facility counts,
+establishment counts, Global ML counts) was identical to the one behind the
+uploaded file, and the Overture feature table differed only in floating-point
+summation order (at most $4 \times 10^{-9}$ m in six columns that S25 does not
+read). Stage 03 (run \texttt{20261104-1651-03\_model-64296a6}) produced a file
+byte-identical to the uploaded S25 file:
+\begin{center}\small
+SHA-256 \texttt{03678f50bac04dea7c2f03abb446deb1fba45b5f55f1a7e716f2d95dbd9ff48d}
+\end{center}
+The installed versions of every pinned package equalled those of the original
+S25 run. The commits from \texttt{64296a6} to the tag \texttt{code-review}
+change comments, documentation and logs only, which
+\path{git diff 64296a6 code-review -- src kaggle configs requirements-kaggle.txt}
+shows.
 
 \section{Data insights}
 
