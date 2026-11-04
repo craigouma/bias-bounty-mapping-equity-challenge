@@ -24,7 +24,7 @@ kaggle-code:
 	uv run python scripts/kaggle_code_push.py
 
 kaggle-run:
-	cd scripts && uv run python kaggle_run.py $(STAGE) --set "$(SET)"
+	cd scripts && uv run python kaggle_run.py $(STAGE) --set "$(SET)" --prefix "$(PREFIX)"
 
 reproduce:
-	cd scripts && uv run python reproduce.py $(FINAL)
+	cd scripts && uv run python reproduce.py $(FINAL) $(PREFIX)

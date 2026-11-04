@@ -14,9 +14,9 @@ from kaggle_run import run_stage
 TOLERANCE = 1e-9
 
 
-def main(final: str) -> int:
+def main(final: str, prefix: str = "") -> int:
     cfg = load(f"final_{final}")
-    run_id, state, dest = run_stage("03_model", cfg["overrides"])
+    run_id, state, dest = run_stage("03_model", cfg["overrides"], prefix=prefix)
     if not state.startswith("complete"):
         return 1
     submitted = ROOT / load("paths")["submissions"] / cfg["file"]
@@ -28,4 +28,4 @@ def main(final: str) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1]))
+    sys.exit(main(*sys.argv[1:3]))
