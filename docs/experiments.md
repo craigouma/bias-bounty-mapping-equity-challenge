@@ -94,3 +94,11 @@ high tier and B-only tracts as a mid tier with calibrated definedness (D019).
 | 20261030-1227-03_model-45a6fcc | 03_model | 45a6fcc | transport.source=tiger building.source=microsoft building.count=globalml poi.source=reference poi.reference_types=[fire,schools] poi.establishment_weight=bus | complete | 1.7 | 0.56 |
 | 20261030-1512-03_model-8f446f4 | 03_model | 8f446f4 | transport.source=tiger building.source=microsoft building.count=globalml poi.source=reference poi.reference_types=[fire,schools] poi.establishment_weight=bus | complete | 1.3 | 0.57 |
 | 20261030-1514-04_analysis-7cec170 | 04_analysis | 7cec170 | defaults | complete | 21.6 | 0.8 |
+| 20261104-1424-01_ingest-0f182ec | 01_ingest | 0f182ec | defaults | complete | 7.8 | 1.47 |
+| 20261104-1434-08_archive-db9b78d | 08_archive | db9b78d | defaults | complete | 1.2 | 0.5 |
+| 20261104-1435-10_globalml-db9b78d | 10_globalml | db9b78d | defaults | complete | 16.1 | 2.22 |
+| 20261104-1434-02_features-db9b78d | 02_features | db9b78d | defaults | complete | 25.5 | 6.87 |
+| 20261104-1434-06_facilities-db9b78d | 06_facilities | db9b78d | defaults | complete | 26.8 | 0.5 |
+| 20261104-1434-05_reference-db9b78d | 05_reference | db9b78d | defaults | complete | 32.5 | 3.51 |
+| 20261104-1512-07_establishments-b11465b | 07_establishments | b11465b | defaults | complete | 1.1 | 0.22 |
+| 20261104-1651-03_model-64296a6 | 03_model | 64296a6 | transport.source=tiger building.source=microsoft building.count=globalml poi.source=reference poi.reference_types=[fire,schools] poi.establishment_weight=bus | complete | 1.5 | 0.56 |
