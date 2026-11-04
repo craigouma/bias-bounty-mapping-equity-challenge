@@ -41,3 +41,18 @@ def test_rendered_kernel_parses_and_carries_run(stage, isolated_build):
     assert meta["title"] == scfg["slug"] == meta["id"].split("/")[1]
     assert meta["enable_internet"] == "true"
     assert (meta["machine_shape"] == "NvidiaTeslaT4") == scfg["gpu"]
+
+
+def test_prefix_renames_kernel_and_its_sources(isolated_build):
+    run = {"run_id": "r1", "stage": "03_model", "sha": "a" * 40, "overrides": [], "install": True}
+    meta = json.loads(
+        (kaggle_run.render("03_model", run, "repro-") / "kernel-metadata.json").read_text()
+    )
+    kcfg = load("kaggle")
+    scfg = kcfg["stages"]["03_model"]
+    assert meta["id"] == f"{kcfg['username']}/repro-{scfg['slug']}"
+    assert meta["title"] == f"repro-{scfg['slug']}"
+    assert meta["kernel_sources"] == [
+        f"{kcfg['username']}/repro-{s}" for s in scfg["kernel_sources"]
+    ]
+    assert meta["dataset_sources"][0] == f"{kcfg['username']}/{kcfg['code_dataset']}"
