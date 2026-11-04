@@ -85,8 +85,8 @@ sync:
   workers: 8
   attempts: 3
 
-# Public reference sources permitted by Zindi staff on 27 Oct 2026. Only these file names are
-# admitted; organiser coverage-gap files stay forbidden regardless.
+# Public reference sources downloaded from their publishers (used from S17). Only these file
+# names are admitted; organiser coverage-gap files stay forbidden regardless.
 external_reference:
   enabled: true
   tiger_prisecroads_url: https://www2.census.gov/geo/tiger/TIGER2025/PRISECROADS/tl_2025_{state}_prisecroads.zip

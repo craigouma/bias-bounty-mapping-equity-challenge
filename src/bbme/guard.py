@@ -2,9 +2,8 @@
 
 Organiser coverage-gap files must never be opened. The removed reference layers (TIGER roads,
 Microsoft footprints, HIFLD / USGS structures, CBP establishments) are admitted only under the
-file names listed in `external_reference` in configs/data.yaml (permitted by Zindi staff,
-27 Oct 2026). Every raw
-input passes `raw()`, which admits only the provided file names; derived artifacts pass
+file names listed in `external_reference` in configs/data.yaml, downloaded from their
+publishers. Every raw input passes `raw()`, which admits only the provided file names; derived artifacts pass
 `artifact()`, which rejects denylisted names. A provided name that happens to contain a
 denylisted token (`usgs-combined-tract-table`, a permitted wildfire stratum) is admitted
 because the allowlist is checked first.
