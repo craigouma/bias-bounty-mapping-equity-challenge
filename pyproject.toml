@@ -15,6 +15,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "matplotlib>=3.11.2",
+    "openpyxl==3.1.5",
     "pyproj>=3.6,<3.8",
     "pytest>=8.0",
     "ruff>=0.6",
