@@ -218,7 +218,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - File: `artifacts/submissions/S17_20261027-2139-03_model-8fffd01.csv`
 - Run ID: `20261027-2139-03_model-8fffd01`
 - Code SHA: `8fffd016d4ccefbfac84f79fd167e9292621296c`
-- Hypothesis: exact transport from TIGER S1100 + S1200 (Zindi staff permission, 27 Oct)
+- Hypothesis: exact transport from TIGER S1100 + S1200 (public TIGER/Line 2025)
 - Change against current best: S16 with transport.source=tiger: T = gap(Overture named length, TIGER S1100+S1200 length clipped to the tract), defined where TIGER length > 0; TIGER undefined shares match the published rates (0.212, 0.369, 0.284, 0.546 against 0.21, 0.37, 0.28, 0.55); building 0 and POI fire blend as S16
 - Expected direction: a large drop from S14's 0.0745, since transport carries most of the signal and is now computed instead of estimated
 - Decision informed: how much of the remaining error sits in building and POI
@@ -231,7 +231,7 @@ Scorecards are kept verbatim in `docs/scorecards/S##.md`.
 - File: `artifacts/submissions/S18_20261028-0024-03_model-8d8b042.csv`
 - Run ID: `20261028-0024-03_model-8d8b042`
 - Code SHA: `8d8b04267d09ad98e52724c4e7ed5da15b669905`
-- Hypothesis: exact building gap from Microsoft US Building Footprints (Zindi staff permission, 27 Oct)
+- Hypothesis: exact building gap from Microsoft US Building Footprints (public US v2 release)
 - Change against current best: S17 with building.source=microsoft: B = gap(Overture footprints, Microsoft footprints) per tract by centroid, defined where Microsoft has one (99.99% of tracts); B mean 0.0026; transport TIGER and POI fire blend as S17
 - Expected direction: small gain over S17, since B is close to 0 nearly everywhere
 - Decision informed: building handled exactly; base for the exact POI version
