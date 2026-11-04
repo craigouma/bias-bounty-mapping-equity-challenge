@@ -16,7 +16,7 @@ EXPERIMENTS = ROOT / "docs" / "experiments.md"
 TERMINAL = ("complete", "error", "cancel")
 
 
-def render(stage: str, run: dict) -> Path:
+def render(stage: str, run: dict, prefix: str = "") -> Path:
     kcfg = load("kaggle")
     scfg = kcfg["stages"][stage]
     user = kcfg["username"]
@@ -28,8 +28,8 @@ def render(stage: str, run: dict) -> Path:
     body = (STAGES_DIR / stage / "run.py").read_text()
     (out / "run.py").write_text(f"{bootstrap}\n\n{body}\n\nmain(RUN, CODE)\n")
     meta = {
-        "id": f"{user}/{scfg['slug']}",
-        "title": scfg["slug"],
+        "id": f"{user}/{prefix}{scfg['slug']}",
+        "title": f"{prefix}{scfg['slug']}",
         "code_file": "run.py",
         "language": "python",
         "kernel_type": "script",
@@ -41,7 +41,7 @@ def render(stage: str, run: dict) -> Path:
             f"{user}/{d}" for d in [kcfg["code_dataset"], *scfg.get("datasets", [])]
         ],
         "competition_sources": [],
-        "kernel_sources": [f"{user}/{s}" for s in scfg["kernel_sources"]],
+        "kernel_sources": [f"{user}/{prefix}{s}" for s in scfg["kernel_sources"]],
         "model_sources": [],
     }
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
@@ -88,8 +88,14 @@ def log_run(run: dict, state: str, wall_min: float, dest: Path) -> None:
         f.write(row)
 
 
-def run_stage(stage: str, overrides: list[str], timeout_h: float = 11.5) -> tuple[str, str, Path]:
-    """Render, push, follow and pull one stage; returns run ID, final state and output folder."""
+def run_stage(
+    stage: str, overrides: list[str], timeout_h: float = 11.5, prefix: str = ""
+) -> tuple[str, str, Path]:
+    """Render, push, follow and pull one stage; returns run ID, final state and output folder.
+
+    A non-empty prefix runs the stage as a separate chain of kernels (`<prefix><slug>`), whose
+    kernel sources carry the same prefix, so a from-scratch rerun leaves the original outputs alone.
+    """
     kcfg = load("kaggle")
     scfg = kcfg["stages"][stage]
     require_clean_tree()
@@ -104,8 +110,8 @@ def run_stage(stage: str, overrides: list[str], timeout_h: float = 11.5) -> tupl
         "overrides": overrides,
         "install": stage != "00_env",
     }
-    folder = render(stage, run)
-    ref = f"{kcfg['username']}/{scfg['slug']}"
+    folder = render(stage, run, prefix)
+    ref = f"{kcfg['username']}/{prefix}{scfg['slug']}"
     cmd = ["kaggle", "kernels", "push", "-p", str(folder)]
     if scfg["gpu"]:
         cmd += ["--accelerator", kcfg["accelerator"]]
@@ -133,8 +139,9 @@ def main() -> int:
     parser.add_argument("stage")
     parser.add_argument("--set", default="", help="space-separated key=value overrides")
     parser.add_argument("--timeout-h", type=float, default=11.5)
+    parser.add_argument("--prefix", default="", help="kernel slug prefix for a separate chain")
     args = parser.parse_args()
-    _, state, _ = run_stage(args.stage, args.set.split(), args.timeout_h)
+    _, state, _ = run_stage(args.stage, args.set.split(), args.timeout_h, args.prefix)
     return 0 if state.startswith("complete") else 1
 
 
